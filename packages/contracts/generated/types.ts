@@ -315,12 +315,13 @@ export interface ClientProfileInput {
 export interface ClientProfileView {
   "revision_id": string;
   "revision": number;
-  "full_name_masked": string;
+  "full_name": string;
   "id_issuing_country": string;
   "id_document_type": "national_id" | "residence_id" | "passport";
-  "id_number_masked": string;
-  "phone_masked": string;
+  "id_number": string;
+  "phone": string;
   "sex": "male" | "female";
+  "birth_date": string;
   "nationality": string;
   "age_years": number;
   "identity_verification"?: string;

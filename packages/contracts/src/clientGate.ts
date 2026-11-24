@@ -59,6 +59,12 @@ export interface ClientGateConfig {
    * frame because an absolute floor rejected sharp originals in A7.78-B.
    */
   sharpness: { minRelativeToBurstMax: number };
+  /**
+   * The burst ACCUMULATES (owner decision 2026-11-24): frames that fail a check
+   * are skipped, frames that pass are kept, and the burst runs until the
+   * target is reached or `maxDurationMs` (60 s, the help-card limit) passes.
+   * It no longer starts again from zero after a few seconds.
+   */
   burst: {
     targetFrames: number;
     maxDurationMs: number;
@@ -89,7 +95,7 @@ export const CLIENT_GATE_CONFIG: ClientGateConfig = {
   expression: { maxSmile: 0.3, maxJawOpen: 0.05 },
   eyes: { maxBlink: 0.5, minRelativeOpening: 0.7 },
   sharpness: { minRelativeToBurstMax: 0.5 },
-  burst: { targetFrames: 10, maxDurationMs: 8000, minSpacingMs: 66, minCoverageMs: 1000, holdMs: 500 },
+  burst: { targetFrames: 10, maxDurationMs: 60000, minSpacingMs: 66, minCoverageMs: 1000, holdMs: 500 },
   labels: {
     'stream.preferredSizes': 'default',
     'stream.minSize': 'default',
@@ -117,7 +123,7 @@ export const CLIENT_GATE_CONFIG: ClientGateConfig = {
     'eyes.minRelativeOpening': 'default',
     'sharpness.minRelativeToBurstMax': 'default',
     'burst.targetFrames': 'owner',
-    'burst.maxDurationMs': 'default',
+    'burst.maxDurationMs': 'owner',
     'burst.minSpacingMs': 'default',
     'burst.minCoverageMs': 'default',
     'burst.holdMs': 'default',

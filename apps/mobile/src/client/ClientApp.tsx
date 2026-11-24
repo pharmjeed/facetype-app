@@ -1,8 +1,10 @@
 /**
  * The client app shell (docs/client-app-v1.md §4): wires the pure navigation
  * reducer (`clientFlow.ts`) to the four screens and owns every side effect —
- * sign-in, GET /me, profile + consent saves, account deletion, and the durable
+ * sign-in, GET /me, the profile save with its notice consent, and the durable
  * upload spool that keeps running while the person is on the profile page.
+ * Owner decision 2026-11-24: no edit, research withdrawal, account deletion or
+ * sign-out on the profile page (the API client keeps those calls).
  *
  * Mounted by `App.tsx` unless the field-study build flag is set. Arabic only,
  * right-to-left.
@@ -11,7 +13,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
 import {
   AppState,
-  BackHandler,
   I18nManager,
   NativeModules,
   Platform,
@@ -35,7 +36,7 @@ import { googleProvider } from './auth/googleProvider.ts';
 import { mockProvider } from './auth/mockProvider.ts';
 import type { AuthProvider, ProviderId, SignInOutcome } from './auth/types.ts';
 import { initialClientState, reduceClient, type SignInError } from './clientFlow.ts';
-import { apiErrorKey, profileFieldErrorKey } from './messages.ts';
+import { profileFieldErrorKey } from './messages.ts';
 import { CLIENT_BUILD_ENV } from './env.ts';
 import { cameraBackend, type CameraBackend } from './native/clientCamera.tsx';
 import type { BurstFrame, CameraCapabilities, FrameMeta } from './native/types.ts';
@@ -141,13 +142,6 @@ function apiSignInError(error: unknown): SignInError {
   return 'failed';
 }
 
-/** One Arabic sentence for a failed profile-page action. */
-function actionErrorText(error: unknown): string {
-  if (!isClientApiError(error)) return s('common.unexpected', { code: 'unexpected' });
-  const key = apiErrorKey(error.code, error.kind);
-  return key ? s(key) : s('common.unexpected', { code: error.code ?? error.kind });
-}
-
 export function ClientApp(): ReactNode {
   const [state, dispatch] = useReducer(reduceClient, initialClientState);
   const sessionEnded = useRef<() => void>(() => undefined);
@@ -159,9 +153,7 @@ export function ClientApp(): ReactNode {
   const [saving, setSaving] = useState(false);
   const [setupError, setSetupError] = useState<SetupServerError | null>(null);
   const [prefillName, setPrefillName] = useState<string | null>(null);
-  const [busy, setBusy] = useState<'withdraw' | 'delete' | 'signout' | 'refresh' | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [profileError, setProfileError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const signedIn = useRef(false);
   const lastStage = useRef<string | null>(null);
@@ -201,25 +193,22 @@ export function ClientApp(): ReactNode {
     if (next !== null) timer.current = setTimeout(() => void pump(), next);
   }, [refreshMe, runner, stopPump]);
 
-  const endLocalSession = useCallback(
-    async (reason: 'user' | 'deleted' | 'session_expired') => {
-      signedIn.current = false;
-      stopPump();
-      setSpool({ kind: 'idle' });
-      // A queued capture belongs to the account that made it; never upload it
-      // under another. discard() aborts the request in flight, waits for the
-      // saves already started and deletes manifest and frames (a process death
-      // midway is finished at the next boot). Owed attempt telemetry survives a
-      // sign-out for the same account only; a deletion drops it.
-      await runner?.discard({ telemetry: reason === 'deleted' ? 'drop' : 'keep' }).catch(() => undefined);
-      runner?.bindAccount(null);
-      for (const provider of services.providers) await provider.signOut?.().catch(() => undefined);
-    },
-    [runner, services.providers, stopPump],
-  );
+  const endLocalSession = useCallback(async () => {
+    signedIn.current = false;
+    stopPump();
+    setSpool({ kind: 'idle' });
+    // A queued capture belongs to the account that made it; never upload it
+    // under another. discard() aborts the request in flight, waits for the
+    // saves already started and deletes manifest and frames (a process death
+    // midway is finished at the next boot). Owed attempt telemetry survives
+    // for the same account.
+    await runner?.discard({ telemetry: 'keep' }).catch(() => undefined);
+    runner?.bindAccount(null);
+    for (const provider of services.providers) await provider.signOut?.().catch(() => undefined);
+  }, [runner, services.providers, stopPump]);
 
   sessionEnded.current = () => {
-    void endLocalSession('session_expired').then(() => dispatch({ type: 'SIGNED_OUT', reason: 'session_expired' }));
+    void endLocalSession().then(() => dispatch({ type: 'SIGNED_OUT', reason: 'session_expired' }));
   };
 
   const enterSession = useCallback(async () => {
@@ -268,19 +257,6 @@ export function ClientApp(): ReactNode {
     return () => subscription.remove();
   }, [pump]);
 
-  // Android back inside «تعديل البيانات» returns to the profile (capture handles its own).
-  useEffect(() => {
-    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (state.screen === 'profileSetup' && state.setupMode === 'edit') {
-        setSetupError(null);
-        dispatch({ type: 'CANCEL_EDIT' });
-        return true;
-      }
-      return false;
-    });
-    return () => subscription.remove();
-  }, [state.screen, state.setupMode]);
-
   const signIn = useCallback(
     async (id: ProviderId) => {
       const provider = services.providers.find((candidate) => candidate.id === id);
@@ -314,17 +290,19 @@ export function ClientApp(): ReactNode {
     [api, enterSession, services.providers],
   );
 
-  const showConsent = state.setupMode === 'first' && state.me?.consent?.store_accepted !== true;
+  // The notice line above «حفظ ومتابعة» names both storage and research use
+  // (docs/client-notice-v1-ar.md), so continuing records both.
+  const needsConsent = state.me?.consent?.store_accepted !== true;
 
   const saveProfile = useCallback(
-    async (values: ProfileValues, researchUse: boolean) => {
+    async (values: ProfileValues) => {
       setSaving(true);
       setSetupError(null);
       try {
         await api.putProfile(values);
-        if (showConsent) {
+        if (needsConsent) {
           try {
-            await api.postConsent({ version: CONSENT_VERSION, store_accepted: true, research_use: researchUse });
+            await api.postConsent({ version: CONSENT_VERSION, store_accepted: true, research_use: true });
           } catch (error) {
             setSetupError(isClientApiError(error, 'network') ? { kind: 'network' } : { kind: 'consent_failed' });
             return;
@@ -348,48 +326,8 @@ export function ClientApp(): ReactNode {
         setSaving(false);
       }
     },
-    [api, showConsent],
+    [api, needsConsent],
   );
-
-  const withdrawResearch = useCallback(async () => {
-    setBusy('withdraw');
-    setNotice(null);
-    setProfileError(null);
-    try {
-      await api.postConsent({ version: CONSENT_VERSION, store_accepted: true, research_use: false });
-      await refreshMe();
-      setNotice(s('profile.withdrawn'));
-    } catch (error) {
-      setProfileError(actionErrorText(error));
-    } finally {
-      setBusy(null);
-    }
-  }, [api, refreshMe]);
-
-  const deleteAccount = useCallback(async () => {
-    setBusy('delete');
-    setProfileError(null);
-    try {
-      await api.deleteAccount();
-      await endLocalSession('deleted');
-      dispatch({ type: 'SIGNED_OUT', reason: 'deleted' });
-    } catch (error) {
-      setProfileError(actionErrorText(error));
-    } finally {
-      setBusy(null);
-    }
-  }, [api, endLocalSession]);
-
-  const signOut = useCallback(async () => {
-    setBusy('signout');
-    try {
-      await api.logout();
-      await endLocalSession('user');
-      dispatch({ type: 'SIGNED_OUT', reason: 'user' });
-    } finally {
-      setBusy(null);
-    }
-  }, [api, endLocalSession]);
 
   const onEnqueue = useCallback(
     async (frames: BurstFrame[], attempts: number, capabilities: CameraCapabilities | null, telemetry: PendingAttempt) => {
@@ -452,23 +390,12 @@ export function ClientApp(): ReactNode {
   } else if (state.screen === 'profileSetup') {
     body = (
       <ProfileSetupScreen
-        key={state.setupMode}
-        mode={state.setupMode}
         profile={state.me?.profile ?? null}
         prefillName={prefillName}
-        showConsent={showConsent}
         saving={saving}
         serverError={setupError}
         supportContact={AUTH_CONFIG.supportContact}
-        onSave={(values, researchUse) => void saveProfile(values, researchUse)}
-        onCancel={
-          state.setupMode === 'edit'
-            ? () => {
-                setSetupError(null);
-                dispatch({ type: 'CANCEL_EDIT' });
-              }
-            : undefined
-        }
+        onSave={(values) => void saveProfile(values)}
       />
     );
   } else if (state.screen === 'capture') {
@@ -490,26 +417,14 @@ export function ClientApp(): ReactNode {
       <ProfileScreen
         me={state.me}
         spool={spool}
-        busy={busy}
-        notice={notice}
-        error={profileError}
+        refreshing={refreshing}
         now={new Date()}
-        onCapture={() => {
-          setNotice(null);
-          dispatch({ type: 'OPEN_CAPTURE' });
-        }}
-        onEdit={() => {
-          setSetupError(null);
-          dispatch({ type: 'EDIT_PROFILE' });
-        }}
+        onCapture={() => dispatch({ type: 'OPEN_CAPTURE' })}
         onRefresh={() => {
-          setBusy('refresh');
-          void refreshMe().finally(() => setBusy(null));
+          setRefreshing(true);
+          void refreshMe().finally(() => setRefreshing(false));
           void pump();
         }}
-        onWithdrawResearch={() => void withdrawResearch()}
-        onDelete={() => void deleteAccount()}
-        onSignOut={() => void signOut()}
       />
     );
   } else {

@@ -65,20 +65,21 @@ export interface AccountView {
 }
 
 /**
- * What the server returns after a profile save: masked, never the full ID,
- * phone, name or birth date (ADR-015 §2). `id_number_masked` and
- * `phone_masked` are display-ready («•••• 1234»); the name is initials and the
- * birth date is reduced to an age.
+ * What the server returns after a profile save and in GET /me: the person's
+ * own data as entered, unmasked (owner decision 2026-11-24). Only the signed-in
+ * owner of the account receives it.
  */
 export interface ProfileView {
   revision_id: string;
   revision: number;
-  full_name_masked: string;
+  full_name: string;
   id_issuing_country: string;
   id_document_type: IdDocumentType;
-  id_number_masked: string;
-  phone_masked: string;
+  id_number: string;
+  phone: string;
   sex: Sex;
+  /** `YYYY-MM-DD`. */
+  birth_date: string;
   nationality: string;
   age_years: number;
   /** Identifiers are self-declared and unverified (ADR-015 §4). */

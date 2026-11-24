@@ -218,24 +218,24 @@ test('client app v1 end to end against a live API (synthetic data)', { skip: BAS
     assert.ok(checked.ok);
     assert.equal(checked.value.phone, '+966500000000', 'the app sends full E.164');
     const view = await a.putProfile(checked.value);
-    assert.match(view.id_number_masked, /0008$/);
-    assert.match(view.phone_masked, /0000$/);
+    // Unmasked for the account's own owner (owner decision 2026-11-24).
+    assert.equal(view.id_number, SYNTHETIC_ID);
+    assert.equal(view.phone, '+966500000000');
+    assert.equal(view.birth_date, '1990-01-01');
     assert.ok(Number.isInteger(view.age_years) && view.age_years >= 18);
     assert.equal(view.identity_verification, 'self_declared');
-    const raw = JSON.stringify(view);
-    for (const secret of [SYNTHETIC_ID, '500000000', 'اختبار', '1990-01-01']) assert.ok(!raw.includes(secret), secret);
 
     step = '09 capture before consent';
     await rejectsWith(a.createCapture(manifest), 'consent_required', 'FT-PRIV-003');
 
     step = '10 POST /me/consent (research on)';
     const consent = await a.postConsent({ version: CONSENT_VERSION, store_accepted: true, research_use: true });
-    assert.equal(consent.version, 'client-consent-v1');
+    assert.equal(consent.version, 'client-notice-v1');
 
     step = '11 GET /me (profile + consent)';
     me = await a.me();
     assert.ok(me.profile && me.consent?.store_accepted);
-    for (const secret of [SYNTHETIC_ID, '500000000', '1990-01-01']) assert.ok(!JSON.stringify(me).includes(secret), secret);
+    assert.equal(me.profile.id_number, SYNTHETIC_ID);
 
     step = '12 POST /captures';
     const created = await a.createCapture(manifest);

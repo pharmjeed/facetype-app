@@ -10,9 +10,11 @@
  * Native decides which frames are good; this screen only guides and shows
  * progress. There is no photo review and no image is ever displayed back.
  *
- * One burst is one capture (native contract §5.16): a partial burst's frames
- * are deleted at once, its main reason is shown, and the next burst starts
- * from zero. Attempt telemetry is never sent when the frames are queued: an
+ * One burst is one capture (native contract §5.16), and since 2026-11-24 it
+ * accumulates for up to 60 s (owner: «كل مرة تأخذ جزءًا حتى يكتمل»): a frame
+ * that fails is skipped while the live guidance says why, a frame that passes
+ * is kept, and the bar fills to ten. Only a burst that still ends short (60 s,
+ * or the native candidate cap) is deleted, and the next one starts from zero. Attempt telemetry is never sent when the frames are queued: an
  * attempt that reached the spool reports its server verdict from there
  * (docs/client-app-v1.md §6); this screen reports only attempts that end
  * before any upload (cancel, time-out, camera permission refused).
@@ -162,8 +164,15 @@ export function CaptureScreen({
   const message = (() => {
     const phase = flow.phase;
     if (phase.name === 'bursting') {
-      const key = rejectReasonKey(phase.topRejectReason, view.message);
-      return key ? s(key) : s('burst.progress', { accepted: phase.accepted, target: phase.target });
+      // Native-only reasons (camera effects, an internal store failure) cannot be seen in the live measures.
+      const native =
+        phase.topRejectReason === 'effects_active' || phase.topRejectReason === 'internal'
+          ? rejectReasonKey(phase.topRejectReason, view.message)
+          : null;
+      if (native) return s(native);
+      // While the current frame fails, say why now (not the burst's most frequent reason so far).
+      if (view.message !== 'hold_still') return s(GUIDE_KEY[view.message]);
+      return s('burst.progress', { accepted: phase.accepted, target: phase.target });
     }
     return s(GUIDE_KEY[view.message]);
   })();

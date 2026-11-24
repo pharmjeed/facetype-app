@@ -1,15 +1,17 @@
 /**
  * Screen 3 — profile (home) (docs/client-app-v1.md §1).
  *
- * Shows only what GET /me returns: masked identifiers («•••• 1234»), name
- * initials and an age (never the birth date), capture
- * status, last capture date and the optional 7-day repeat. The personality
+ * Shows what GET /me returns, unmasked (owner decision 2026-11-24): name,
+ * document, phone, sex, birth date and age, nationality; then the capture
+ * status, last capture date and the optional 7-day repeat. The only actions
+ * are «التصوير» and «تحديث»: edit, research withdrawal, account deletion and
+ * sign-out were removed by the same decision. The personality
  * block always reads «النتيجة غير متاحة بعد»: there is no validated model, so
  * there is nothing else it could truthfully say (CLAUDE.md, ADR-008). It does
  * not read `personality` beyond that, on purpose.
  */
 
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 import { colors, spacing } from '@facetype/design-system';
@@ -21,13 +23,18 @@ import { countryName } from '../countries.ts';
 import type { SpoolOutcome } from '../spool/spool.ts';
 import { isTerminal } from '../spool/manifest.ts';
 import { s, type StringKey } from '../strings.ts';
-import { LinkButton, ui } from './ui.tsx';
+import { ui } from './ui.tsx';
 
 const DOC: Record<string, StringKey> = {
   national_id: 'doc.national_id',
   residence_id: 'doc.residence_id',
   passport: 'doc.passport',
 };
+
+/** Numbers, `+` and dashes stay left-to-right inside an Arabic line (Unicode isolate). */
+function ltr(value: string): string {
+  return `⁦${value}⁩`;
+}
 
 /** `YYYY-MM-DD` of an ISO timestamp; never a locale-dependent long date. */
 export function isoDay(value: string | null | undefined): string {
@@ -64,31 +71,18 @@ export function captureStatusKey(me: ClientMe, spool: SpoolOutcome): StringKey {
 export function ProfileScreen({
   me,
   spool,
-  busy,
-  notice,
-  error,
+  refreshing,
   now,
   onCapture,
-  onEdit,
   onRefresh,
-  onWithdrawResearch,
-  onDelete,
-  onSignOut,
 }: {
   me: ClientMe;
   spool: SpoolOutcome;
-  busy: 'withdraw' | 'delete' | 'signout' | 'refresh' | null;
-  notice: string | null;
-  error: string | null;
+  refreshing: boolean;
   now: Date;
   onCapture: () => void;
-  onEdit: () => void;
   onRefresh: () => void;
-  onWithdrawResearch: () => void;
-  onDelete: () => void;
-  onSignOut: () => void;
 }): ReactNode {
-  const [confirm, setConfirm] = useState<'withdraw' | 'delete' | null>(null);
   const profile = me.profile;
   const captures = me.captures;
   const dueAt = captures?.next_repeat_due_at ? Date.parse(captures.next_repeat_due_at) : NaN;
@@ -101,18 +95,19 @@ export function ProfileScreen({
 
       {profile ? (
         <View style={ui.card}>
-          <Text style={ui.text}>{s('profile.name', { value: profile.full_name_masked })}</Text>
+          <Text style={ui.text}>{s('profile.name', { value: profile.full_name })}</Text>
           <Text style={ui.text}>
             {s('profile.id', {
               type: s(DOC[profile.id_document_type] ?? 'doc.passport'),
               country: countryName(profile.id_issuing_country),
-              masked: profile.id_number_masked,
+              number: ltr(profile.id_number),
             })}
           </Text>
-          <Text style={ui.text}>{s('profile.phone', { masked: profile.phone_masked })}</Text>
+          <Text style={ui.text}>{s('profile.phone', { value: ltr(profile.phone) })}</Text>
           <Text style={ui.text}>
             {s('profile.sex', { value: profile.sex === 'female' ? s('sex.female') : s('sex.male') })}
           </Text>
+          <Text style={ui.text}>{s('profile.birth_date', { value: ltr(profile.birth_date) })}</Text>
           {Number.isInteger(profile.age_years) ? <Text style={ui.text}>{s('profile.age', { value: profile.age_years })}</Text> : null}
           <Text style={ui.text}>{s('profile.nationality', { value: countryName(profile.nationality) })}</Text>
         </View>
@@ -141,50 +136,7 @@ export function ProfileScreen({
         <Text style={ui.hint}>{s('profile.personality_note')}</Text>
       </View>
 
-      <View style={ui.card}>
-        <Text style={ui.text}>{me.consent?.research_use ? s('profile.research_on') : s('profile.research_off')}</Text>
-        {me.consent?.research_use ? (
-          confirm === 'withdraw' ? (
-            <View style={{ gap: spacing[2] }}>
-              <Text style={ui.text}>{s('profile.withdraw_confirm')}</Text>
-              <Button
-                label={s('profile.withdraw_do')}
-                onPress={() => {
-                  setConfirm(null);
-                  onWithdrawResearch();
-                }}
-                loading={busy === 'withdraw'}
-              />
-              <Button label={s('common.cancel')} onPress={() => setConfirm(null)} variant="secondary" />
-            </View>
-          ) : (
-            <LinkButton label={s('profile.withdraw_research')} onPress={() => setConfirm('withdraw')} />
-          )
-        ) : null}
-      </View>
-
-      {notice ? <Text style={ui.text} accessibilityLiveRegion="polite">{notice}</Text> : null}
-      {error ? <Text style={ui.error} accessibilityLiveRegion="polite">{error}</Text> : null}
-
-      <Button label={s('profile.edit')} onPress={onEdit} variant="secondary" />
-      <Button label={s('profile.refresh')} onPress={onRefresh} variant="secondary" loading={busy === 'refresh'} />
-      <Button label={s('profile.sign_out')} onPress={onSignOut} variant="secondary" loading={busy === 'signout'} />
-      {confirm === 'delete' ? (
-        <View style={ui.card}>
-          <Text style={ui.text}>{s('profile.delete_confirm')}</Text>
-          <Button
-            label={s('profile.delete_do')}
-            onPress={() => {
-              setConfirm(null);
-              onDelete();
-            }}
-            loading={busy === 'delete'}
-          />
-          <Button label={s('common.cancel')} onPress={() => setConfirm(null)} variant="secondary" />
-        </View>
-      ) : (
-        <LinkButton label={s('profile.delete')} onPress={() => setConfirm('delete')} />
-      )}
+      <Button label={s('profile.refresh')} onPress={onRefresh} variant="secondary" loading={refreshing} />
     </ScrollView>
   );
 }

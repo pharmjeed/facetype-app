@@ -7,14 +7,15 @@
  *    (CLAUDE.md: MODEL_UNAVAILABLE), and nothing else in this file hints at one.
  *  - The only instruction about the face itself is «بدون ابتسامة» (capture
  *    spec v2 §1 row 1; natural-face capture: no expression coaching).
- *  - The consent wording is `docs/client-consent-v1-ar.md` verbatim, version
- *    `client-consent-v1`; editing it here without a new version is a consent
- *    the user never saw.
+ *  - The notice under «حفظ ومتابعة» is `docs/client-notice-v1-ar.md`
+ *    verbatim, version `client-notice-v1` (owner decision 2026-11-24: no
+ *    consent checkboxes; continuing after this one line is the agreement).
+ *    Editing it here without a new version is a notice the user never saw.
  *  - A distance is never presented as a measurement; guidance only says
  *    «اقترب» or «ابتعد».
  */
 
-export const CONSENT_VERSION = 'client-consent-v1';
+export const CONSENT_VERSION = 'client-notice-v1';
 
 export const S = {
   'boot.loading': 'جارٍ التحميل…',
@@ -39,12 +40,10 @@ export const S = {
   'signin.server_unconfigured': 'تسجيل الدخول بهذه الطريقة غير مُعد على الخادم بعد.',
   'signin.failed': 'تعذّر تسجيل الدخول. حاول مرة أخرى.',
   'signin.privacy_note': 'لا يصل التطبيق إلى Face ID ولا إلى بصمة جهازك.',
-  'signin.deleted': 'استلمنا طلب حذف حسابك: توقفت كل معالجة، وتُحذف الصور والبيانات خلال 30 يومًا.',
 
   // 2. Profile setup
   'setup.title': 'بياناتك',
-  'setup.edit_title': 'تعديل البيانات',
-  'setup.intro': 'تُحفظ بياناتك مشفّرة ومنفصلة عن الصور، ولا تظهر كاملة في التطبيق.',
+  'setup.intro': 'تُحفظ بياناتك مشفّرة ومنفصلة عن الصور.',
   'setup.full_name': 'الاسم الكامل',
   'setup.id_country': 'دولة إصدار الوثيقة',
   'setup.id_type': 'نوع الوثيقة',
@@ -57,17 +56,12 @@ export const S = {
   'setup.nationality': 'الجنسية',
   'setup.country_search': 'ابحث باسم الدولة أو رمزها',
   'setup.country_selected': 'المختارة: {name}',
-  'setup.reenter_hint':
-    'لحماية بياناتك لا نعرض الاسم ورقم الوثيقة والجوال وتاريخ الميلاد كاملة؛ أعد إدخالها لحفظ التعديل.',
   'setup.unverified_note': 'لم نتحقق من رقم هويتك أو جوالك؛ نستخدم رقم الهوية فقط لمنع تكرار الحساب.',
   'setup.save': 'حفظ ومتابعة',
-  'setup.save_edit': 'حفظ التعديل',
   'setup.fix_fields': 'راجع الحقول المشار إليها.',
-  'setup.consent_required': 'الموافقة المطلوبة شرط للمتابعة.',
   'setup.id_taken': 'رقم الوثيقة هذا مسجّل في حساب آخر. إن كان رقمك فتواصل مع الدعم: {contact}',
   'setup.support_unconfigured': 'جهة الدعم غير مُعدة بعد في هذا الإصدار',
-  'setup.saved_profile_consent_failed':
-    'حُفظت بياناتك لكن لم تُسجَّل الموافقة. اضغط «حفظ ومتابعة» مرة أخرى.',
+  'setup.saved_profile_consent_failed': 'حُفظت بياناتك لكن لم تكتمل الخطوة الأخيرة. اضغط «حفظ ومتابعة» مرة أخرى.',
 
   'doc.national_id': 'هوية وطنية',
   'doc.residence_id': 'إقامة',
@@ -88,36 +82,16 @@ export const S = {
   'err.underage': 'التطبيق متاح لمن أعمارهم 18 سنة فأكثر.',
   'err.nationality': 'اختر الجنسية من القائمة.',
 
-  // Consent (docs/client-consent-v1-ar.md, version client-consent-v1) — verbatim.
-  'consent.required_label': 'أوافق على حفظ صوري وبياناتي لتحليل وجهي (مطلوب)',
-  'consent.optional_label': 'أوافق على استخدام صوري وبياناتي في البحث العلمي (اختياري)',
-  'consent.read_more': 'اقرأ التفاصيل',
-  'consent.hide': 'إخفاء التفاصيل',
-  'consent.version': 'الإصدار: client-consent-v1',
-  'consent.required_title': 'الموافقة المطلوبة (لا يمكن المتابعة دونها)',
-  'consent.required_heading': 'أوافق على حفظ صوري وبياناتي لتحليل وجهي.',
-  'consent.required_1':
-    'نحفظ صور وجهك التي تلتقطها في التطبيق، ومعلومات التصوير (نوع الجوال وإعدادات الكاميرا والوقت)، وبياناتك: الاسم ورقم الهوية والجوال والجنس وتاريخ الميلاد والجنسية.',
-  'consent.required_2':
-    'نستخدمها لتحليل شكل وجهك وعرض نتيجتك في ملفك. لا توجد نتيجة للشخصية الآن، وستظهر «النتيجة غير متاحة بعد» حتى يوجد نموذج مثبت علميًا.',
-  'consent.required_3': 'لا تُستخدم لأي قرار في التوظيف أو التأمين أو الائتمان أو العلاج أو القضاء.',
-  'consent.required_4': 'بياناتك الشخصية محفوظة مشفّرة ومنفصلة عن الصور، ولا تظهر كاملة في التطبيق.',
-  'consent.required_5': 'لم نتحقق من رقم هويتك أو جوالك؛ نستخدم رقم الهوية فقط لمنع تكرار الحساب.',
-  'consent.required_6':
-    'تبقى صورك وبياناتك حتى تحذف حسابك. عند الحذف نوقف كل معالجة فورًا، ونحذف الصور والبيانات خلال 30 يومًا، وتنتهي النسخ الاحتياطية خلال 35 يومًا.',
-  'consent.optional_title': 'الموافقة الاختيارية',
-  'consent.optional_heading': 'أوافق على استخدام صوري وبياناتي في البحث العلمي.',
-  'consent.optional_1': 'تُستخدم صورك مع صور آخرين لبناء معايير علمية لشكل الوجه ولأبحاث أكاديمية غير تجارية.',
-  'consent.optional_2': 'يمكنك سحب هذه الموافقة في أي وقت من ملفك؛ بعدها لا تدخل صورك في أي بحث جديد.',
-  'consent.optional_3':
-    'البيانات التي سبق تسليمها لبحث قبل سحب الموافقة لا يمكن استرجاعها، لكنها لا تتضمن اسمك أو رقم هويتك أو جوالك.',
+  // The notice (docs/client-notice-v1-ar.md, version client-notice-v1) — verbatim.
+  'consent.notice': 'بالمتابعة توافق على حفظ صورك وبياناتك واستخدامها في البحث العلمي غير التجاري.',
 
   // 3. Profile (home)
   'profile.title': 'ملفي',
   'profile.name': 'الاسم: {value}',
-  'profile.id': 'الوثيقة: {type} ({country}) {masked}',
-  'profile.phone': 'الجوال: {masked}',
+  'profile.id': 'الوثيقة: {type} ({country}) {number}',
+  'profile.phone': 'الجوال: {value}',
   'profile.sex': 'الجنس: {value}',
+  'profile.birth_date': 'تاريخ الميلاد: {value}',
   'profile.age': 'العمر: {value} سنة',
   'profile.nationality': 'الجنسية: {value}',
   'profile.capture_title': 'التصوير',
@@ -128,21 +102,8 @@ export const S = {
   'profile.personality_title': 'نتيجة الشخصية',
   'profile.personality_unavailable': 'النتيجة غير متاحة بعد',
   'profile.personality_note': 'لا يوجد حتى الآن نموذج مثبت علميًا، لذلك لا نعرض أي نتيجة.',
-  'profile.research_on': 'موافقة البحث العلمي: مفعّلة',
-  'profile.research_off': 'موافقة البحث العلمي: غير مفعّلة',
   'profile.capture': 'التصوير',
-  'profile.edit': 'تعديل البيانات',
-  'profile.delete': 'حذف حسابي',
-  'profile.sign_out': 'تسجيل الخروج',
   'profile.refresh': 'تحديث',
-  'profile.withdraw_research': 'سحب موافقة البحث',
-  'profile.withdraw_confirm':
-    'بعد السحب لا تدخل صورك في أي بحث جديد. البيانات التي سبق تسليمها لبحث لا يمكن استرجاعها، لكنها لا تتضمن اسمك أو رقم هويتك أو جوالك.',
-  'profile.withdraw_do': 'تأكيد سحب الموافقة',
-  'profile.withdrawn': 'سُحبت موافقة البحث.',
-  'profile.delete_confirm':
-    'حذف الحساب يوقف كل معالجة فورًا، وتُحذف الصور والبيانات خلال 30 يومًا، وتنتهي النسخ الاحتياطية خلال 35 يومًا. لا يمكن التراجع.',
-  'profile.delete_do': 'تأكيد حذف الحساب',
 
   'status.none': 'لم تصوّر بعد',
   'status.uploading': 'جارٍ الرفع',

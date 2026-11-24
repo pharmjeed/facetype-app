@@ -19,12 +19,13 @@ const READY: ClientMe = {
   profile: {
     revision_id: 'rev-1',
     revision: 1,
-    full_name_masked: 'س•••',
+    full_name: 'سارة محمد',
     id_issuing_country: 'SA',
     id_document_type: 'national_id',
-    id_number_masked: '•••• 0008',
-    phone_masked: '•••• 4567',
+    id_number: '1000000008',
+    phone: '+966501234567',
     sex: 'female',
+    birth_date: '1996-01-15',
     nationality: 'SA',
     age_years: 30,
     identity_verification: 'self_declared',
@@ -32,9 +33,9 @@ const READY: ClientMe = {
   },
   consent: {
     id: 'c-1',
-    version: 'client-consent-v1',
+    version: 'client-notice-v1',
     store_accepted: true,
-    research_use: false,
+    research_use: true,
     created_at: '2026-11-23T00:00:00Z',
   },
 };
@@ -88,17 +89,6 @@ test('profile ⇄ capture, and capture only with a complete account', () => {
   assert.equal(reduceClient(incomplete, { type: 'OPEN_CAPTURE' }).screen, 'profile');
 });
 
-test('«تعديل البيانات» opens setup in edit mode and can be cancelled', () => {
-  const home = run([{ type: 'SESSION_READY', me: READY }]);
-  const edit = reduceClient(home, { type: 'EDIT_PROFILE' });
-  assert.equal(edit.screen, 'profileSetup');
-  assert.equal(edit.setupMode, 'edit');
-  assert.equal(reduceClient(edit, { type: 'CANCEL_EDIT' }).screen, 'profile');
-  // First-time setup cannot be cancelled into a profile that does not exist.
-  const first = run([{ type: 'SESSION_READY', me: BARE }]);
-  assert.equal(reduceClient(first, { type: 'CANCEL_EDIT' }).screen, 'profileSetup');
-});
-
 test('a refreshed /me that lost the required consent sends the profile back to setup', () => {
   const home = run([{ type: 'SESSION_READY', me: READY }]);
   const next = reduceClient(home, { type: 'ME_REFRESHED', me: { ...READY, consent: null } });
@@ -108,14 +98,12 @@ test('a refreshed /me that lost the required consent sends the profile back to s
   assert.equal(reduceClient(capture, { type: 'ME_REFRESHED', me: { ...READY, consent: null } }).screen, 'capture');
 });
 
-test('sign-out, deletion and session expiry all return to sign-in and forget /me', () => {
+test('an ended session returns to sign-in and forgets /me', () => {
   const home = run([{ type: 'SESSION_READY', me: READY }]);
-  for (const reason of ['user', 'deleted', 'session_expired'] as const) {
-    const out = reduceClient(home, { type: 'SIGNED_OUT', reason });
-    assert.equal(out.screen, 'signedOut');
-    assert.equal(out.me, null);
-    assert.equal(out.notice, reason === 'user' ? null : reason);
-  }
+  const out = reduceClient(home, { type: 'SIGNED_OUT', reason: 'session_expired' });
+  assert.equal(out.screen, 'signedOut');
+  assert.equal(out.me, null);
+  assert.equal(out.notice, 'session_expired');
 });
 
 test('a config error is shown on sign-in and blocks every provider', () => {
@@ -134,7 +122,6 @@ test('there are exactly four screens after boot', () => {
     { type: 'PROFILE_SAVED', me: READY },
     { type: 'OPEN_CAPTURE' },
     { type: 'CLOSE_CAPTURE' },
-    { type: 'EDIT_PROFILE' },
   ] as ClientEvent[]) {
     state = reduceClient(state, event);
     screens.add(state.screen);

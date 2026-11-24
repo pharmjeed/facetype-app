@@ -57,7 +57,6 @@ export function SignInScreen({
         <Text style={ui.text}>{s('signin.subtitle')}</Text>
       </View>
 
-      {notice === 'deleted' ? <Text style={ui.text}>{s('signin.deleted')}</Text> : null}
       {notice === 'session_expired' ? <Text style={ui.text}>{s('common.session_expired')}</Text> : null}
       {configError ? (
         <Text style={ui.error} accessibilityLiveRegion="polite">
