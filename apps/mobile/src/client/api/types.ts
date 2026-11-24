@@ -55,7 +55,18 @@ export interface RefreshBody {
  * (glasses, cover) have not run: it never claims quality. `stored` = integrity
  * and quality checks passed; `needs_retake` = a check failed.
  */
-export type CaptureStatus = 'uploading' | 'checking' | 'received' | 'stored' | 'needs_retake';
+export type CaptureStatus =
+  | 'uploading'
+  | 'checking'
+  | 'received'
+  | 'stored'
+  | 'needs_retake'
+  /** ADR-016: the server is measuring the burst (research mode). */
+  | 'measuring'
+  /** ADR-016: another round is needed; `reasons[0]` says why. */
+  | 'needs_more'
+  /** ADR-016: the series is complete. */
+  | 'complete';
 
 export interface AccountView {
   id: string;
@@ -202,6 +213,8 @@ export type AttemptOutcome =
   | 'stored'
   | 'received'
   | 'needs_retake'
+  | 'needs_more'
+  | 'complete'
   | 'abandoned'
   | 'cancelled'
   | 'timed_out'

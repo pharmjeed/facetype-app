@@ -69,6 +69,8 @@ test('the pending attempt is wire-ready and bounded', () => {
 test('an enqueued attempt reports the verdict, or abandoned; nothing while the upload is still running', () => {
   assert.equal(outcomeForStage('stored'), 'stored');
   assert.equal(outcomeForStage('received'), 'received');
+  assert.equal(outcomeForStage('needs_more'), 'needs_more');
+  assert.equal(outcomeForStage('complete'), 'complete');
   assert.equal(outcomeForStage('needs_retake'), 'needs_retake');
   assert.equal(outcomeForStage('abandoned'), 'abandoned');
   assert.equal(outcomeForStage('failed'), 'abandoned');

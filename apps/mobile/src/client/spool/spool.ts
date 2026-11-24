@@ -6,7 +6,8 @@
  *                    (renewed when expired or about to expire) → complete {meta}
  *                    → deleteFrames once the server has re-hashed it
  *   finalizing     → POST /captures/{id}/finalize
- *   checking       → GET /captures/{id} until received | stored | needs_retake
+ *   checking       → GET /captures/{id} until received | stored | needs_retake |
+ *                    needs_more | complete (ADR-016: `measuring` keeps polling)
  *   (terminal)     → POST /attempts once, with the verdict as the outcome
  *
  * Every transition is saved before the next network call, so a restart resumes
@@ -248,8 +249,16 @@ function targetRejected(status: number): boolean {
 }
 
 /** Server verdicts that end the spool's work on a capture. */
-function isVerdict(status: string): status is 'received' | 'stored' | 'needs_retake' {
-  return status === 'received' || status === 'stored' || status === 'needs_retake';
+function isVerdict(
+  status: string,
+): status is 'received' | 'stored' | 'needs_retake' | 'needs_more' | 'complete' {
+  return (
+    status === 'received' ||
+    status === 'stored' ||
+    status === 'needs_retake' ||
+    status === 'needs_more' ||
+    status === 'complete'
+  );
 }
 
 class Retryable extends Error {

@@ -41,6 +41,10 @@ export type SpoolStage =
   | 'received'
   | 'stored'
   | 'needs_retake'
+  /** ADR-016: the server measured the burst and wants another round. */
+  | 'needs_more'
+  /** ADR-016: the series has every photo the server needs. */
+  | 'complete'
   | 'failed'
   | 'abandoned';
 
@@ -49,7 +53,15 @@ export type SpoolStage =
  * frames are verified on the server and the quality checks finish there
  * later (docs/client-app-v1.md §6); the profile follows GET /me from then on.
  */
-export const TERMINAL_STAGES: readonly SpoolStage[] = ['received', 'stored', 'needs_retake', 'failed', 'abandoned'];
+export const TERMINAL_STAGES: readonly SpoolStage[] = [
+  'received',
+  'stored',
+  'needs_retake',
+  'needs_more',
+  'complete',
+  'failed',
+  'abandoned',
+];
 
 export interface ManifestFrame {
   index: number;
@@ -212,6 +224,8 @@ const STAGES: readonly SpoolStage[] = [
   'received',
   'stored',
   'needs_retake',
+  'needs_more',
+  'complete',
   'failed',
   'abandoned',
 ];

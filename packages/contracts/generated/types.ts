@@ -187,7 +187,7 @@ export interface ClientAppleSignIn {
 
 /** Attempt telemetry (capture-spec-v2 §5). No images, no landmarks. */
 export interface ClientAttemptInput {
-  "outcome": "stored" | "received" | "needs_retake" | "abandoned" | "cancelled" | "timed_out" | "out_of_scope" | "permission_denied";
+  "outcome": "stored" | "received" | "needs_retake" | "needs_more" | "complete" | "abandoned" | "cancelled" | "timed_out" | "out_of_scope" | "permission_denied";
   "duration_ms": number;
   "attempts": number;
   /** Per-reason counts; keys: one_face, distance_or_size, centred, facing, light, expression, eyes, sharp, effects_active, internal. */
@@ -207,20 +207,20 @@ export interface ClientCaptureCreate {
 
 export interface ClientCaptureCreated {
   "capture_id": string;
-  "status": "uploading" | "checking" | "received" | "stored" | "needs_retake";
+  "status": "uploading" | "checking" | "received" | "stored" | "needs_retake" | "measuring" | "needs_more" | "complete";
   "frames": Array<ClientFrameUpload>;
 }
 
 export interface ClientCaptureSummary {
   "count": number;
   "last_at": null | string;
-  "latest_status": "uploading" | "checking" | "received" | "stored" | "needs_retake" | null;
+  "latest_status": "uploading" | "checking" | "received" | "stored" | "needs_retake" | "measuring" | "needs_more" | "complete" | null;
   "next_repeat_due_at": null | string;
 }
 
 export interface ClientCaptureView {
   "id": string;
-  "status": "uploading" | "checking" | "received" | "stored" | "needs_retake";
+  "status": "uploading" | "checking" | "received" | "stored" | "needs_retake" | "measuring" | "needs_more" | "complete";
   "sequence": number;
   "frame_count": number;
   "accepted_frames": number;

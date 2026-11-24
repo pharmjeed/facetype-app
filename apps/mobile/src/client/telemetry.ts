@@ -85,6 +85,8 @@ export function outcomeForStage(stage: SpoolStage): AttemptOutcome | null {
     case 'stored':
     case 'received':
     case 'needs_retake':
+    case 'needs_more':
+    case 'complete':
       return stage;
     case 'failed':
     case 'abandoned':

@@ -59,7 +59,7 @@ import {
 import { ClientCameraView, type CameraBackend } from '../native/clientCamera.tsx';
 import type { BurstFrame, CameraCapabilities, FrameMeasure } from '../native/types.ts';
 import type { SpoolOutcome } from '../spool/spool.ts';
-import { apiErrorKey, rejectReasonKey, verdictReasonKey } from '../messages.ts';
+import { apiErrorKey, moreReasonKey, rejectReasonKey, verdictReasonKey } from '../messages.ts';
 import { s, type StringKey } from '../strings.ts';
 import { attemptDevice, pendingAttempt, type PendingAttempt } from '../telemetry.ts';
 import { ui } from './ui.tsx';
@@ -302,6 +302,15 @@ export function CaptureScreen({
     dispatch({ type: 'RETAKE' });
   }, [onAcknowledge]);
 
+  // ADR-016: the server asked for another round; open the camera again at once.
+  const continueCapture = useCallback(() => {
+    onAcknowledge();
+    enqueued.current = false;
+    telemetrySent.current = false;
+    guidance.current = initialGuidance(Date.now());
+    dispatch({ type: 'CONTINUE', nowMs: Date.now() });
+  }, [onAcknowledge]);
+
   const phase = flow.phase;
   const cameraActive = isCameraPhase(phase) && foreground;
   const passing = view.message === 'hold_still';
@@ -443,6 +452,7 @@ export function CaptureScreen({
       {phase.name === 'checking' ? (
         <View style={ui.card} accessibilityLiveRegion="polite">
           <Text style={ui.title}>{s('check.title')}</Text>
+          {phase.measuring ? <Text style={ui.text}>{s('check.measuring')}</Text> : null}
           {phase.slow ? <Text style={ui.text}>{s('check.slow')}</Text> : null}
           <Button label={s('capture.back_profile')} onPress={onClose} variant="secondary" />
         </View>
@@ -467,6 +477,36 @@ export function CaptureScreen({
         <View style={ui.card} accessibilityLiveRegion="polite">
           <Text style={ui.title}>{s('done.title')}</Text>
           <Text style={ui.text}>{s('done.body')}</Text>
+          <Button
+            label={s('capture.back_profile')}
+            onPress={() => {
+              onAcknowledge();
+              onClose();
+            }}
+          />
+        </View>
+      ) : null}
+
+      {phase.name === 'more' ? (
+        <View style={ui.card} accessibilityLiveRegion="polite">
+          <Text style={ui.title}>{s('more.title')}</Text>
+          <Text style={ui.text}>{s(moreReasonKey(phase.reasons[0]))}</Text>
+          <Button label={s('more.continue')} onPress={continueCapture} />
+          <Button
+            label={s('capture.back_profile')}
+            onPress={() => {
+              onAcknowledge();
+              onClose();
+            }}
+            variant="secondary"
+          />
+        </View>
+      ) : null}
+
+      {phase.name === 'complete' ? (
+        <View style={ui.card} accessibilityLiveRegion="polite">
+          <Text style={ui.title}>{s('complete.title')}</Text>
+          <Text style={ui.text}>{s('complete.body')}</Text>
           <Button
             label={s('capture.back_profile')}
             onPress={() => {

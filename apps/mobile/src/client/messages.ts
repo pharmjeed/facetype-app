@@ -53,6 +53,22 @@ export function rejectReasonKey(reason: string | null, current: GuidanceMessage)
 }
 
 /** Server verdict reason → a specific retake sentence. */
+/** ADR-016 `needs_more` reason codes (services/client_measure.py REASON_ORDER). */
+const MORE_REASONS: Record<string, StringKey> = {
+  remove_glasses: 'more.remove_glasses',
+  face_camera: 'more.face_camera',
+  neutral_face: 'more.neutral_face',
+  open_eyes: 'more.open_eyes',
+  hold_still: 'more.hold_still',
+  one_face: 'more.one_face',
+  same_person: 'more.same_person',
+  more_photos: 'more.more_photos',
+};
+
+export function moreReasonKey(reason: string | undefined): StringKey {
+  return (reason && MORE_REASONS[reason]) || 'more.more_photos';
+}
+
 export function verdictReasonKey(reason: string): StringKey {
   const r = reason.toLowerCase();
   // The server's post-finalize integrity re-hash (run_capture_check).

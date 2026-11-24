@@ -3,7 +3,8 @@
  * docs/capture-spec-v2.md §3–§4).
  *
  *   tips ─▶ guiding ─▶ bursting ─▶ (partial → frames deleted → guiding → a fresh burst)
- *                                  (complete → uploading ─▶ checking ─▶ received | done | retake)
+ *                                  (complete → uploading ─▶ checking ─▶ received | done | retake
+ *                                                                      | more ─CONTINUE─▶ guiding | complete)
  *   side states: permission_denied, interrupted, camera_error, help (60 s),
  *                lost (app closed before upload finished), failed (server refused)
  *
@@ -40,10 +41,15 @@ export type CapturePhase =
   | { name: 'interrupted' }
   | { name: 'camera_error'; code: CameraErrorCode }
   | { name: 'uploading'; done: number; total: number; offline: boolean }
-  | { name: 'checking'; slow: boolean }
+  /** `measuring`: the server is measuring the burst (ADR-016). */
+  | { name: 'checking'; slow: boolean; measuring: boolean }
   | { name: 'received' }
   | { name: 'done' }
   | { name: 'retake'; reasons: string[] }
+  /** ADR-016: the server wants another round of 10; the camera reopens with CONTINUE. */
+  | { name: 'more'; reasons: string[] }
+  /** ADR-016: «اكتملت صورك». */
+  | { name: 'complete' }
   | { name: 'lost' }
   | { name: 'failed'; code: string };
 
@@ -70,7 +76,9 @@ export type CaptureEvent =
   | { type: 'BURST_FAILED'; nowMs: number }
   | { type: 'ENQUEUED' }
   | { type: 'SPOOL_STATUS'; outcome: SpoolOutcome; nowMs: number }
-  | { type: 'RETAKE' };
+  | { type: 'RETAKE' }
+  /** From `more`: straight back to the camera for the next round. */
+  | { type: 'CONTINUE'; nowMs: number };
 
 export function initialCaptureFlow(nowMs: number): CaptureFlowState {
   return {
@@ -120,6 +128,7 @@ export function phaseFromSpool(outcome: SpoolOutcome, nowMs: number): CapturePha
       return {
         name: 'checking',
         slow: m.checkingSinceMs !== null && nowMs - m.checkingSinceMs >= SPOOL_TIMING.checkingNoticeMs,
+        measuring: m.verdict?.status === 'measuring',
       };
     case 'received':
       return { name: 'received' };
@@ -127,6 +136,10 @@ export function phaseFromSpool(outcome: SpoolOutcome, nowMs: number): CapturePha
       return { name: 'done' };
     case 'needs_retake':
       return { name: 'retake', reasons: m.verdict?.reasons ?? [] };
+    case 'needs_more':
+      return { name: 'more', reasons: m.verdict?.reasons ?? [] };
+    case 'complete':
+      return { name: 'complete' };
     case 'abandoned':
       return { name: 'lost' };
     case 'failed':
@@ -140,6 +153,8 @@ const AFTER_CAMERA: readonly CapturePhase['name'][] = [
   'received',
   'done',
   'retake',
+  'more',
+  'complete',
   'lost',
   'failed',
 ];
@@ -256,5 +271,14 @@ export function reduceCapture(state: CaptureFlowState, event: CaptureEvent): Cap
     }
     case 'RETAKE':
       return { ...initialCaptureFlow(state.sessionStartedAtMs), reasonCounts: state.reasonCounts };
+    case 'CONTINUE':
+      // The server links the new round to the series itself (ADR-016).
+      if (phase.name !== 'more') return state;
+      return {
+        ...initialCaptureFlow(state.sessionStartedAtMs),
+        reasonCounts: state.reasonCounts,
+        phase: { name: 'guiding', partialReason: null, retrying: false },
+        guidanceStartedAtMs: event.nowMs,
+      };
   }
 }

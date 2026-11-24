@@ -63,6 +63,12 @@ export function captureStatusKey(me: ClientMe, spool: SpoolOutcome): StringKey {
       return 'status.stored';
     case 'needs_retake':
       return 'status.needs_retake';
+    case 'measuring':
+      return 'status.measuring';
+    case 'needs_more':
+      return 'status.needs_more';
+    case 'complete':
+      return 'status.complete';
     default:
       return 'status.unknown';
   }

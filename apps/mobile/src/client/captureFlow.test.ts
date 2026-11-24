@@ -199,10 +199,12 @@ test('upload and verdict phases follow the durable spool', () => {
   assert.deepEqual(phaseFromSpool({ kind: 'waiting', manifest: manifest('checking', { checkingSinceMs: 0 }), retryInMs: 1, reason: 'checking' }, 29_000), {
     name: 'checking',
     slow: false,
+    measuring: false,
   });
   assert.deepEqual(phaseFromSpool({ kind: 'waiting', manifest: manifest('checking', { checkingSinceMs: 0 }), retryInMs: 1, reason: 'checking' }, 30_000), {
     name: 'checking',
     slow: true,
+    measuring: false,
   });
   assert.deepEqual(phaseFromSpool({ kind: 'terminal', manifest: manifest('stored') }, 0), { name: 'done' });
   // Integrity verified, quality checks pending: its own phase, never «تم».
@@ -219,6 +221,43 @@ test('upload and verdict phases follow the durable spool', () => {
   );
   assert.deepEqual(phaseFromSpool({ kind: 'terminal', manifest: manifest('abandoned') }, 0), { name: 'lost' });
   assert.equal(phaseFromSpool({ kind: 'idle' }, 0), null);
+});
+
+test('ADR-016: the server measures, asks for more, or says the photos are complete', () => {
+  const measuring = manifest('checking', {
+    checkingSinceMs: 0,
+    verdict: { id: 'cap-1', status: 'measuring', accepted_frames: 10, reasons: [] },
+  });
+  assert.deepEqual(phaseFromSpool({ kind: 'waiting', manifest: measuring, retryInMs: 1, reason: 'checking' }, 1_000), {
+    name: 'checking',
+    slow: false,
+    measuring: true,
+  });
+  const more = manifest('needs_more', {
+    verdict: { id: 'cap-1', status: 'needs_more', accepted_frames: 10, reasons: ['remove_glasses'] },
+  });
+  assert.deepEqual(phaseFromSpool({ kind: 'terminal', manifest: more }, 0), { name: 'more', reasons: ['remove_glasses'] });
+  assert.deepEqual(phaseFromSpool({ kind: 'terminal', manifest: manifest('complete') }, 0), { name: 'complete' });
+});
+
+test('ADR-016: CONTINUE reopens the camera straight away, only from the more card', () => {
+  const asked = reduceCapture(initialCaptureFlow(0), {
+    type: 'SPOOL_STATUS',
+    outcome: {
+      kind: 'terminal',
+      manifest: manifest('needs_more', { verdict: { id: 'cap-1', status: 'needs_more', accepted_frames: 10, reasons: ['hold_still'] } }),
+    },
+    nowMs: 0,
+  });
+  // A finished verdict does not replace the tips card of a new attempt...
+  assert.equal(asked.phase.name, 'tips');
+  const onCard: typeof asked = { ...asked, phase: { name: 'more', reasons: ['hold_still'] } };
+  const next = reduceCapture(onCard, { type: 'CONTINUE', nowMs: 5_000 });
+  assert.deepEqual(next.phase, { name: 'guiding', partialReason: null, retrying: false });
+  assert.equal(next.guidanceStartedAtMs, 5_000);
+  assert.deepEqual(next.kept, []);
+  // ...and CONTINUE does nothing anywhere else.
+  assert.equal(reduceCapture(initialCaptureFlow(0), { type: 'CONTINUE', nowMs: 1 }).phase.name, 'tips');
 });
 
 test('opening the capture screen while a capture is still uploading shows the upload, not the camera', () => {
