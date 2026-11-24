@@ -51,5 +51,18 @@ target 'FaceType' do
 
   post_install do |installer|
     react_native_post_install(installer, config[:reactNativePath], :mac_catalyst_enabled => false)
+
+    # MediaPipeTasksCommon is a static framework that already contains GTMSessionFetcher's object files.
+    # GoogleSignIn brings the GTMSessionFetcher pod as a second static library, and the app link then fails
+    # with 196 duplicate GTMSessionFetcher symbols (first Mac build, 2026-11-24). Link only MediaPipe's copy:
+    # GoogleSignIn's references resolve against it. Headers still come from the pod, so compilation is unchanged.
+    installer.aggregate_targets.each do |aggregate|
+      aggregate.user_build_configurations.each_key do |config_name|
+        path = aggregate.xcconfig_path(config_name)
+        text = File.read(path)
+        fixed = text.gsub(/ -l"GTMSessionFetcher"/, '')
+        File.write(path, fixed) if fixed != text
+      end
+    end
   end
 end
