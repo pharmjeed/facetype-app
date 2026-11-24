@@ -448,8 +448,9 @@ final class FaceTypeClientFrameAnalyzer {
   /// i.e. it returns the transpose. Element (r, c) is therefore read directly
   /// as `data[c * rows + r]` (contract §5.1).
   private static func pose(_ matrix: TransformMatrix) -> (yaw: Double, pitch: Double, roll: Double)? {
-    let rows = matrix.rows
-    guard rows >= 3, matrix.columns >= 3 else { return nil }
+    // `rows`/`columns` are NSUInteger (UInt in Swift); the pointer subscript takes Int.
+    let rows = Int(matrix.rows)
+    guard rows >= 3, Int(matrix.columns) >= 3 else { return nil }
     let data = matrix.data
     return pose(columnMajor: { row, column in Double(data[column * rows + row]) })
   }
