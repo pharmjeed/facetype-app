@@ -1,0 +1,70 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Camera is required: face geometry comes from the camera feed.
+
+      What is deliberately absent: USE_BIOMETRIC and USE_FINGERPRINT. This app
+      never touches the biometric authentication subsystem (FT-00 s.3), and the
+      permission is not requested so it cannot be reached even by accident.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <!-- The guided protocol is a self-scan: it needs the FRONT camera, not any
+         camera. Declaring it keeps the app off devices that cannot run the
+         capture at all. -->
+    <uses-feature android:name="android.hardware.camera.front" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+
+    <!--
+      android:usesCleartextTraffic="false" fails closed. Scans carry face
+      geometry, so the shipped app must not be able to send one over plain
+      HTTP, whatever base URL was compiled into its JavaScript bundle.
+      src/debug/AndroidManifest.xml replaces that attribute for local
+      development against a laptop backend; the overlay belongs to the debug
+      source set and is never merged into a release variant.
+    -->
+    <application
+        android:name=".MainApplication"
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@style/AppTheme">
+
+        <!-- ARCore install is optional at store level; provider selection then
+             fails closed on devices where it is absent or unsupported. -->
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+
+        <!--
+          Whether this build compiled the emitting copy of
+          CaptureQualityDiagnostics (src/calibration/java) instead of the silent
+          one (src/quiet/java). "false" for every ordinary build, including the
+          debug APK handed to testers, and hard-coded "false" for release.
+
+          Nothing reads this at runtime; it is a declaration, so the artifact
+          says what it is. tools/build_android_apk.py holds it against what the
+          dex actually contains and fails the build if the two disagree. A
+          declaration on its own would be worth little, and a dex check on its
+          own would not record intent.
+        -->
+        <meta-data
+            android:name="ai.facetype.calibrationDiagnostics"
+            android:value="${calibrationDiagnostics}" />
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

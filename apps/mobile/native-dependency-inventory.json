@@ -1,0 +1,190 @@
+{
+  "schema": "facetype-native-dependency-inventory/v1",
+  "documentation": "docs/mobile-android-install.md#10-third-party-native-dependencies",
+  "note": [
+    "Every third-party Gradle coordinate the Android app declares, with the",
+    "licence it ships under and what it does with camera data. `make",
+    "license-audit` fails if a coordinate is declared without an entry here, if",
+    "an entry is left behind after its coordinate is removed, or if a version is",
+    "dynamic rather than exact -- a floating version means the APK that was",
+    "verified and the APK that ships can differ at the same git SHA.",
+    "",
+    "The posture recorded here was read from each artifact's published terms on",
+    "2026-08-26. It is a record of a decision, not a substitute for a lawyer:",
+    "FT-01 s.16 requires a human to re-read the upstream terms before any",
+    "commercial release, and the network claims below still need confirming",
+    "against real traffic from the physical handset (P0-03)."
+  ],
+  "android": [
+    {
+      "coordinate": "com.facebook.react:react-android",
+      "version_source": "com.facebook.react gradle plugin (pinned by the react-native version in apps/mobile/package.json)",
+      "license": "MIT",
+      "license_url": "https://github.com/facebook/react-native/blob/main/LICENSE",
+      "purpose": "React Native Android runtime.",
+      "camera_data": "none",
+      "network": "only what the app itself requests"
+    },
+    {
+      "coordinate": "com.facebook.react:hermes-android",
+      "version_source": "com.facebook.react gradle plugin (pinned by the react-native version in apps/mobile/package.json)",
+      "license": "MIT",
+      "license_url": "https://github.com/facebook/hermes/blob/main/LICENSE",
+      "purpose": "JavaScript engine for the app bundle.",
+      "camera_data": "none",
+      "network": "none"
+    },
+    {
+      "coordinate": "com.google.ar:core",
+      "version": "1.45.0",
+      "license": "Apache-2.0 (SDK), plus the ARCore Additional Terms of Service",
+      "license_url": "https://developers.google.com/ar/develop/terms",
+      "purpose": "ARCore Augmented Faces: front-camera session, camera texture and the 468-vertex face mesh the scan is built from.",
+      "camera_data": "on-device; the app reads camera frames from ARCore and never forwards them",
+      "network": "Google Play Services for AR may check for and install its own runtime component",
+      "notes": "This is the public AR rendering API. It is not the biometric authentication subsystem: no BiometricPrompt, no Keystore biometric binding, no template (FT-00 s.3)."
+    },
+    {
+      "coordinate": "com.google.mlkit:face-detection",
+      "version": "16.1.7",
+      "license": "ML Kit Terms of Service (declared by the artifact POM), under the Google APIs Terms of Service",
+      "license_url": "https://developers.google.com/ml-kit/terms",
+      "purpose": "Bundled on-device face detection. Supplies the face count and the face rectangle the client-side blur and exposure measurements are computed over.",
+      "camera_data": "on-device only; ML Kit vision APIs have no cloud fallback and the copied NV21 buffer is zeroised after each analysis",
+      "network": "the SDK pulls in com.google.android.datatransport (Google's Firelog), which can send anonymised SDK diagnostics -- usage telemetry, not image content. It merges android.permission.ACCESS_NETWORK_STATE and a TransportBackendDiscovery service into the manifest; both are recorded in ALLOWED_PERMISSIONS in tools/build_android_apk.py",
+      "bundled_model": true,
+      "notes": "Face DETECTION, not recognition: it reports where a face is, and builds no template and no identifier. The bundled variant is chosen over com.google.android.gms:play-services-mlkit-face-detection so a freshly installed app is never missing its model at the moment of the first scan. The diagnostics transport is an open item for the physical-device network check."
+    },
+    {
+      "coordinate": "com.google.mediapipe:tasks-vision",
+      "version": "0.10.35",
+      "license": "Apache-2.0 (declared by the artifact POM)",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "purpose": "MediaPipe Tasks Vision FaceLandmarker, used for its blendshape head only: the 52 per-expression activations the neutrality estimator reads. It is not used for landmarks (ARCore supplies the mesh), not for face counting (ML Kit does that), and it cannot supply occlusion -- see ADR-010.",
+      "camera_data": "on-device only; the model is packaged in the APK, the task is created in IMAGE running mode with no delegate that leaves the process, and the converted ARGB frame is released as soon as the blendshapes are read",
+      "network": "none at inference. The model bundle is fetched once at BUILD time by the fetchFaceLandmarkerModel Gradle task, from a pinned URL against a pinned SHA-256; nothing is downloaded on the handset.",
+      "bundled_model": true,
+      "model_asset": {
+        "file": "apps/mobile/android/app/src/main/assets/face_landmarker.task",
+        "url": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+        "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+        "license": "Apache-2.0, per the MediaPipe face-landmarker model card",
+        "license_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker",
+        "contents": [
+          "face_detector.tflite",
+          "face_landmarks_detector.tflite",
+          "face_blendshapes.tflite",
+          "geometry_pipeline_metadata_landmarks.binarypb"
+        ],
+        "notes": "Not committed to git; fetched at build time and verified against the SHA-256 above, which the build refuses to package without matching."
+      },
+      "notes": "Face LANDMARKING and expression activation, not recognition: it builds no template and no identifier, and this app reads only the blendshape categories the neutrality estimator names. It never touches BiometricPrompt or the Keystore biometric bindings (FT-00 s.3). Pulls tasks-core (the JNI runtime, four ABIs), androidx.annotation and guava; neither AAR declares a permission of its own.",
+      "client_app_use": "The client app v1 camera (ai.facetype.client) also runs FaceLandmarker in IMAGE mode with numFaces=2, blendshapes and facial transformation matrices on, on a downscaled upright copy of each analysed frame: face count (a detected second face blocks storing), 478 landmarks, head pose, iris-based distance estimate and the 52 blendshapes, all recorded per stored frame. Same packaged model, same on-device posture; nothing leaves the device from the task."
+    },
+    {
+      "coordinate": "androidx.camera:camera-core",
+      "version": "1.4.2",
+      "license": "Apache-2.0 (declared by the artifact POM)",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "purpose": "CameraX core for the client app v1 camera (ai.facetype.client): Preview and ImageAnalysis use cases on the front camera's full delivered YUV_420_888 stream.",
+      "camera_data": "on-device only; frames are copied into an app-owned NV21 buffer, measured, and only accepted burst frames are JPEG-encoded and stored AES-GCM encrypted in noBackupFilesDir/client_spool",
+      "network": "none",
+      "notes": "No vendor extensions artifact (androidx.camera:camera-extensions) is declared, so vendor effect modes cannot be opened. Not the biometric subsystem: no BiometricPrompt, no Keystore biometric binding (FT-00 s.3)."
+    },
+    {
+      "coordinate": "androidx.camera:camera-camera2",
+      "version": "1.4.2",
+      "license": "Apache-2.0 (declared by the artifact POM)",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "purpose": "Camera2 implementation of CameraX, plus Camera2Interop: per-frame capture results (exposure, ISO, focus, AWB, crop, zoom, intrinsics) and request options (stabilisation off, distortion correction on where supported, auto-framing off).",
+      "camera_data": "on-device only; capture metadata is recorded per stored frame",
+      "network": "none"
+    },
+    {
+      "coordinate": "androidx.camera:camera-lifecycle",
+      "version": "1.4.2",
+      "license": "Apache-2.0 (declared by the artifact POM)",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "purpose": "Binds the client camera use cases to the host activity's lifecycle.",
+      "camera_data": "none (lifecycle binding only)",
+      "network": "none"
+    },
+    {
+      "coordinate": "androidx.camera:camera-view",
+      "version": "1.4.2",
+      "license": "Apache-2.0 (declared by the artifact POM)",
+      "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+      "purpose": "PreviewView: the on-screen (mirrored) preview of the client camera. Stored frames are never taken from the preview.",
+      "camera_data": "on-device display only",
+      "network": "none"
+    },
+    {
+      "coordinate": "junit:junit",
+      "version": "4.13.2",
+      "license": "EPL-1.0",
+      "license_url": "https://junit.org/junit4/license.html",
+      "purpose": "JVM unit tests for ai.facetype.capture. Test-only: never packaged into any APK variant.",
+      "camera_data": "none",
+      "network": "none",
+      "test_only": true
+    },
+    {
+      "coordinate": "com.android.tools.build:gradle",
+      "version_source": "com.facebook.react.rootproject / react-native-gradle-plugin",
+      "license": "Apache-2.0",
+      "license_url": "https://android.googlesource.com/platform/tools/base/+/refs/heads/mirror-goog-studio-main/LICENSE",
+      "purpose": "Android Gradle Plugin. Build tooling: not shipped.",
+      "camera_data": "none",
+      "network": "none",
+      "build_only": true
+    },
+    {
+      "coordinate": "com.facebook.react:react-native-gradle-plugin",
+      "version_source": "resolved from the react-native package in node_modules by settings.gradle",
+      "license": "MIT",
+      "license_url": "https://github.com/facebook/react-native/blob/main/LICENSE",
+      "purpose": "React Native build integration. Build tooling: not shipped.",
+      "camera_data": "none",
+      "network": "none",
+      "build_only": true
+    },
+    {
+      "coordinate": "org.jetbrains.kotlin:kotlin-gradle-plugin",
+      "version": "1.9.24",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt",
+      "purpose": "Kotlin compiler plugin. Build tooling: not shipped.",
+      "camera_data": "none",
+      "network": "none",
+      "build_only": true
+    }
+  ],
+  "ios": {
+    "third_party_frameworks": [
+      {
+        "pod": "MediaPipeTasksVision",
+        "version": "0.10.35",
+        "pulls": [
+          "MediaPipeTasksCommon 0.10.35"
+        ],
+        "declared_in": "apps/mobile/ios/Podfile",
+        "license": "Apache-2.0 (declared by the podspec)",
+        "license_url": "http://www.apache.org/licenses/LICENSE-2.0.txt",
+        "purpose": "MediaPipe Tasks Vision FaceLandmarker for the client app v1 camera (apps/mobile/ios/FaceTypeClientCamera): video running mode, numFaces = 2, 478 landmarks, 52 blendshapes and facial transformation matrices, run on a downscaled copy of each delivered AVFoundation frame. Same release as the Android tasks-vision coordinate above.",
+        "camera_data": "on-device only; the task runs in-process on the CPU delegate and the downscaled copy is a pooled buffer reused for the next frame",
+        "network": "none at inference. The model bundle is fetched once at BUILD time by ios/scripts/fetch-face-landmarker.sh (Xcode build phase in ios/project.yml), from the same pinned URL against the same pinned SHA-256 as Android; nothing is downloaded on the handset.",
+        "bundled_model": true,
+        "model_asset": {
+          "file": "apps/mobile/ios/Models/face_landmarker.task (cache, git-ignored; copied into the app bundle)",
+          "url": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+          "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+          "license": "Apache-2.0, per the MediaPipe face-landmarker model card",
+          "license_url": "https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker",
+          "notes": "Not committed to git. Verified at build time against the SHA-256 above and re-hashed at runtime by FaceTypeClientFrameAnalyzer, which refuses any other file (model_unavailable)."
+        },
+        "notes": "Face LANDMARKING and expression activation, not recognition: it builds no template and no identifier. It never touches Face ID, LocalAuthentication or the Secure Enclave (FT-00 s.3)."
+      }
+    ],
+    "note": "The ARKit field-study lane links only Apple system frameworks (ARKit, Vision, AVFoundation). The client camera adds the MediaPipeTasksVision pod above and Apple's Accelerate, CoreMedia, CoreMotion and CryptoKit. `LocalAuthentication` is deliberately not linked (FT-00 s.3) and tests/contract/test_native_projects.py asserts it."
+  }
+}

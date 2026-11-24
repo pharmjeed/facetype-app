@@ -1,0 +1,10 @@
+# canonical_face_model.obj (audit P0-02) is a checksum-pinned third-party
+# asset: packages/python-facetype-core/tests/fixtures/canonical_face_model.obj
+# and apps/mobile/src/capture/__fixtures__/canonical_face_model.obj are
+# committed copies of one exact upstream revision, verified byte-for-byte
+# against topology_manifest.py's `source_file_sha256` pin. Git must never
+# rewrite their line endings on checkout/commit -- a `core.autocrlf=true`
+# checkout on Windows would otherwise silently convert LF to CRLF and break
+# that pin (and the tests that check it) regardless of what this repository
+# intends the bytes to be.
+*.obj -text

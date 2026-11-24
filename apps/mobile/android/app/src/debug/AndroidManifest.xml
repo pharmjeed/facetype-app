@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug-variant manifest overlay.
+
+  The main manifest fails closed with android:usesCleartextTraffic="false", so a
+  release APK cannot talk plain HTTP even if a bundle were misconfigured to try.
+  A physical handset talking to a development backend on a laptop has no
+  certificate to present, so the debug variant — and only the debug variant —
+  replaces that attribute and points at a permissive network security config.
+
+  tools:replace is required: the merger treats a conflicting attribute value as
+  an error rather than letting the overlay win silently.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="${usesCleartextTraffic}"
+        tools:replace="android:usesCleartextTraffic" />
+</manifest>

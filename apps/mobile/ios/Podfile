@@ -1,0 +1,55 @@
+# FaceType AI — iOS dependencies.
+#
+# ARKit is a system framework and needs no pod. What this file does provide is
+# the React Native pod graph, which the Swift capture module compiles against,
+# and MediaPipe Tasks Vision for the client camera (see the pod line below).
+
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+platform :ios, '15.1'   # ARKit face tracking with blendshapes
+
+# Pin the React Native architecture instead of inheriting whatever
+# RCT_NEW_ARCH_ENABLED happens to hold in the invoking shell. Android already
+# pins the same decision (`newArchEnabled=false` in gradle.properties); iOS
+# pinned nothing, so the same checkout could produce two different apps.
+#
+# It has to be the old architecture, because that is what this app's native
+# code is written against: FaceTypeCapture.m/FaceTypeSecureSession.m register
+# through RCT_EXTERN_MODULE, FaceTypePreviewViewManager is an RCTViewManager
+# reached by requireNativeComponent(), and AppDelegate overrides
+# sourceURL(for:). Under the bridgeless New Architecture none of those three
+# are the mechanism in use -- a legacy view manager needs explicit interop
+# registration before it can be mounted at all -- so a build that silently
+# switched would fail on the device rather than here.
+ENV['RCT_NEW_ARCH_ENABLED'] = '0'
+
+prepare_react_native_project!
+
+target 'FaceType' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # MediaPipe Tasks Vision: the Face Landmarker the client camera runs
+  # (FaceTypeClientCamera/FaceTypeClientFrameAnalyzer.swift) -- video mode,
+  # numFaces = 2, blendshapes and facial transformation matrices. Pinned
+  # exactly to the release Android declares
+  # (`com.google.mediapipe:tasks-vision:0.10.35` in android/app/build.gradle),
+  # so both platforms run one task graph over one model bundle; the contract
+  # test fails if the two drift apart. Apache-2.0; a static xcframework that
+  # pulls MediaPipeTasksCommon at the same exact version. Runs on-device only:
+  # the model is bundled at build time (scripts/fetch-face-landmarker.sh) and
+  # nothing is downloaded on the handset.
+  pod 'MediaPipeTasksVision', '0.10.35'
+
+  post_install do |installer|
+    react_native_post_install(installer, config[:reactNativePath], :mac_catalyst_enabled => false)
+  end
+end

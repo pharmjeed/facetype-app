@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A face outline with the three guided-capture points. Geometry, which
+         is what the product measures; deliberately not a photograph. -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:pathData="M54,30 C64,30 71,39 71,52 C71,66 64,78 54,78 C44,78 37,66 37,52 C37,39 44,30 54,30 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M47,48 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M61,48 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M54,56 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0" />
+</vector>

@@ -1,0 +1,172 @@
+# Xcode project, declared rather than hand-written.
+#
+# A .pbxproj is ~600 lines of generated UUIDs. Writing one by hand produces a
+# file nobody can review and that fails in ways nobody can diagnose, so this
+# describes the project and `xcodegen generate` produces the real thing in CI.
+# The generated project is not committed: it is a build artifact.
+
+name: FaceType
+options:
+  bundleIdPrefix: ai.facetype
+  # The macos-14 runner builds with Xcode 15.4. XcodeGen otherwise defaults to
+  # its newest project format (currently Xcode 16 / objectVersion 77), which
+  # Xcode 15 cannot open. Keep the generated app and Pods projects on the
+  # newest format supported by the declared CI toolchain.
+  xcodeVersion: "15.4"
+  projectFormat: xcode15_3
+  deploymentTarget:
+    # ARKit face tracking with blendshapes (field lane); MediaPipeTasksVision
+    # needs 15.0 (client camera).
+    iOS: "15.1"
+  createIntermediateGroups: true
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  FaceType:
+    type: application
+    platform: iOS
+    sources:
+      - path: FaceType
+        excludes:
+          - "*.plist"
+          - "*.entitlements"
+      # Kept at this compatibility path for tooling that predates the FaceType/
+      # source group. This is the real implementation and is compiled by the
+      # application target (not a duplicate or an unreferenced shim).
+      - path: FaceTypeCapture.swift
+      # Client app v1 camera (docs/client-native-interface.md): AVFoundation +
+      # MediaPipe Tasks Vision, no ARKit. Swift plus the RCT_EXTERN_MODULE .m
+      # files the old React Native architecture discovers modules through.
+      - path: FaceTypeClientCamera
+    info:
+      path: FaceType/Info.plist
+    # Sign in with Apple (client app v1 accounts, ADR-015). The file is
+    # committed; with `path` only, XcodeGen references it and sets
+    # CODE_SIGN_ENTITLEMENTS without rewriting it. A device build needs a paid
+    # Apple Developer team with the capability on the App ID; simulator builds
+    # are unsigned and ignore it.
+    entitlements:
+      path: FaceType/FaceType.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.facetype
+        PRODUCT_NAME: FaceType AI
+        MARKETING_VERSION: "2.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        # Google Sign-In callback URL scheme, substituted into Info.plist's
+        # CFBundleURLTypes: the REVERSED iOS OAuth client id,
+        # com.googleusercontent.apps.NNN. Deliberately empty until the owner
+        # creates the Google iOS client; fill it here once, or pass
+        # FACETYPE_GOOGLE_IOS_URL_SCHEME=... to xcodebuild. It is a public
+        # identifier, not a secret. Empty = Google sign-in not configured.
+        FACETYPE_GOOGLE_IOS_URL_SCHEME: "com.googleusercontent.apps.967286092515-0is8o69h01lrbkljr5dshlp2547hla4o"
+        SWIFT_VERSION: "5.9"
+        # Makes the React Native Objective-C API visible to Swift, and the
+        # @objc Swift class visible back to the bridge.
+        SWIFT_OBJC_BRIDGING_HEADER: FaceType/FaceType-Bridging-Header.h
+        ALWAYS_SEARCH_USER_PATHS: NO
+        CLANG_ENABLE_MODULES: YES
+        ENABLE_BITCODE: NO
+        # React Native and CocoaPods build phases read their package trees and
+        # write generated bundles; Xcode's per-script sandbox blocks both.
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # Simulator builds carry no signing identity and CI has none, so
+        # signing is disabled -- but only for the simulator SDK. As an
+        # unconditional base setting this also disabled signing for
+        # `-sdk iphoneos`, which meant a device build emitted an unsigned
+        # .app that no iPhone will install: the single setting standing
+        # between this repository and a testable handset build. It bought CI
+        # nothing either, because the iOS workflow already passes
+        # CODE_SIGNING_ALLOWED=NO on the xcodebuild command line itself.
+        "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
+        "CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]": NO
+        # Device builds sign normally, with the team identifier supplied at
+        # build time rather than committed here, so no developer's personal
+        # Apple team lives in the repository. The reliable form is an
+        # xcodebuild setting override:
+        #
+        #   xcodebuild -workspace FaceType.xcworkspace -scheme FaceType         #     -configuration Debug -sdk iphoneos         #     DEVELOPMENT_TEAM=<TEAMID> ...
+        #
+        # which replaces this default outright. The `$(FACETYPE_DEVELOPMENT_TEAM)`
+        # default below only picks the value up when the build settings table
+        # already carries that name; when it does not, it evaluates to empty,
+        # which is the same as unset. Either way an unset team fails the device
+        # build with Xcode's own "no team" diagnostic -- the honest outcome. It
+        # never silently produces an uninstallable unsigned bundle, which is
+        # exactly what the old unconditional CODE_SIGNING_ALLOWED: NO did.
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(FACETYPE_DEVELOPMENT_TEAM)
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]": Apple Development
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+        Release:
+          SWIFT_OPTIMIZATION_LEVEL: "-O"
+    preBuildScripts:
+      - name: Bundle React Native code and images
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          export PROJECT_ROOT="$SRCROOT/.."
+          export REACT_NATIVE_PATH="$(node --print "path.dirname(require.resolve('react-native/package.json', {paths: [process.argv[1]]}))" "$PROJECT_ROOT")"
+          WITH_ENVIRONMENT="$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh"
+          REACT_NATIVE_XCODE="$REACT_NATIVE_PATH/scripts/react-native-xcode.sh"
+          /bin/sh -c "\"$WITH_ENVIRONMENT\" \"$REACT_NATIVE_XCODE\""
+    postCompileScripts:
+      # The MediaPipe face-landmarker model bundle for the client camera,
+      # fetched rather than committed -- the same pinned URL and SHA-256 as
+      # Android's `fetchFaceLandmarkerModel` task, kept in
+      # scripts/fetch-face-landmarker.sh. A verified copy cached in Models/
+      # (git-ignored) means only the first build on a machine needs the
+      # network; a download that does not hash to the pin fails the build.
+      # FaceTypeClientFrameAnalyzer re-hashes the bundled file at runtime and
+      # refuses to run on anything else (`model_unavailable`).
+      - name: Bundle the pinned MediaPipe face-landmarker model
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          MODEL_CACHE="$SRCROOT/Models/face_landmarker.task"
+          BUNDLE_RESOURCES="$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH"
+          /bin/sh "$SRCROOT/scripts/fetch-face-landmarker.sh" "$MODEL_CACHE" "$BUNDLE_RESOURCES"
+    dependencies:
+      # System frameworks. ARKit's face geometry is a public rendering API and
+      # is unrelated to the biometric subsystem.
+      #
+      # LocalAuthentication is deliberately NOT linked. FT-00 §3 forbids any
+      # path to Face ID or the Secure Enclave, and not linking the framework
+      # means such a call cannot even compile.
+      #
+      # ARKit is used only by the field-study lane (FaceTypeCapture.swift),
+      # which checks ARFaceTrackingConfiguration.isSupported at runtime: the
+      # app no longer requires the `arkit` device capability, so it installs
+      # on phones without TrueDepth. The client camera never touches ARKit.
+      - sdk: ARKit.framework
+      # Client camera: Accelerate (vImage downscale for MediaPipe), CoreMedia
+      # (sample-buffer timing and intrinsics), CoreMotion (gyro rate, gravity),
+      # CryptoKit (AES-GCM spool, SHA-256).
+      - sdk: Accelerate.framework
+      - sdk: AVFoundation.framework
+      - sdk: CoreMedia.framework
+      - sdk: CoreMotion.framework
+      - sdk: CryptoKit.framework
+      - sdk: CoreVideo.framework
+      # CIContext.jpegRepresentation, for the consented field-study photograph
+      # (FaceType/FaceTypeRawFrameStore.swift). It arrives implicitly through
+      # other umbrella headers today; linking it explicitly means the encode
+      # cannot break on an SDK that reorganises them.
+      - sdk: CoreImage.framework
+      - sdk: ImageIO.framework
+      # CACurrentMediaTime(), used to bound how old the ARFrame backing a
+      # capture may be. It arrives implicitly through UIKit today; linking it
+      # explicitly means the staleness check cannot break on an SDK that
+      # reorganises its umbrella headers.
+      - sdk: QuartzCore.framework
+      - sdk: Vision.framework
+      # Generic-password Keychain access for the ephemeral API session. This
+      # is Security.framework only; LocalAuthentication remains unlinked.
+      - sdk: Security.framework
+      - sdk: UIKit.framework

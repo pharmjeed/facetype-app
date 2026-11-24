@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ar</string>
+	<key>CFBundleDisplayName</key>
+	<string>FaceType AI</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<!--
+	  UILaunchScreen, not UILaunchStoryboardName. This target has no
+	  LaunchScreen.storyboard and never had one, so the old key named a
+	  resource that does not exist. iOS treats an app whose launch screen
+	  cannot be resolved as one that does not support the device's native
+	  resolution: it runs the app letterboxed in a scaled compatibility
+	  window, which on a modern iPhone means the whole React Native root view
+	  renders at the wrong size. An empty UILaunchScreen dictionary is the
+	  documented way to ask for the plain system launch screen with no
+	  resource file at all, and it is available on every OS this target
+	  supports (deployment target 15.1; the key is iOS 14+).
+	-->
+	<key>UILaunchScreen</key>
+	<dict/>
+	<!--
+	  arm64, not armv7. The deployment target is iOS 15.1 and no armv7 device
+	  ever ran iOS 11, so declaring a 32-bit requirement described a device set
+	  that cannot exist and risks an App Store Connect validation error against
+	  an arm64-only binary.
+
+	  `arkit` is deliberately NOT required (client app v1). The client camera
+	  is AVFoundation + MediaPipe and runs on any front camera, TrueDepth or
+	  not. The ARKit field-study lane checks availability at runtime instead:
+	  FaceTypeCapture.isAvailable/start and FaceTypePreviewView all gate on
+	  ARFaceTrackingConfiguration.isSupported and fail closed.
+	-->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<!--
+	  Camera is required: the client app photographs the face automatically
+	  (frames of the analysed video stream), keeps the accepted photos
+	  encrypted on the device and uploads them to the user's own account; the
+	  field-study lane measures face geometry. The string has to say that
+	  photos are kept and uploaded; the previous wording ("no photo is
+	  uploaded and no frame is kept") is false for the client app.
+
+	  Note what is absent. There is no NSFaceIDUsageDescription, because this app
+	  never calls LocalAuthentication and must never be able to. Declaring the
+	  key would grant a capability FT-00 §3 forbids.
+	-->
+	<key>NSCameraUsageDescription</key>
+	<string>يستخدم التطبيق الكاميرا الأمامية لتصوير وجهك تلقائيًا وقياس ملامحه. تُحفظ الصور المقبولة مشفّرة على جهازك ثم تُرفع إلى حسابك وفق موافقتك. لا يستخدم التطبيق Face ID.</string>
+	<!--
+	  iOS 17 reaction effects (hand-gesture balloons, confetti...) are drawn
+	  into the camera frames themselves. Their gestures start disabled for this
+	  app; the client camera also refuses to store any frame while a reaction,
+	  Portrait or Studio Light effect is active (`effects_active`).
+	-->
+	<key>NSCameraReactionEffectGesturesEnabledDefault</key>
+	<false/>
+	<!--
+	  iOS 14 and later gate every connection to an address on the local
+	  network behind this permission. A development build reaches both the
+	  Metro bundler and the backend over a LAN address (that is exactly what
+	  `.xcode.env` documents setting FACETYPE_API_URL to), so without this
+	  key a build installed on a real iPhone cannot be shown the permission
+	  prompt and is refused the connection. Release builds talk to a remote
+	  HTTPS origin and never trigger it.
+
+	  The wording has to say what actually happens. An earlier version of this
+	  string promised that no face data reaches another device on the network,
+	  which is the opposite of the truth for the case the permission exists to
+	  cover: the whole point of pointing FACETYPE_API_URL at a LAN address is
+	  that the scan's geometry is uploaded to that machine. A consent string
+	  that under-states what is sent is worse than no string at all (Codex
+	  review 2026-08-26T13-14-11Z, item 4).
+	-->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>أثناء الاختبار المحلي فقط، يتصل التطبيق بخادم التطوير على شبكتك المحلية ويُرسل إليه صور الوجه الملتقطة وبيانات هندسة الوجه الناتجة عن المسح. لا يحدث هذا في الإصدار المنشور، الذي يتصل بخادم آمن عبر الإنترنت.</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ar</string>
+		<string>en</string>
+	</array>
+	<!--
+	  Google Sign-In returns to the app through its reversed iOS client id
+	  (com.googleusercontent.apps.NNN). The value comes from the build setting
+	  FACETYPE_GOOGLE_IOS_URL_SCHEME, declared empty in ios/project.yml until
+	  the Google iOS OAuth client exists; the owner fills it once, there or as
+	  an xcodebuild override. While it is empty the Google provider stays
+	  unconfigured (client app v1: provider not configured, never a fake
+	  success) and a distribution build must not be submitted.
+	-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>google-sign-in</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(FACETYPE_GOOGLE_IOS_URL_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
+	<!--
+	  The app's cryptography is the operating system's own: HTTPS from its
+	  networking stack, and (client camera spool) AES-GCM and SHA-256 from
+	  Apple's CryptoKit, used only to protect the user's own photos at rest on
+	  the device. It implements no encryption algorithm of its own. Declaring
+	  that here is what lets a TestFlight/App Store Connect upload complete
+	  instead of stopping on the export-compliance question every time a build
+	  is submitted. Whether OS-provided at-rest encryption keeps this `false`
+	  is an export-compliance determination the account holder must confirm
+	  before distribution.
+	-->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

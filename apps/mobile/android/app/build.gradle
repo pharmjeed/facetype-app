@@ -1,0 +1,276 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {
+    root = file("../../")
+    // Resolved in settings.gradle through Node: pnpm does not hoist, so the
+    // upstream ../../node_modules/react-native path does not exist.
+    reactNativeDir = file(gradle.ext.reactNativeDir)
+    codegenDir = file(gradle.ext.reactNativeCodegenDir)
+    autolinkLibrariesWithApp()
+}
+
+android {
+    namespace "ai.facetype"
+    compileSdk rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
+
+    defaultConfig {
+        applicationId "ai.facetype"
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "2.0.0"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = "17" }
+
+    // No explicit debug signingConfig. The Android Gradle Plugin generates and
+    // manages ~/.android/debug.keystore itself; the previous block pointed at
+    // an `app/debug.keystore` that was never committed, so a clean checkout
+    // failed before it compiled anything.
+    /*
+     * Calibration diagnostics: OFF unless a build explicitly asks for them.
+     *
+     * `-PfacetypeCalibrationDiagnostics=true` (surfaced as
+     * `python tools/task.py android-apk --calibration-diagnostics`) is the only
+     * way to turn the aggregate capture-quality logging on, and it only reaches
+     * the debug source set. A plain `./gradlew assembleDebug` and the default
+     * tester APK compile the empty-bodied `src/quiet/java` twin, exactly as a
+     * release build does.
+     */
+    def calibrationDiagnostics =
+        project.hasProperty("facetypeCalibrationDiagnostics") &&
+            project.property("facetypeCalibrationDiagnostics").toString().toBoolean()
+
+    sourceSets {
+        // Release is wired to the silent implementation unconditionally and is
+        // never given `src/calibration/java` under any condition. That is what
+        // makes a release build incapable of emitting rather than merely
+        // configured not to: there is no property, flag or environment variable
+        // that adds the emitting file to this variant.
+        release.java.srcDirs += "src/quiet/java"
+        debug.java.srcDirs += calibrationDiagnostics ? "src/calibration/java" : "src/quiet/java"
+    }
+
+    buildTypes {
+        debug {
+            // AGP's built-in debug signing.
+            signingConfig signingConfigs.debug
+            // Declared in the merged manifest so the built artifact states what
+            // it is, and `tools/build_android_apk.py` can hold that declaration
+            // against what the dex actually contains.
+            // Cleartext is permitted only when the inlined backend itself is http (a laptop on the LAN).
+            // tools/build_android_apk.py passes -PfacetypeAllowCleartext=false for an https backend.
+            manifestPlaceholders = [calibrationDiagnostics: calibrationDiagnostics.toString(),
+                                    usesCleartextTraffic: (project.findProperty('facetypeAllowCleartext') ?: 'true').toString()]
+        }
+        release {
+            // Intentionally unsigned. Release signing needs a real key, which
+            // must not live in the repository; a release build is a deployment
+            // step, not a CI step.
+            //
+            // Hard-coded "false" rather than calibrationDiagnostics: a release
+            // build cannot emit the diagnostic whatever the property says, so
+            // its declaration must not be able to claim otherwise.
+            manifestPlaceholders = [calibrationDiagnostics: "false"]
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    packagingOptions {
+        // ARCore and Hermes both ship native libs; keep the first.
+        pickFirst "**/libc++_shared.so"
+    }
+}
+
+/*
+ * The MediaPipe face-landmarker model bundle, fetched rather than committed.
+ *
+ * WHY IT IS NOT IN GIT. It is 3.7 MB of weights. A binary that large in a diff
+ * is a binary nobody reads, so what gets reviewed is the pin -- a URL and a
+ * SHA-256 -- and the build refuses to package anything that does not hash to it.
+ * That is a stronger guarantee than "someone committed a file once": a substituted
+ * or truncated download fails the build instead of silently shipping a different
+ * model under the same git SHA.
+ *
+ * WHY IT RUNS BEFORE preBuild RATHER THAN IN tools/build_android_apk.py. Every
+ * build path has to get the model, including a bare `gradlew assembleDebug`. An
+ * APK that is missing it still installs and still opens the camera; it just
+ * abstains from measuring neutrality on every frame, which is a fail-closed
+ * FT-SCAN-014 that looks exactly like a device problem. `assert_installable`
+ * additionally refuses to certify an APK the asset is missing from.
+ *
+ * OFFLINE. A correct file already in place is left alone and no request is made,
+ * so only the first build on a machine needs the network.
+ */
+ext.faceLandmarkerModelUrl =
+    "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+ext.faceLandmarkerModelSha256 =
+    "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff"
+
+static String sha256Of(File file) {
+    def digest = java.security.MessageDigest.getInstance("SHA-256")
+    file.withInputStream { stream ->
+        byte[] chunk = new byte[65536]
+        int read
+        while ((read = stream.read(chunk)) != -1) {
+            digest.update(chunk, 0, read)
+        }
+    }
+    return digest.digest().encodeHex().toString()
+}
+
+tasks.register("fetchFaceLandmarkerModel") {
+    description = "Downloads and checksum-verifies the MediaPipe face-landmarker model asset."
+    group = "build setup"
+    def target = file("src/main/assets/face_landmarker.task")
+    def expected = project.ext.faceLandmarkerModelSha256
+    def source = project.ext.faceLandmarkerModelUrl
+    outputs.file(target)
+    doLast {
+        if (target.exists() && sha256Of(target) == expected) {
+            return
+        }
+        target.parentFile.mkdirs()
+        // Download beside the target, verify, and only then move into place, so
+        // an interrupted or corrupted fetch never leaves a half-written asset
+        // that the next build would treat as cached.
+        def staging = new File(target.parentFile, target.name + ".part")
+        staging.delete()
+        try {
+            new java.net.URL(source).openStream().withCloseable { input ->
+                staging.withOutputStream { output -> output << input }
+            }
+        } catch (IOException problem) {
+            staging.delete()
+            throw new GradleException(
+                "Could not fetch the face-landmarker model from ${source}. The first " +
+                    "build on a machine needs network access; later builds reuse the " +
+                    "verified copy at ${target}. Cause: ${problem.message}"
+            )
+        }
+        def actual = sha256Of(staging)
+        if (actual != expected) {
+            staging.delete()
+            throw new GradleException(
+                "The face-landmarker model downloaded from ${source} hashes to ${actual}, " +
+                    "not the pinned ${expected}. Refusing to package an unrecognised model."
+            )
+        }
+        // ATOMIC. The previous `delete()` then `renameTo()` had a window in
+        // which the verified copy was gone and the new one was not yet in
+        // place: a build interrupted there left NO model, and the next build
+        // would re-download rather than fail -- but a concurrent Gradle daemon
+        // reading the assets directory in that window would package an APK
+        // with the file missing, which installs and then abstains on every
+        // frame. `renameTo` also returns false rather than throwing on
+        // failure, so the old form could not even report that it had not
+        // worked.
+        try {
+            java.nio.file.Files.move(
+                staging.toPath(),
+                target.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                java.nio.file.StandardCopyOption.ATOMIC_MOVE
+            )
+        } catch (java.nio.file.AtomicMoveNotSupportedException ignored) {
+            // Some filesystems cannot promise it. Still better than the old
+            // form: this one replaces in one call and throws if it fails.
+            java.nio.file.Files.move(
+                staging.toPath(),
+                target.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+            )
+        }
+    }
+}
+
+tasks.named("preBuild") { dependsOn("fetchFaceLandmarkerModel") }
+
+// Every third-party coordinate below is an exact version. A dynamic ("1.+",
+// "latest.release") or changing (-SNAPSHOT) version would mean the APK that
+// was verified and the APK that ships could contain different code with the
+// same git SHA, which makes the build unauditable -- so Gradle is told to
+// fail the resolution rather than trust one. `make license-audit` separately
+// checks each coordinate against apps/mobile/native-dependency-inventory.json,
+// where its licence and data-flow posture is recorded.
+configurations.configureEach {
+    resolutionStrategy {
+        failOnDynamicVersions()
+        failOnChangingVersions()
+    }
+}
+
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("com.facebook.react:hermes-android")
+
+    // ARCore Augmented Faces. This is the public rendering API -- it is not the
+    // biometric authentication subsystem, and BiometricPrompt / Keystore
+    // biometric bindings are deliberately absent (FT-00 s.3).
+    implementation("com.google.ar:core:1.45.0")
+
+    // Google ML Kit face detection, BUNDLED model variant.
+    //
+    // Bundled (com.google.mlkit:face-detection) rather than the thin
+    // Play-Services variant (com.google.android.gms:play-services-mlkit-face-
+    // detection): the thin one downloads its model from Google Play on first
+    // use, so a freshly installed app can be missing it at exactly the moment
+    // the first scan needs it. The model is paid for in APK size instead.
+    //
+    // Runs entirely on-device; there is no cloud fallback and no network path
+    // for camera pixels. Licence: ML Kit Terms of Service (per the artifact's
+    // own POM), plus the Google APIs Terms of Service. Both, and the SDK
+    // diagnostics transport it pulls in, are documented in
+    // docs/mobile-android-install.md and recorded in the inventory.
+    implementation("com.google.mlkit:face-detection:16.1.7")
+
+    // MediaPipe Tasks Vision, for FaceLandmarker's blendshape head ONLY.
+    //
+    // WHAT IT IS FOR. `neutrality` -- and nothing else. ADR-010 records why:
+    // the blendshape model in `face_landmarker.task` terminates in 52
+    // independently sigmoid-activated per-expression weights over the whole
+    // face, under the same category vocabulary ARKit uses, so jaw, brow and lip
+    // evidence all exist. That is the evidence class ADR-009 accepted on iOS and
+    // could not find on Android. It is NOT an occlusion estimator: the same
+    // bundle's landmark model outputs exactly 478 coordinates, one whole-face
+    // presence scalar and a tongue-out score, with no per-landmark visibility,
+    // so `occlusion` stays null and keeps failing closed.
+    //
+    // Runs entirely on-device from a model packaged in the APK. No network path
+    // for pixels, and the AAR declares no permissions of its own.
+    //
+    // Licence: Apache-2.0, declared by the artifact's own POM. The model bundle
+    // is fetched by `fetchFaceLandmarkerModel` below, from a pinned URL and
+    // against a pinned SHA-256.
+    implementation("com.google.mediapipe:tasks-vision:0.10.35")
+
+    // CameraX, for the client app v1 camera (ai.facetype.client,
+    // docs/client-native-interface.md): front-camera Preview + ImageAnalysis on
+    // the full delivered YUV stream, Camera2Interop for per-frame capture
+    // results and request options (stabilisation off, distortion correction
+    // on where supported), and PreviewView for the on-screen preview.
+    //
+    // 1.4.2: the last line built against Kotlin metadata this project's Kotlin
+    // 1.9.24 compiler reads; compileSdk 35 / minSdk 24 compatible. No vendor
+    // extensions artifact (androidx.camera:camera-extensions) is declared, so
+    // vendor effect modes cannot be opened. On-device only; the library sends
+    // nothing over the network. Licence: Apache-2.0 (artifact POMs).
+    implementation("androidx.camera:camera-core:1.4.2")
+    implementation("androidx.camera:camera-camera2:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-view:1.4.2")
+
+    // Pure-Kotlin JVM tests for ai.facetype.capture (pose math, queuing, YUV
+    // conversion, ROI geometry, pixel metrics, analyser backpressure and
+    // capture freshness) -- no Android framework, no ARCore native library,
+    // no ML Kit model. `testDebugUnitTest`.
+    testImplementation("junit:junit:4.13.2")
+}

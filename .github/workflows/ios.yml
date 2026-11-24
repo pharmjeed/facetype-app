@@ -1,0 +1,70 @@
+name: iOS simulator build
+# Compile check with no credentials: the whole app, the native camera included, built for the simulator, unsigned.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+env:
+  # Public identifiers, not secrets: they are inside every shipped app.
+  FACETYPE_API_URL: https://facetype.193-122-83-224.sslip.io
+  FACETYPE_GOOGLE_WEB_CLIENT_ID: 967286092515-25tgr9nlrnan7aj082saei9m2lmd7luh.apps.googleusercontent.com
+  FACETYPE_GOOGLE_IOS_CLIENT_ID: 967286092515-0is8o69h01lrbkljr5dshlp2547hla4o.apps.googleusercontent.com
+  FACETYPE_CLIENT_MOCK_AUTH: "false"
+  npm_config_manage_package_manager_versions: "false"
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Xcode
+        run: bash ci/select-xcode.sh
+      - name: JS dependencies (pnpm 10.0.0, frozen lockfile)
+        run: npx -y pnpm@10.0.0 install --frozen-lockfile
+      - name: Generate the Xcode project (xcodegen pinned by toolchain.json)
+        working-directory: apps/mobile/ios
+        run: |
+          set -euo pipefail
+          url=$(jq -r '.xcodegen.url' toolchain.json)
+          expected=$(jq -r '.xcodegen.sha256' toolchain.json)
+          binary=$(jq -r '.xcodegen.binaryPath' toolchain.json)
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" "$url"
+          actual=$(shasum -a 256 "$RUNNER_TEMP/xcodegen.zip" | cut -d ' ' -f 1)
+          [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
+          "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+      - name: Pods (CocoaPods pinned by Gemfile)
+        working-directory: apps/mobile/ios
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+          for attempt in 1 2 3; do
+            if bundle exec pod install --repo-update; then exit 0; fi
+            rm -rf Pods FaceType.xcworkspace
+          done
+          exit 1
+      - name: Build for the simulator, unsigned
+        working-directory: apps/mobile/ios
+        run: |
+          status=0
+          xcodebuild -workspace FaceType.xcworkspace -scheme FaceType -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO build > build.log 2>&1 || status=$?
+          grep -n -E "error:|Unable to resolve|PhaseScriptExecution failed|BUILD (SUCCEEDED|FAILED)" build.log | head -200 || true
+          if [ "$status" -ne 0 ]; then echo "----- last 150 lines -----"; tail -150 build.log; exit "$status"; fi
+          bundle=$(find build/Build/Products/Release-iphonesimulator -path '*.app/main.jsbundle' -print -quit)
+          test -n "$bundle" && test -s "$bundle" || { echo "release app has no main.jsbundle"; exit 1; }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-build-log
+          path: apps/mobile/ios/build.log
+          if-no-files-found: ignore

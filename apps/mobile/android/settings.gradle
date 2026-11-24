@@ -1,0 +1,79 @@
+// React Native's Gradle template hard-codes
+// ../node_modules/@react-native/gradle-plugin, which assumes npm/yarn hoisting.
+// Under pnpm nothing is hoisted -- packages live in the content-addressed store
+// and that path does not exist, so plugin resolution failed with
+// "Error resolving plugin [id: 'com.facebook.react.settings']".
+//
+// The paths are resolved through Node instead, exactly as ios/Podfile resolves
+// react_native_pods.rb with require.resolve. This keeps pnpm's strict isolation
+// rather than hoisting the whole workspace to satisfy one toolchain.
+//
+// The resolver is defined INSIDE pluginManagement on purpose: Gradle requires
+// that block to be the first statement in the file, so a helper declared above
+// it is a hard startup error, not a style issue.
+
+pluginManagement {
+    // Store the resolver on Settings, not on PluginManagementSpec.  The latter
+    // only exposes the property inside this block, while the resolved React
+    // Native paths are also needed below it.
+    //
+    // Everything variable reaches Node through the environment rather than
+    // through the script text.  On Windows the workspace path contains
+    // backslashes and the JSON literal that carried it needed double quotes,
+    // and Java's Win32 argv encoding preserves neither: `node -e` received
+    // `const here = C:\Users\...;` with the quotes gone, so Gradle died during
+    // settings evaluation before a single task ran.  The script below is
+    // deliberately free of backslashes and double quotes for that reason, and
+    // tests/contract/test_mobile_device_build.py keeps it that way.
+    settings.ext.nodeResolve = { String request ->
+        def script = """
+            const path = require('path');
+            const here = process.env.FACETYPE_RESOLVE_ROOT;
+            const rn = require.resolve('react-native/package.json', {paths: [here]});
+            const request = process.env.FACETYPE_RESOLVE_REQUEST;
+            const target = require.resolve(request, {paths: [path.dirname(rn), here]});
+            process.stdout.write(path.dirname(target));
+        """
+        // ProcessBuilder, not String.execute(envp, dir): the latter replaces
+        // the whole environment, which would strip PATH and leave `node`
+        // itself unresolvable.
+        def builder = new ProcessBuilder('node', '-e', script)
+        builder.directory(settingsDir.parentFile)
+        builder.environment().put('FACETYPE_RESOLVE_ROOT', settingsDir.parentFile.absolutePath)
+        builder.environment().put('FACETYPE_RESOLVE_REQUEST', request)
+
+        def out = new ByteArrayOutputStream()
+        def err = new ByteArrayOutputStream()
+        def proc = builder.start()
+        proc.waitForProcessOutput(out, err)
+        if (proc.exitValue() != 0) {
+            throw new GradleException("could not resolve ${request} through node: ${err}")
+        }
+        return out.toString().trim()
+    }
+
+    includeBuild(settings.ext.nodeResolve('@react-native/gradle-plugin/package.json'))
+}
+
+plugins {
+    id("com.facebook.react.settings")
+}
+
+extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
+    ex.autolinkLibrariesFromCommand()
+}
+
+// Consumed by app/build.gradle. Resolved rather than derived: under pnpm the
+// codegen package is not a sibling of the gradle plugin.
+gradle.ext.reactNativeDir = settings.ext.nodeResolve('react-native/package.json')
+gradle.ext.reactNativeCodegenDir = settings.ext.nodeResolve('@react-native/codegen/package.json')
+
+rootProject.name = 'FaceTypeAI'
+include ':app'
+
+// pluginManagement's included build resolves plugin ids only.  The root
+// buildscript also declares the React Native Gradle plugin as a classpath
+// dependency; a normal RN 0.76 project includes the composite build a second
+// time here so Gradle substitutes that versionless module with the local
+// plugin, whose dependency graph also supplies the compatible AGP version.
+includeBuild(settings.ext.nodeResolve('@react-native/gradle-plugin/package.json'))

@@ -1,0 +1,95 @@
+name: TestFlight upload
+# Manual. Needs the repository secret ASC_KEY_P8 (the App Store Connect API key file's text, set by the owner) and the
+# repository variables APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID (identifiers, not secrets).
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  FACETYPE_API_URL: https://facetype.193-122-83-224.sslip.io
+  FACETYPE_GOOGLE_WEB_CLIENT_ID: 967286092515-25tgr9nlrnan7aj082saei9m2lmd7luh.apps.googleusercontent.com
+  FACETYPE_GOOGLE_IOS_CLIENT_ID: 967286092515-0is8o69h01lrbkljr5dshlp2547hla4o.apps.googleusercontent.com
+  FACETYPE_CLIENT_MOCK_AUTH: "false"
+  npm_config_manage_package_manager_versions: "false"
+jobs:
+  upload:
+    runs-on: macos-15
+    timeout-minutes: 75
+    env:
+      TEAM: ${{ vars.APPLE_TEAM_ID }}
+      KEY_ID: ${{ vars.ASC_KEY_ID }}
+      ISSUER: ${{ vars.ASC_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check configuration
+        run: |
+          for v in TEAM KEY_ID ISSUER; do [ -n "${!v}" ] || { echo "missing variable $v"; exit 1; }; done
+          [ -n "${{ secrets.ASC_KEY_P8 }}" ] || { echo "missing secret ASC_KEY_P8"; exit 1; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Xcode
+        run: bash ci/select-xcode.sh
+      - name: JS dependencies (pnpm 10.0.0, frozen lockfile)
+        run: npx -y pnpm@10.0.0 install --frozen-lockfile
+      - name: Generate the Xcode project (xcodegen pinned by toolchain.json)
+        working-directory: apps/mobile/ios
+        run: |
+          set -euo pipefail
+          url=$(jq -r '.xcodegen.url' toolchain.json)
+          expected=$(jq -r '.xcodegen.sha256' toolchain.json)
+          binary=$(jq -r '.xcodegen.binaryPath' toolchain.json)
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" "$url"
+          actual=$(shasum -a 256 "$RUNNER_TEMP/xcodegen.zip" | cut -d ' ' -f 1)
+          [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
+          "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+      - name: Pods (CocoaPods pinned by Gemfile)
+        working-directory: apps/mobile/ios
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+          for attempt in 1 2 3; do
+            if bundle exec pod install --repo-update; then exit 0; fi
+            rm -rf Pods FaceType.xcworkspace
+          done
+          exit 1
+      - name: App Store Connect key
+        env:
+          P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$P8" > "$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8"
+          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8" >> "$GITHUB_ENV"
+      - name: Archive (automatic signing through the API key)
+        working-directory: apps/mobile/ios
+        run: |
+          build_number=$(date -u +%Y%m%d%H%M)
+          xcodebuild -workspace FaceType.xcworkspace -scheme FaceType -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/FaceType.xcarchive \
+            DEVELOPMENT_TEAM="$TEAM" FACETYPE_DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION="$build_number" \
+            -allowProvisioningUpdates -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" \
+            archive > archive.log 2>&1 || { grep -n -E "error:|requires a provisioning|No Accounts|No profiles|Unable to resolve" archive.log | sort -u | head -80; tail -80 archive.log; exit 1; }
+          tail -5 archive.log
+      - name: Export and upload to App Store Connect
+        working-directory: apps/mobile/ios
+        run: |
+          sed "s/__TEAM__/$TEAM/" "$GITHUB_WORKSPACE/ci/ExportOptions.plist" > build/ExportOptions.plist
+          xcodebuild -exportArchive -archivePath build/FaceType.xcarchive -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/export -allowProvisioningUpdates -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" > export.log 2>&1 \
+            || { grep -E "error|Error" export.log | sort -u | head -60; tail -60 export.log; exit 1; }
+          tail -20 export.log
+      - name: Remove the key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testflight-logs
+          path: |
+            apps/mobile/ios/archive.log
+            apps/mobile/ios/export.log
+          if-no-files-found: ignore

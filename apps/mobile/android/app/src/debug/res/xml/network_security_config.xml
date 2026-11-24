@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug variant only. This file lives in src/debug/ and is never merged into a
+  release APK, so relaxing cleartext here cannot reach a shipped build.
+
+  Why the base config is broad rather than a domain allowlist: a developer
+  backend is reached at whatever private address the laptop happens to hold on
+  the day, and network-security-config matches domains, not CIDR ranges. Pinning
+  one address here would put a private LAN address in source, which is exactly
+  what the runtime FACETYPE_API_URL injection exists to avoid.
+
+  The release posture is the opposite and is enforced in the main manifest:
+  android:usesCleartextTraffic="false".
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
