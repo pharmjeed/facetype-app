@@ -5,7 +5,7 @@ platform :ios, '16.0'
 
 target 'FaceType' do
   pod 'MediaPipeTasksVision', '0.10.35'
-  pod 'GoogleSignIn', '8.0.0'
+  pod 'GoogleSignIn', '7.1.0'
 
   target 'FaceTypeTests' do
     inherit! :search_paths
