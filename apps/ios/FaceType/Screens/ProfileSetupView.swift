@@ -47,12 +47,14 @@ struct ProfileSetupView: View {
 
           Section {
             TextField(s("setup.full_name"), text: $model.form.full_name)
+              .accessibilityIdentifier("field.full_name")
               .textContentType(.name)
               .autocorrectionDisabled()
           } header: {
             VStack(alignment: .leading, spacing: 12) {
               Text(s("setup.intro")).font(.footnote).textCase(nil)
-              Text(s("setup.full_name"))
+                .accessibilityIdentifier("setup.intro")
+              Text(s("setup.full_name")).accessibilityIdentifier("header.full_name")
             }
           } footer: {
             FieldError(text: error(.full_name))
@@ -70,6 +72,7 @@ struct ProfileSetupView: View {
             .pickerStyle(.segmented)
             .id(ProfileField.id_document_type)
             TextField(s("setup.id_number"), text: $model.form.id_number)
+              .accessibilityIdentifier("field.id_number")
               .keyboardType(.asciiCapable)
               .textInputAutocapitalization(.characters)
               .autocorrectionDisabled()
@@ -86,6 +89,7 @@ struct ProfileSetupView: View {
 
           Section {
             TextField(s("setup.phone"), text: $model.form.phone)
+              .accessibilityIdentifier("field.phone")
               .keyboardType(.phonePad)
               .textContentType(.telephoneNumber)
           } header: {
@@ -168,6 +172,8 @@ struct ProfileSetupView: View {
             .listRowBackground(Color.clear)
           }
         }
+        // Dragging the form down also closes the keyboard (a tap outside a field closes it too: KeyboardDismiss).
+        .scrollDismissesKeyboard(.interactively)
         .navigationTitle(s("setup.title"))
         .toolbar { ToolbarItem(placement: .navigationBarTrailing) { LanguageToggle() } }
       }
@@ -233,6 +239,7 @@ struct CountryPickerView: View {
         }
       }
     }
+    .scrollDismissesKeyboard(.immediately)
     .navigationTitle(title)
     .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: s("setup.country_search"))
   }

@@ -25,6 +25,7 @@ targets:
     scheme:
       testTargets:
         - FaceTypeTests
+        - FaceTypeUITests
     sources:
       - path: FaceType
         excludes:
@@ -100,4 +101,19 @@ targets:
         # The app's product name has a space («FaceType AI»); XcodeGen's default host path uses the target name.
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FaceType AI.app/FaceType AI"
         BUNDLE_LOADER: "$(TEST_HOST)"
+        "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
+
+  # The form's behaviour on screen (keyboard, direction), driven through the app's CI demo mode. Links no pod.
+  FaceTypeUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: FaceTypeUITests
+    dependencies:
+      - target: FaceType
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: ai.facetype.uitests
+        TEST_TARGET_NAME: FaceType
         "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
