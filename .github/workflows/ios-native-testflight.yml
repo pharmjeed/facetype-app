@@ -54,9 +54,16 @@ jobs:
         env:
           P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
+          set -euo pipefail
           mkdir -p "$RUNNER_TEMP/keys"
-          printf '%s\n' "$P8" > "$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8"
-          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8" >> "$GITHUB_ENV"
+          key="$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8"
+          # A key pasted into the secret form can lose its line breaks or gain CR/space; rebuild the PEM from its
+          # base64 body (64-character lines). Only the body's length is printed, never the key.
+          body=$(printf '%s' "$P8" | tr -d '\r' | sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' | tr -d ' \n\t')
+          echo "key body length: ${#body}"
+          { echo "-----BEGIN PRIVATE KEY-----"; printf '%s\n' "$body" | fold -w 64; echo "-----END PRIVATE KEY-----"; } > "$key"
+          openssl pkey -in "$key" -noout && echo "the key parses as a private key"
+          echo "KEY_PATH=$key" >> "$GITHUB_ENV"
       - name: Archive (Release, unsigned)
         working-directory: apps/ios
         run: |
