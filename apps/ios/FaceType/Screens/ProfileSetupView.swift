@@ -46,8 +46,7 @@ struct ProfileSetupView: View {
           }
 
           Section {
-            TextField(s("setup.full_name"), text: $model.form.full_name)
-              .accessibilityIdentifier("field.full_name")
+            HintedTextField(title: s("setup.full_name"), identifier: "field.full_name", text: $model.form.full_name)
               .textContentType(.name)
               .autocorrectionDisabled()
           } header: {
@@ -71,8 +70,7 @@ struct ProfileSetupView: View {
             }
             .pickerStyle(.segmented)
             .id(ProfileField.id_document_type)
-            TextField(s("setup.id_number"), text: $model.form.id_number)
-              .accessibilityIdentifier("field.id_number")
+            HintedTextField(title: s("setup.id_number"), identifier: "field.id_number", text: $model.form.id_number)
               .keyboardType(.asciiCapable)
               .textInputAutocapitalization(.characters)
               .autocorrectionDisabled()
@@ -88,8 +86,7 @@ struct ProfileSetupView: View {
           }
 
           Section {
-            TextField(s("setup.phone"), text: $model.form.phone)
-              .accessibilityIdentifier("field.phone")
+            HintedTextField(title: s("setup.phone"), identifier: "field.phone", text: $model.form.phone)
               .keyboardType(.phonePad)
               .textContentType(.telephoneNumber)
           } header: {
@@ -185,6 +182,31 @@ struct ProfileSetupView: View {
     calendar.timeZone = TimeZone(identifier: "UTC")!
     let start = calendar.date(from: DateComponents(year: DateWheel.firstYear, month: 1, day: 1))!
     return start...Date()
+  }
+}
+
+/// A text field whose empty-state hint sits on the reading side of the chosen language. UIKit places the system
+/// placeholder by the phone's language (CI screenshots 2026-11-25: after an in-app switch to English on an Arabic
+/// phone the hint stayed on the right until the next launch); a SwiftUI hint follows the app's direction.
+/// Keyboard type, content type and autocorrection set on this view reach the inner field through the environment.
+struct HintedTextField: View {
+  let title: String
+  let identifier: String
+  @Binding var text: String
+
+  var body: some View {
+    ZStack(alignment: .leading) {
+      if text.isEmpty {
+        Text(title)
+          .foregroundStyle(Color(uiColor: .placeholderText))
+          .lineLimit(1)
+          .accessibilityHidden(true)
+          .allowsHitTesting(false)
+      }
+      TextField("", text: $text)
+        .accessibilityLabel(title)
+        .accessibilityIdentifier(identifier)
+    }
   }
 }
 
