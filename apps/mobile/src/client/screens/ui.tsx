@@ -325,19 +325,25 @@ export function DateField({
         columnLabels={[s('picker.day'), s('picker.month'), s('picker.year')]}
       >
         <View style={{ flexDirection: 'row', gap: spacing[2] }}>
-          <Wheel label={s('picker.day')} items={days} index={draft.d - 1} onChange={(i) => setDraft((d) => ({ ...d, d: i + 1 }))} />
-          <Wheel
-            label={s('picker.month')}
-            items={ARABIC_MONTHS}
-            index={draft.m - 1}
-            onChange={(i) => setDraft((d) => clampDay({ ...d, m: i + 1 }))}
-          />
-          <Wheel
-            label={s('picker.year')}
-            items={years.map(String)}
-            index={Math.max(0, years.indexOf(draft.y))}
-            onChange={(i) => setDraft((d) => clampDay({ ...d, y: years[i] ?? d.y }))}
-          />
+          <View style={{ flex: 1 }}>
+            <Wheel label={s('picker.day')} items={days} index={draft.d - 1} onChange={(i) => setDraft((d) => ({ ...d, d: i + 1 }))} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Wheel
+              label={s('picker.month')}
+              items={ARABIC_MONTHS}
+              index={draft.m - 1}
+              onChange={(i) => setDraft((d) => clampDay({ ...d, m: i + 1 }))}
+            />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Wheel
+              label={s('picker.year')}
+              items={years.map(String)}
+              index={Math.max(0, years.indexOf(draft.y))}
+              onChange={(i) => setDraft((d) => clampDay({ ...d, y: years[i] ?? d.y }))}
+            />
+          </View>
         </View>
       </PickerSheet>
     </View>

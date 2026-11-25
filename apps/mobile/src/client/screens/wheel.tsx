@@ -7,7 +7,9 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   FlatList,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -25,7 +27,9 @@ const VISIBLE = 5;
 const PAD = ROW * Math.floor(VISIBLE / 2);
 
 const w = StyleSheet.create({
-  wheel: { flex: 1, height: ROW * VISIBLE },
+  // A fixed height and no `flex`: `flex: 1` sets flexBasis 0, which in a column parent of auto height (the
+  // country sheet) collapsed the wheel to zero height. Side-by-side wheels get their width from a wrapper.
+  wheel: { height: ROW * VISIBLE, alignSelf: 'stretch' },
   band: {
     position: 'absolute',
     left: 0,
@@ -154,7 +158,7 @@ export function PickerSheet({
 }): ReactNode {
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onCancel}>
-      <View style={w.backdrop}>
+      <KeyboardAvoidingView style={w.backdrop} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <Pressable style={{ flex: 1 }} onPress={onCancel} accessibilityLabel={s('common.cancel')} />
         <View style={w.sheet}>
           <View style={w.header}>
@@ -185,7 +189,7 @@ export function PickerSheet({
           ) : null}
           {children}
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
