@@ -50,7 +50,10 @@ struct ProfileSetupView: View {
               .textContentType(.name)
               .autocorrectionDisabled()
           } header: {
-            Text(s("setup.full_name"))
+            VStack(alignment: .leading, spacing: 12) {
+              Text(s("setup.intro")).font(.footnote).textCase(nil)
+              Text(s("setup.full_name"))
+            }
           } footer: {
             FieldError(text: error(.full_name))
           }
@@ -169,15 +172,6 @@ struct ProfileSetupView: View {
         }
         .navigationTitle(s("setup.title"))
         .toolbar { ToolbarItem(placement: .navigationBarTrailing) { LanguageToggle() } }
-        .safeAreaInset(edge: .top) {
-          Text(s("setup.intro"))
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 6)
-            .background(.bar)
-        }
       }
     }
   }
