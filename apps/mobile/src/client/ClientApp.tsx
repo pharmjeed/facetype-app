@@ -44,10 +44,12 @@ import { CaptureScreen } from './screens/CaptureScreen.tsx';
 import { ProfileScreen } from './screens/ProfileScreen.tsx';
 import { ProfileSetupScreen, type SetupServerError } from './screens/ProfileSetupScreen.tsx';
 import { SignInScreen } from './screens/SignInScreen.tsx';
+import { LanguageContext } from './screens/ui.tsx';
 import { isTerminal } from './spool/manifest.ts';
 import { nativeBackedMetaVault } from './spool/metaVault.ts';
 import { nextRunInMs, SpoolRunner, type SpoolDeps, type SpoolOutcome } from './spool/spool.ts';
-import { CONSENT_VERSION, s } from './strings.ts';
+import { isLang, lang, setLang, wantsRtl, type Lang } from './i18n.ts';
+import { consentVersion, s } from './strings.ts';
 import type { PendingAttempt } from './telemetry.ts';
 import type { ProfileForm, ProfileValues } from './validation.ts';
 
@@ -65,6 +67,8 @@ const API_ENDPOINT = ((): { url: string } | { error: string } => {
 const NON_RELEASE = POLICY.allowCleartext;
 const AUTH_CONFIG = authConfigFromEnv(CLIENT_BUILD_ENV, Platform.OS, NON_RELEASE);
 const MOCK_SUBJECT_KEY = '@facetype/client-mock-subject/v1';
+/** The interface language chosen with the language switch (owner 2026-11-25); Arabic when absent. */
+const LANGUAGE_KEY = '@facetype/client-language/v1';
 const RETRY_AFTER_CRASH_MS = 10_000;
 
 interface NativeSecureSession {
@@ -154,6 +158,31 @@ export function ClientApp(): ReactNode {
   const [setupError, setSetupError] = useState<SetupServerError | null>(null);
   const [prefillName, setPrefillName] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [language, setLanguageState] = useState<Lang>(lang());
+
+  // Text and layout direction are computed from `language` at render time (i18n.ts), so a switch shows at
+  // once. forceRTL only makes the native direction follow on the next launch (native widgets, keyboard).
+  const setLanguage = useCallback((next: Lang) => {
+    setLang(next);
+    setLanguageState(next);
+    I18nManager.allowRTL(true);
+    I18nManager.forceRTL(wantsRtl(next));
+    void AsyncStorage.setItem(LANGUAGE_KEY, next).catch(() => undefined);
+  }, []);
+  const languageContext = useMemo(() => ({ language, setLanguage }), [language, setLanguage]);
+
+  useEffect(() => {
+    void AsyncStorage.getItem(LANGUAGE_KEY)
+      .then((stored) => {
+        if (isLang(stored) && stored !== lang()) {
+          setLang(stored);
+          setLanguageState(stored);
+        }
+        I18nManager.allowRTL(true);
+        I18nManager.forceRTL(wantsRtl(lang()));
+      })
+      .catch(() => undefined);
+  }, []);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const signedIn = useRef(false);
   const lastStage = useRef<string | null>(null);
@@ -244,8 +273,6 @@ export function ClientApp(): ReactNode {
   }, [api, enterSession, runner, services.configError]);
 
   useEffect(() => {
-    I18nManager.allowRTL(true);
-    I18nManager.forceRTL(true);
     void boot();
     return stopPump;
   }, [boot, stopPump]);
@@ -302,7 +329,7 @@ export function ClientApp(): ReactNode {
         await api.putProfile(values);
         if (needsConsent) {
           try {
-            await api.postConsent({ version: CONSENT_VERSION, store_accepted: true, research_use: true });
+            await api.postConsent({ version: consentVersion(), store_accepted: true, research_use: true });
           } catch (error) {
             setSetupError(isClientApiError(error, 'network') ? { kind: 'network' } : { kind: 'consent_failed' });
             return;
@@ -432,9 +459,11 @@ export function ClientApp(): ReactNode {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar barStyle={state.screen === 'capture' ? 'light-content' : 'dark-content'} />
-      {body}
-    </SafeAreaView>
+    <LanguageContext.Provider value={languageContext}>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar barStyle={state.screen === 'capture' ? 'light-content' : 'dark-content'} />
+        {body}
+      </SafeAreaView>
+    </LanguageContext.Provider>
   );
 }

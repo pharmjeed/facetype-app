@@ -26,7 +26,7 @@ import {
   type ProfileValues,
   type Sex,
 } from '../validation.ts';
-import { Choices, CountryField, DateField, Field, ui } from './ui.tsx';
+import { Choices, CountryField, DateField, Field, LanguageSwitch, ui } from './ui.tsx';
 
 export type SetupServerError =
   | { kind: 'identifier_taken' }
@@ -108,6 +108,7 @@ export function ProfileSetupScreen({
 
   return (
     <ScrollView contentContainerStyle={[styles.screen, { paddingBottom: spacing[8] }]} keyboardShouldPersistTaps="handled">
+      <LanguageSwitch />
       <Text style={ui.title} accessibilityRole="header">
         {s('setup.title')}
       </Text>

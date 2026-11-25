@@ -1,35 +1,47 @@
 /**
- * Small right-to-left form pieces shared by the client screens. Text scales
- * with the system font size (no `allowFontScaling={false}` anywhere), every
- * control has an accessibility role and label, and tap targets are ≥ 44 pt.
+ * Small form pieces shared by the client screens, in the interface language's direction (Arabic right to left,
+ * English left to right; `../i18n.ts`). Text scales with the system font size (no `allowFontScaling={false}`
+ * anywhere), every control has an accessibility role and label, and tap targets are ≥ 44 pt.
  */
 
-import { useState, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View, type KeyboardTypeOptions } from 'react-native';
+import { createContext, useContext, useState, type ReactNode } from 'react';
+import {
+  I18nManager,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  type KeyboardTypeOptions,
+} from 'react-native';
 
 import { MIN_TAP_TARGET, colors, radius, spacing } from '@facetype/design-system';
 
 import { countryName, filterCountries } from '../countries.ts';
 import {
-  ARABIC_MONTHS,
   clampDay,
   daysInMonth,
   formatBirthDate,
+  monthNames,
   toIso,
   wheelStart,
   yearsDescending,
   type Ymd,
 } from '../datePicker.ts';
+import { lang, leftTextAlign, type Lang } from '../i18n.ts';
 import { s } from '../strings.ts';
+import { dirCrossStart, dirRow, dirText } from './dir.ts';
 import { PickerSheet, Wheel } from './wheel.tsx';
 
-export const ui = StyleSheet.create({
-  label: { fontSize: 15, fontWeight: '600', color: colors.text, textAlign: 'right', writingDirection: 'rtl' },
-  hint: { fontSize: 13, color: colors.muted, textAlign: 'right', writingDirection: 'rtl' },
-  error: { fontSize: 13, color: colors.danger, textAlign: 'right', writingDirection: 'rtl' },
-  text: { fontSize: 16, color: colors.text, lineHeight: 24, textAlign: 'right', writingDirection: 'rtl' },
-  title: { fontSize: 24, fontWeight: '700', color: colors.text, textAlign: 'right', writingDirection: 'rtl' },
-  h2: { fontSize: 19, fontWeight: '600', color: colors.text, textAlign: 'right', writingDirection: 'rtl' },
+export { dirCrossStart, dirRow, dirText };
+
+const base = StyleSheet.create({
+  label: { fontSize: 15, fontWeight: '600', color: colors.text },
+  hint: { fontSize: 13, color: colors.muted },
+  error: { fontSize: 13, color: colors.danger },
+  text: { fontSize: 16, color: colors.text, lineHeight: 24 },
+  title: { fontSize: 24, fontWeight: '700', color: colors.text },
+  h2: { fontSize: 19, fontWeight: '600', color: colors.text },
   input: {
     minHeight: MIN_TAP_TARGET,
     borderWidth: 1,
@@ -39,12 +51,10 @@ export const ui = StyleSheet.create({
     paddingHorizontal: spacing[3],
     fontSize: 16,
     color: colors.text,
-    textAlign: 'right',
-    writingDirection: 'rtl',
   },
   inputError: { borderColor: colors.danger },
   field: { gap: spacing[1] },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] },
+  row: { flexWrap: 'wrap', gap: spacing[2] },
   choice: {
     minHeight: MIN_TAP_TARGET,
     paddingHorizontal: spacing[4],
@@ -56,7 +66,7 @@ export const ui = StyleSheet.create({
   },
   choiceOn: { borderColor: colors.primary, backgroundColor: '#E8F0F7' },
   choiceText: { fontSize: 15, color: colors.text },
-  checkRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing[3], minHeight: MIN_TAP_TARGET },
+  checkRow: { alignItems: 'flex-start', gap: spacing[3], minHeight: MIN_TAP_TARGET },
   box: {
     width: 26,
     height: 26,
@@ -77,8 +87,61 @@ export const ui = StyleSheet.create({
     padding: spacing[4],
     gap: spacing[3],
   },
-  link: { fontSize: 15, color: colors.primary, fontWeight: '600', textAlign: 'right', paddingVertical: spacing[2] },
+  link: { fontSize: 15, color: colors.primary, fontWeight: '600', paddingVertical: spacing[2] },
+  langSwitch: { minHeight: MIN_TAP_TARGET, justifyContent: 'center', paddingHorizontal: spacing[2] },
+  langText: { fontSize: 15, color: colors.primary, fontWeight: '600' },
 });
+
+/**
+ * The shared styles. Direction-dependent entries are getters, read at render time, so a language switch
+ * re-renders them the other way round without a restart.
+ */
+export const ui = {
+  get label() { return [base.label, dirText()]; },
+  get hint() { return [base.hint, dirText()]; },
+  get error() { return [base.error, dirText()]; },
+  get text() { return [base.text, dirText()]; },
+  get title() { return [base.title, dirText()]; },
+  get h2() { return [base.h2, dirText()]; },
+  get input() { return [base.input, dirText()]; },
+  inputError: base.inputError,
+  field: base.field,
+  get row() { return [base.row, dirRow()]; },
+  choice: base.choice,
+  choiceOn: base.choiceOn,
+  choiceText: base.choiceText,
+  get checkRow() { return [base.checkRow, dirRow()]; },
+  box: base.box,
+  boxOn: base.boxOn,
+  tick: base.tick,
+  card: base.card,
+  get link() { return [base.link, dirText()]; },
+};
+
+/** The interface language and its setter (ClientApp persists it). */
+export const LanguageContext = createContext<{ language: Lang; setLanguage: (next: Lang) => void }>({
+  language: 'ar',
+  setLanguage: () => undefined,
+});
+
+/** «English» in Arabic, «العربية» in English, at the reading end of the screen's top. */
+export function LanguageSwitch(): ReactNode {
+  const { language, setLanguage } = useContext(LanguageContext);
+  const other: Lang = language === 'ar' ? 'en' : 'ar';
+  return (
+    <View style={[dirRow(), { justifyContent: 'flex-end' }]}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={s('lang.switch')}
+        onPress={() => setLanguage(other)}
+        hitSlop={8}
+        style={base.langSwitch}
+      >
+        <Text style={base.langText}>{s('lang.switch')}</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 export function Field({
   label,
@@ -113,7 +176,7 @@ export function Field({
         autoCapitalize={autoCapitalize}
         autoCorrect={false}
         placeholder={placeholder}
-        style={[ui.input, ltr && { textAlign: 'left', writingDirection: 'ltr' }, error ? ui.inputError : null]}
+        style={[ui.input, ltr && { textAlign: leftTextAlign(I18nManager.isRTL), writingDirection: 'ltr' }, error ? ui.inputError : null]}
       />
       {hint ? <Text style={ui.hint}>{hint}</Text> : null}
       {error ? (
@@ -323,15 +386,16 @@ export function DateField({
         onCancel={() => setOpen(false)}
         onDone={done}
         columnLabels={[s('picker.day'), s('picker.month'), s('picker.year')]}
+        key={lang()}
       >
-        <View style={{ flexDirection: 'row', gap: spacing[2] }}>
+        <View style={[dirRow(), { gap: spacing[2] }]}>
           <View style={{ flex: 1 }}>
             <Wheel label={s('picker.day')} items={days} index={draft.d - 1} onChange={(i) => setDraft((d) => ({ ...d, d: i + 1 }))} />
           </View>
           <View style={{ flex: 1 }}>
             <Wheel
               label={s('picker.month')}
-              items={ARABIC_MONTHS}
+              items={monthNames()}
               index={draft.m - 1}
               onChange={(i) => setDraft((d) => clampDay({ ...d, m: i + 1 }))}
             />

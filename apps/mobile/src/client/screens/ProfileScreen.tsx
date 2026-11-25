@@ -20,10 +20,11 @@ import { Button } from '../../components/Button.tsx';
 import { styles } from '../../theme.ts';
 import type { ClientMe } from '../api/types.ts';
 import { countryName } from '../countries.ts';
+import { formatBirthDate } from '../datePicker.ts';
 import type { SpoolOutcome } from '../spool/spool.ts';
 import { isTerminal } from '../spool/manifest.ts';
 import { s, type StringKey } from '../strings.ts';
-import { ui } from './ui.tsx';
+import { LanguageSwitch, ui } from './ui.tsx';
 
 const DOC: Record<string, StringKey> = {
   national_id: 'doc.national_id',
@@ -95,6 +96,7 @@ export function ProfileScreen({
 
   return (
     <ScrollView contentContainerStyle={[styles.screen, { paddingBottom: spacing[8] }]}>
+      <LanguageSwitch />
       <Text style={ui.title} accessibilityRole="header">
         {s('profile.title')}
       </Text>
@@ -113,7 +115,7 @@ export function ProfileScreen({
           <Text style={ui.text}>
             {s('profile.sex', { value: profile.sex === 'female' ? s('sex.female') : s('sex.male') })}
           </Text>
-          <Text style={ui.text}>{s('profile.birth_date', { value: ltr(profile.birth_date) })}</Text>
+          <Text style={ui.text}>{s('profile.birth_date', { value: formatBirthDate(profile.birth_date) })}</Text>
           {Number.isInteger(profile.age_years) ? <Text style={ui.text}>{s('profile.age', { value: profile.age_years })}</Text> : null}
           <Text style={ui.text}>{s('profile.nationality', { value: countryName(profile.nationality) })}</Text>
         </View>

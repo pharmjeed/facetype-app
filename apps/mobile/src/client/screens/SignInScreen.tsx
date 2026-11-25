@@ -14,7 +14,7 @@ import { styles } from '../../theme.ts';
 import type { AuthProvider, ProviderId } from '../auth/types.ts';
 import type { SignInError, SignedOutNotice } from '../clientFlow.ts';
 import { s, type StringKey } from '../strings.ts';
-import { ui } from './ui.tsx';
+import { LanguageSwitch, ui } from './ui.tsx';
 
 const LABEL: Record<ProviderId, StringKey> = {
   apple: 'signin.apple',
@@ -50,6 +50,7 @@ export function SignInScreen({
 }): ReactNode {
   return (
     <ScrollView contentContainerStyle={[styles.screen, { justifyContent: 'center', flexGrow: 1 }]}>
+      <LanguageSwitch />
       <View style={{ gap: spacing[2] }}>
         <Text style={ui.title} accessibilityRole="header">
           {s('signin.title')}

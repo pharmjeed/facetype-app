@@ -21,6 +21,7 @@ import {
 import { MIN_TAP_TARGET, colors, radius, spacing } from '@facetype/design-system';
 
 import { s } from '../strings.ts';
+import { dirRow, dirText } from './dir.ts';
 
 const ROW = MIN_TAP_TARGET;
 const VISIBLE = 5;
@@ -53,11 +54,11 @@ const w = StyleSheet.create({
     paddingBottom: spacing[8],
     gap: spacing[3],
   },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: MIN_TAP_TARGET },
-  title: { fontSize: 17, fontWeight: '700', color: colors.text, writingDirection: 'rtl' },
+  header: { alignItems: 'center', justifyContent: 'space-between', minHeight: MIN_TAP_TARGET },
+  title: { fontSize: 17, fontWeight: '700', color: colors.text },
   action: { fontSize: 16, fontWeight: '600', color: colors.primary, paddingHorizontal: spacing[2] },
   actionOff: { color: colors.muted },
-  labels: { flexDirection: 'row', gap: spacing[2] },
+  labels: { gap: spacing[2] },
   label: { flex: 1, textAlign: 'center', fontSize: 13, color: colors.muted },
 });
 
@@ -161,11 +162,11 @@ export function PickerSheet({
       <KeyboardAvoidingView style={w.backdrop} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <Pressable style={{ flex: 1 }} onPress={onCancel} accessibilityLabel={s('common.cancel')} />
         <View style={w.sheet}>
-          <View style={w.header}>
+          <View style={[w.header, dirRow()]}>
             <Pressable accessibilityRole="button" onPress={onCancel} hitSlop={8}>
               <Text style={w.action}>{s('common.cancel')}</Text>
             </Pressable>
-            <Text style={w.title} accessibilityRole="header">
+            <Text style={[w.title, dirText()]} accessibilityRole="header">
               {title}
             </Text>
             <Pressable
@@ -179,7 +180,7 @@ export function PickerSheet({
             </Pressable>
           </View>
           {columnLabels ? (
-            <View style={w.labels}>
+            <View style={[w.labels, dirRow()]}>
               {columnLabels.map((text) => (
                 <Text key={text} style={w.label}>
                   {text}

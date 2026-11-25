@@ -63,4 +63,5 @@ test('the field shows day, Arabic month name and year', () => {
   assert.equal(ARABIC_MONTHS.length, 12);
   assert.equal(formatBirthDate('1995-04-23'), '23 أبريل 1995');
   assert.equal(formatBirthDate(''), '');
+  assert.equal(formatBirthDate('1995-04-23', 'en'), '23 April 1995');
 });

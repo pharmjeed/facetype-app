@@ -3,6 +3,8 @@
  * Native. The stored value stays the ISO `YYYY-MM-DD` string that `validation.ts` checks.
  */
 
+import { lang, type Lang } from './i18n.ts';
+
 export const ARABIC_MONTHS = [
   'يناير',
   'فبراير',
@@ -17,6 +19,26 @@ export const ARABIC_MONTHS = [
   'نوفمبر',
   'ديسمبر',
 ] as const;
+
+export const ENGLISH_MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+] as const;
+
+/** Month names in the current interface language. */
+export function monthNames(language: Lang = lang()): readonly string[] {
+  return language === 'en' ? ENGLISH_MONTHS : ARABIC_MONTHS;
+}
 
 /** The oldest year the wheel offers; validation refuses anything earlier. */
 export const FIRST_YEAR = 1900;
@@ -60,9 +82,9 @@ export function wheelStart(value: string, today: Date): Ymd {
   return parseIso(value) ?? { y: today.getUTCFullYear() - 30, m: 1, d: 1 };
 }
 
-/** «23 أبريل 1995» for the field; the ISO string is what is stored and sent. */
-export function formatBirthDate(value: string): string {
+/** «23 أبريل 1995» / "23 April 1995" for the field; the ISO string is what is stored and sent. */
+export function formatBirthDate(value: string, language: Lang = lang()): string {
   const parsed = parseIso(value);
   if (!parsed) return value;
-  return `${parsed.d} ${ARABIC_MONTHS[parsed.m - 1]} ${parsed.y}`;
+  return `${parsed.d} ${monthNames(language)[parsed.m - 1]} ${parsed.y}`;
 }

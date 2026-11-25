@@ -24,3 +24,19 @@ test('an exact ISO code comes first, and letter variants still match', () => {
   assert.equal(filterCountries('sa')[0]?.code, 'SA');
   assert.ok(filterCountries('الامارات').some((c) => c.code === 'AE'));
 });
+
+test('English names and search follow the interface language', async () => {
+  const { setLang } = await import('./i18n.ts');
+  const { countries, countryName } = await import('./countries.ts');
+  setLang('en');
+  try {
+    assert.equal(countryName('SA'), 'Saudi Arabia');
+    assert.ok((countries()[0]?.name ?? '').localeCompare(countries()[1]?.name ?? '', 'en') <= 0);
+    assert.ok(filterCountries('egy').some((c) => c.code === 'EG'));
+    assert.ok(filterCountries('aland').some((c) => c.code === 'AX'));
+    assert.equal(filterCountries('').length, countries().length);
+  } finally {
+    setLang('ar');
+  }
+  assert.equal(countryName('SA'), 'السعودية');
+});
