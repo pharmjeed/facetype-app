@@ -95,4 +95,7 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: ai.facetype.tests
+        # The app's product name has a space («FaceType AI»); XcodeGen's default host path uses the target name.
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FaceType AI.app/FaceType AI"
+        BUNDLE_LOADER: "$(TEST_HOST)"
         "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
