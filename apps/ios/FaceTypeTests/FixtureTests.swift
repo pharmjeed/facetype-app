@@ -297,7 +297,17 @@ final class FixtureTests: XCTestCase {
       XCTAssertEqual(phaseJSON(phase)?["name"] as? String, expected?["name"] as? String, name)
       if let expected, let got = phaseJSON(phase) {
         for (key, value) in expected where key != "name" {
-          XCTAssertEqual(got[key]?.description, (value as? NSObject)?.description, "\(name).\(key)")
+          let label = "\(name).\(key)"
+          switch value {
+          case let flag as NSNumber where CFGetTypeID(flag) == CFBooleanGetTypeID():
+            XCTAssertEqual(got[key] as? Bool, flag.boolValue, label)
+          case let number as NSNumber:
+            XCTAssertEqual(got[key] as? Int, number.intValue, label)
+          case let list as [String]:
+            XCTAssertEqual(got[key] as? [String], list, label)
+          default:
+            XCTAssertEqual(got[key] as? String, value as? String, label)
+          }
         }
       }
     }
