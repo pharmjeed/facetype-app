@@ -65,7 +65,8 @@ jobs:
         run: |
           set -euo pipefail
           app=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
-          echo "--- built Info.plist ---"; plutil -p "$app/Info.plist" | head -80
+          plutil -p "$app/Info.plist" | grep -E "UILaunchScreen|NSCameraUsageDescription|CFBundleShortVersionString|CFBundleVersion|FTApiBaseURL|CFBundleURLSchemes" -A1 | head -20
+          for key in UILaunchScreen NSCameraUsageDescription FTApiBaseURL; do plutil -extract "$key" raw "$app/Info.plist" >/dev/null 2>&1 || plutil -p "$app/Info.plist" | grep -q "\"$key\"" || { echo "Info.plist lacks $key"; exit 1; }; done
           xcrun simctl install "$SIM" "$app"
           mkdir -p shots
           # The first launch after an install is slower; warm it up before the captures.

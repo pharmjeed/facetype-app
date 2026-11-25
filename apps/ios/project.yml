@@ -30,8 +30,6 @@ targets:
         excludes:
           - Info.plist
           - FaceType.entitlements
-    info:
-      path: FaceType/Info.plist
     # Sign in with Apple only. LocalAuthentication is never linked (no Face ID, no Secure Enclave).
     entitlements:
       path: FaceType/FaceType.entitlements
@@ -39,6 +37,10 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.facetype
         PRODUCT_NAME: FaceType AI
+        # The hand-written Info.plist is used as is (XcodeGen's `info:` regenerated a minimal one: no camera usage
+        # string, no launch screen, no Google URL scheme).
+        INFOPLIST_FILE: FaceType/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
         # iPhone only: a universal bundle with a portrait-only Info.plist is refused at upload (ITMS-90474).
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
