@@ -9,8 +9,19 @@ import { Pressable, StyleSheet, Text, TextInput, View, type KeyboardTypeOptions 
 
 import { MIN_TAP_TARGET, colors, radius, spacing } from '@facetype/design-system';
 
-import { countryName, searchCountries } from '../countries.ts';
+import { countryName, filterCountries } from '../countries.ts';
+import {
+  ARABIC_MONTHS,
+  clampDay,
+  daysInMonth,
+  formatBirthDate,
+  toIso,
+  wheelStart,
+  yearsDescending,
+  type Ymd,
+} from '../datePicker.ts';
 import { s } from '../strings.ts';
+import { PickerSheet, Wheel } from './wheel.tsx';
 
 export const ui = StyleSheet.create({
   label: { fontSize: 15, fontWeight: '600', color: colors.text, textAlign: 'right', writingDirection: 'rtl' },
@@ -183,7 +194,38 @@ export function LinkButton({ label, onPress }: { label: string; onPress: () => v
   );
 }
 
-/** Country by Arabic name or ISO code; the stored value is the ISO alpha-2 code. */
+/** The tappable box that shows the saved choice (or a prompt) and opens a picker sheet. */
+function PickerBox({
+  label,
+  text,
+  placeholder,
+  error,
+  onPress,
+}: {
+  label: string;
+  text: string;
+  placeholder: string;
+  error?: string | null;
+  onPress: () => void;
+}): ReactNode {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityValue={{ text: text || placeholder }}
+      accessibilityHint={error ?? undefined}
+      onPress={onPress}
+      style={[ui.input, { justifyContent: 'center' }, error ? ui.inputError : null]}
+    >
+      <Text style={[ui.text, !text && { color: colors.muted }]}>{text || placeholder}</Text>
+    </Pressable>
+  );
+}
+
+/**
+ * Country by scroll wheel over the whole ISO list, with a search box above the wheel to narrow it. The stored
+ * value is the ISO alpha-2 code. Nothing is preselected: the programme is worldwide.
+ */
 export function CountryField({
   label,
   value,
@@ -195,39 +237,109 @@ export function CountryField({
   onChange: (code: string) => void;
   error?: string | null;
 }): ReactNode {
+  const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const matches = searchCountries(query);
+  const [draft, setDraft] = useState(value);
+  const list = filterCountries(query);
+  const index = Math.max(0, list.findIndex((country) => country.code === draft));
+
+  const show = () => {
+    setQuery('');
+    setDraft(value);
+    setOpen(true);
+  };
+  const done = () => {
+    const chosen = list[index];
+    if (chosen) onChange(chosen.code);
+    setOpen(false);
+  };
+
   return (
     <View style={ui.field}>
       <Text style={ui.label}>{label}</Text>
-      {value ? <Text style={ui.text}>{s('setup.country_selected', { name: countryName(value) })}</Text> : null}
-      <TextInput
-        accessibilityLabel={`${label} — ${s('setup.country_search')}`}
-        value={query}
-        onChangeText={setQuery}
-        placeholder={s('setup.country_search')}
-        autoCorrect={false}
-        style={[ui.input, error ? ui.inputError : null]}
-      />
-      {matches.length > 0 ? (
-        <View style={ui.row}>
-          {matches.map((country) => (
-            <Pressable
-              key={country.code}
-              accessibilityRole="button"
-              accessibilityLabel={country.name}
-              onPress={() => {
-                onChange(country.code);
-                setQuery('');
-              }}
-              style={[ui.choice, country.code === value && ui.choiceOn]}
-            >
-              <Text style={ui.choiceText}>{country.name}</Text>
-            </Pressable>
-          ))}
-        </View>
-      ) : null}
+      <PickerBox label={label} text={countryName(value)} placeholder={s('picker.choose_country')} error={error} onPress={show} />
       {error ? <Text style={ui.error}>{error}</Text> : null}
+      <PickerSheet visible={open} title={label} canConfirm={list.length > 0} onCancel={() => setOpen(false)} onDone={done}>
+        <TextInput
+          accessibilityLabel={`${label} — ${s('setup.country_search')}`}
+          value={query}
+          onChangeText={setQuery}
+          placeholder={s('setup.country_search')}
+          autoCorrect={false}
+          style={ui.input}
+        />
+        {list.length > 0 ? (
+          <Wheel
+            key={query}
+            label={label}
+            items={list.map((country) => country.name)}
+            index={index}
+            onChange={(i) => setDraft(list[i]?.code ?? '')}
+          />
+        ) : (
+          <Text style={ui.hint}>{s('picker.no_country')}</Text>
+        )}
+      </PickerSheet>
+    </View>
+  );
+}
+
+/** Birth date by three wheels (day, month, year), right to left. The stored value is ISO `YYYY-MM-DD`. */
+export function DateField({
+  label,
+  value,
+  onChange,
+  error,
+  today = new Date(),
+}: {
+  label: string;
+  value: string;
+  onChange: (iso: string) => void;
+  error?: string | null;
+  today?: Date;
+}): ReactNode {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<Ymd>(() => wheelStart(value, today));
+  const years = yearsDescending(today);
+  const days = Array.from({ length: daysInMonth(draft.y, draft.m) }, (_, i) => String(i + 1));
+
+  const show = () => {
+    setDraft(wheelStart(value, today));
+    setOpen(true);
+  };
+  const done = () => {
+    onChange(toIso(clampDay(draft)));
+    setOpen(false);
+  };
+
+  return (
+    <View style={ui.field}>
+      <Text style={ui.label}>{label}</Text>
+      <PickerBox label={label} text={formatBirthDate(value)} placeholder={s('picker.choose_date')} error={error} onPress={show} />
+      {error ? <Text style={ui.error}>{error}</Text> : null}
+      <PickerSheet
+        visible={open}
+        title={label}
+        onCancel={() => setOpen(false)}
+        onDone={done}
+        columnLabels={[s('picker.day'), s('picker.month'), s('picker.year')]}
+      >
+        <View style={{ flexDirection: 'row', gap: spacing[2] }}>
+          <Wheel label={s('picker.day')} items={days} index={draft.d - 1} onChange={(i) => setDraft((d) => ({ ...d, d: i + 1 }))} />
+          <Wheel
+            label={s('picker.month')}
+            items={ARABIC_MONTHS}
+            index={draft.m - 1}
+            onChange={(i) => setDraft((d) => clampDay({ ...d, m: i + 1 }))}
+          />
+          <Wheel
+            label={s('picker.year')}
+            items={years.map(String)}
+            index={Math.max(0, years.indexOf(draft.y))}
+            onChange={(i) => setDraft((d) => clampDay({ ...d, y: years[i] ?? d.y }))}
+          />
+        </View>
+      </PickerSheet>
     </View>
   );
 }

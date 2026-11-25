@@ -26,7 +26,7 @@ import {
   type ProfileValues,
   type Sex,
 } from '../validation.ts';
-import { Choices, CountryField, Field, ui } from './ui.tsx';
+import { Choices, CountryField, DateField, Field, ui } from './ui.tsx';
 
 export type SetupServerError =
   | { kind: 'identifier_taken' }
@@ -139,16 +139,7 @@ export function ProfileSetupScreen({
         ltr
       />
       <Choices label={s('setup.sex')} options={sexOptions} value={form.sex} onChange={set('sex')} error={fieldError('sex')} />
-      <Field
-        label={s('setup.birth_date')}
-        value={form.birth_date}
-        onChange={set('birth_date')}
-        error={fieldError('birth_date')}
-        hint={s('setup.birth_date_hint')}
-        placeholder="1995-04-23"
-        keyboardType="numbers-and-punctuation"
-        ltr
-      />
+      <DateField label={s('setup.birth_date')} value={form.birth_date} onChange={set('birth_date')} error={fieldError('birth_date')} />
       <CountryField label={s('setup.nationality')} value={form.nationality} onChange={set('nationality')} error={fieldError('nationality')} />
       <Text style={ui.hint}>{s('setup.unverified_note')}</Text>
 

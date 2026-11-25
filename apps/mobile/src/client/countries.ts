@@ -51,3 +51,9 @@ export function searchCountries(query: string, limit = 8): Country[] {
   );
   return (exact ? [exact, ...matches] : matches).slice(0, limit);
 }
+
+/** The country wheel's list: every country when the query is empty, else the matches (no limit), exact code first. */
+export function filterCountries(query: string): Country[] {
+  if (!fold(query)) return [...COUNTRIES];
+  return searchCountries(query, COUNTRIES.length);
+}
