@@ -31,6 +31,8 @@ jobs:
           [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
           unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
           "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+          grep -q applesignin FaceType/FaceType.entitlements || { echo "entitlements file lost Sign in with Apple"; exit 1; }
+          grep -q UILaunchScreen FaceType/Info.plist || { echo "Info.plist was rewritten"; exit 1; }
           mkdir -p "$RUNNER_TEMP/xcodeproj" && cp -R FaceType.xcodeproj "$RUNNER_TEMP/xcodeproj/"
       - uses: actions/upload-artifact@v4
         with:
