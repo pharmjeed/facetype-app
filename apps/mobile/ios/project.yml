@@ -28,6 +28,9 @@ targets:
   FaceType:
     type: application
     platform: iOS
+    # A shared scheme in xcshareddata, so hosts that do not auto-create schemes
+    # (EAS Build reads the project before building) find `FaceType`.
+    scheme: {}
     sources:
       - path: FaceType
         excludes:
