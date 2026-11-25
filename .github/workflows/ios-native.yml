@@ -65,8 +65,11 @@ jobs:
         run: |
           set -euo pipefail
           app=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
+          echo "--- built Info.plist ---"; plutil -p "$app/Info.plist" | head -80
           xcrun simctl install "$SIM" "$app"
           mkdir -p shots
+          # The first launch after an install is slower; warm it up before the captures.
+          xcrun simctl launch "$SIM" ai.facetype -FTDemo signin -FTLang ar; sleep 10
           for lang in ar en; do
             for screen in signin setup setup-errors profile tips; do
               xcrun simctl terminate "$SIM" ai.facetype || true
