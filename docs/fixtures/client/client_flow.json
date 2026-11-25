@@ -1,0 +1,1063 @@
+{
+ "needs_setup": [
+  {
+   "me": null,
+   "needs_setup": true,
+   "expected": true
+  },
+  {
+   "me": {
+    "account": {
+     "id": "acc-1",
+     "provider": "google",
+     "state": "active",
+     "created_at": "2026-11-25T00:00:00Z"
+    },
+    "profile": {
+     "full_name": "x"
+    },
+    "consent": {
+     "store_accepted": true
+    },
+    "captures": {
+     "count": 0,
+     "last_at": null,
+     "latest_status": null,
+     "next_repeat_due_at": null
+    },
+    "personality": {
+     "status": "unavailable"
+    }
+   },
+   "needs_setup": false,
+   "expected": false
+  },
+  {
+   "me": {
+    "account": {
+     "id": "acc-1",
+     "provider": "google",
+     "state": "active",
+     "created_at": "2026-11-25T00:00:00Z"
+    },
+    "profile": null,
+    "consent": {
+     "store_accepted": true
+    },
+    "captures": {
+     "count": 0,
+     "last_at": null,
+     "latest_status": null,
+     "next_repeat_due_at": null
+    },
+    "personality": {
+     "status": "unavailable"
+    }
+   },
+   "needs_setup": true,
+   "expected": true
+  },
+  {
+   "me": {
+    "account": {
+     "id": "acc-1",
+     "provider": "google",
+     "state": "active",
+     "created_at": "2026-11-25T00:00:00Z"
+    },
+    "profile": {
+     "full_name": "x"
+    },
+    "consent": null,
+    "captures": {
+     "count": 0,
+     "last_at": null,
+     "latest_status": null,
+     "next_repeat_due_at": null
+    },
+    "personality": {
+     "status": "unavailable"
+    }
+   },
+   "needs_setup": true,
+   "expected": true
+  }
+ ],
+ "sequences": [
+  {
+   "name": "boot_no_session",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "BOOT_NO_SESSION"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "sign_in_new_user",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "BOOT_NO_SESSION"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "google"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": "google",
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SESSION_READY",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": null,
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profileSetup",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": null,
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "PROFILE_SAVED",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "OPEN_CAPTURE"
+     },
+     "state": {
+      "screen": "capture",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "CLOSE_CAPTURE"
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "sign_in_failed_then_retry",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "BOOT_NO_SESSION"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "apple"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": "apple",
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_FAILED",
+      "error": "cancelled"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": "cancelled",
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "google"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": "google",
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SESSION_READY",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "busy_ignores_second_start",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "BOOT_NO_SESSION"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "apple"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": "apple",
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "google"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": "apple",
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "consent_missing",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "SESSION_READY",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": null,
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profileSetup",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": null,
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "OPEN_CAPTURE"
+     },
+     "state": {
+      "screen": "profileSetup",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": null,
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "PROFILE_SAVED",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": null,
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profileSetup",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": null,
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "PROFILE_SAVED",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "refresh_drops_to_setup",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "SESSION_READY",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "ME_REFRESHED",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": null,
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profileSetup",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": null,
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "session_expired",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "SESSION_READY",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "profile",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "OPEN_CAPTURE"
+     },
+     "state": {
+      "screen": "capture",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      },
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    },
+    {
+     "event": {
+      "type": "SIGNED_OUT",
+      "reason": "session_expired"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": "session_expired",
+      "configError": null
+     }
+    }
+   ]
+  },
+  {
+   "name": "config_error",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "CONFIG_ERROR",
+      "code": "API_URL_INVALID"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": "API_URL_INVALID"
+     }
+    },
+    {
+     "event": {
+      "type": "SIGN_IN_STARTED",
+      "provider": "google"
+     },
+     "state": {
+      "screen": "signedOut",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": "API_URL_INVALID"
+     }
+    }
+   ]
+  },
+  {
+   "name": "refresh_ignored_on_boot",
+   "initial": {
+    "screen": "boot",
+    "me": null,
+    "signInBusy": null,
+    "signInError": null,
+    "notice": null,
+    "configError": null
+   },
+   "steps": [
+    {
+     "event": {
+      "type": "ME_REFRESHED",
+      "me": {
+       "account": {
+        "id": "acc-1",
+        "provider": "google",
+        "state": "active",
+        "created_at": "2026-11-25T00:00:00Z"
+       },
+       "profile": {
+        "full_name": "x"
+       },
+       "consent": {
+        "store_accepted": true
+       },
+       "captures": {
+        "count": 0,
+        "last_at": null,
+        "latest_status": null,
+        "next_repeat_due_at": null
+       },
+       "personality": {
+        "status": "unavailable"
+       }
+      }
+     },
+     "state": {
+      "screen": "boot",
+      "me": null,
+      "signInBusy": null,
+      "signInError": null,
+      "notice": null,
+      "configError": null
+     }
+    }
+   ]
+  }
+ ]
+}

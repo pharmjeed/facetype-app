@@ -1,0 +1,455 @@
+{
+ "today": "2026-11-25",
+ "min_age_years": 18,
+ "default_calling_code": "+966",
+ "full_name": [
+  {
+   "input": "سارة محمد العلي",
+   "ok": true,
+   "value": "سارة محمد العلي"
+  },
+  {
+   "input": " محمد  أحمد ",
+   "ok": true,
+   "value": "محمد أحمد"
+  },
+  {
+   "input": "Mary-Jane O’Neil",
+   "ok": true,
+   "value": "Mary-Jane O'Neil"
+  },
+  {
+   "input": "José Álvarez",
+   "ok": true,
+   "value": "José Álvarez"
+  },
+  {
+   "input": "A",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "ab",
+   "ok": true,
+   "value": "ab"
+  },
+  {
+   "input": "م",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "مُحَمَّد",
+   "ok": true,
+   "value": "مُحَمَّد"
+  },
+  {
+   "input": "Ali2",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "Dr. Smith",
+   "ok": true,
+   "value": "Dr. Smith"
+  },
+  {
+   "input": "  ",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "سالم-",
+   "ok": true,
+   "value": "سالم-"
+  },
+  {
+   "input": "D'Arcy",
+   "ok": true,
+   "value": "D'Arcy"
+  },
+  {
+   "input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "ﻻ",
+   "ok": false,
+   "error": "err.full_name"
+  },
+  {
+   "input": "ـمحمد",
+   "ok": false,
+   "error": "err.full_name"
+  }
+ ],
+ "id_number": [
+  {
+   "country": "SA",
+   "type": "national_id",
+   "input": "1000000008",
+   "ok": true,
+   "value": "1000000008"
+  },
+  {
+   "country": "SA",
+   "type": "national_id",
+   "input": "1000000009",
+   "ok": false,
+   "error": "err.id_checksum"
+  },
+  {
+   "country": "SA",
+   "type": "national_id",
+   "input": "2000000006",
+   "ok": false,
+   "error": "err.sa_national_id"
+  },
+  {
+   "country": "SA",
+   "type": "national_id",
+   "input": "١٠٠٠٠٠٠٠٠٨",
+   "ok": true,
+   "value": "1000000008"
+  },
+  {
+   "country": "SA",
+   "type": "national_id",
+   "input": "1 000 000 008",
+   "ok": true,
+   "value": "1000000008"
+  },
+  {
+   "country": "SA",
+   "type": "residence_id",
+   "input": "2000000006",
+   "ok": true,
+   "value": "2000000006"
+  },
+  {
+   "country": "SA",
+   "type": "residence_id",
+   "input": "2000000007",
+   "ok": false,
+   "error": "err.id_checksum"
+  },
+  {
+   "country": "SA",
+   "type": "residence_id",
+   "input": "1000000008",
+   "ok": false,
+   "error": "err.sa_residence_id"
+  },
+  {
+   "country": "SA",
+   "type": "passport",
+   "input": "a1234567",
+   "ok": true,
+   "value": "A1234567"
+  },
+  {
+   "country": "EG",
+   "type": "national_id",
+   "input": "29001011234567",
+   "ok": true,
+   "value": "29001011234567"
+  },
+  {
+   "country": "EG",
+   "type": "passport",
+   "input": "A12",
+   "ok": false,
+   "error": "err.id_generic"
+  },
+  {
+   "country": "US",
+   "type": "passport",
+   "input": "X-12.345_6",
+   "ok": true,
+   "value": "X123456"
+  },
+  {
+   "country": "",
+   "type": null,
+   "input": "123456",
+   "ok": true,
+   "value": "123456"
+  },
+  {
+   "country": "ZZ",
+   "type": "national_id",
+   "input": "ABCDE",
+   "ok": true,
+   "value": "ABCDE"
+  }
+ ],
+ "phone": [
+  {
+   "input": "0512345678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "512345678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "966512345678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "+966512345678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "00966512345678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "٠٥١٢٣٤٥٦٧٨",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "+20 100 123 4567",
+   "ok": true,
+   "value": "+201001234567"
+  },
+  {
+   "input": "0412345678",
+   "ok": false,
+   "error": "err.phone"
+  },
+  {
+   "input": "+9665123",
+   "ok": false,
+   "error": "err.phone"
+  },
+  {
+   "input": "+1 (415) 555-0100",
+   "ok": true,
+   "value": "+14155550100"
+  },
+  {
+   "input": "12345",
+   "ok": false,
+   "error": "err.phone"
+  },
+  {
+   "input": "+0123456789",
+   "ok": false,
+   "error": "err.phone"
+  },
+  {
+   "input": "05123456",
+   "ok": false,
+   "error": "err.phone"
+  },
+  {
+   "input": "+966 51 234 5678",
+   "ok": true,
+   "value": "+966512345678"
+  },
+  {
+   "input": "05-123-45678",
+   "ok": true,
+   "value": "+966512345678"
+  }
+ ],
+ "birth_date": [
+  {
+   "input": "1995-12-19",
+   "ok": true,
+   "value": "1995-12-19"
+  },
+  {
+   "input": "1995-12-1",
+   "ok": true,
+   "value": "1995-12-01"
+  },
+  {
+   "input": "1995/12/19",
+   "ok": true,
+   "value": "1995-12-19"
+  },
+  {
+   "input": "1995.12.19",
+   "ok": true,
+   "value": "1995-12-19"
+  },
+  {
+   "input": "2000-02-29",
+   "ok": true,
+   "value": "2000-02-29"
+  },
+  {
+   "input": "1999-02-29",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "1899-12-31",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "1900-01-01",
+   "ok": true,
+   "value": "1900-01-01"
+  },
+  {
+   "input": "2008-11-25",
+   "ok": true,
+   "value": "2008-11-25"
+  },
+  {
+   "input": "2008-11-26",
+   "ok": false,
+   "error": "err.underage"
+  },
+  {
+   "input": "2026-11-26",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "1890-01-01",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "19-12-1995",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "",
+   "ok": false,
+   "error": "err.birth_date"
+  },
+  {
+   "input": "١٩٩٥-١٢-١٩",
+   "ok": true,
+   "value": "1995-12-19"
+  },
+  {
+   "input": "1995-13-01",
+   "ok": false,
+   "error": "err.birth_date"
+  }
+ ],
+ "country": [
+  {
+   "input": "SA",
+   "ok": true,
+   "value": "SA"
+  },
+  {
+   "input": "sa",
+   "ok": true,
+   "value": "SA"
+  },
+  {
+   "input": "XX",
+   "ok": false,
+   "error": "err.country"
+  },
+  {
+   "input": "S",
+   "ok": false,
+   "error": "err.country"
+  },
+  {
+   "input": "",
+   "ok": false,
+   "error": "err.country"
+  }
+ ],
+ "luhn": [
+  {
+   "input": "1000000008",
+   "valid": true
+  },
+  {
+   "input": "1000000009",
+   "valid": false
+  },
+  {
+   "input": "79927398713",
+   "valid": true
+  },
+  {
+   "input": "2000000006",
+   "valid": true
+  }
+ ],
+ "profile": [
+  {
+   "form": {
+    "full_name": "سارة محمد العلي",
+    "id_issuing_country": "SA",
+    "id_document_type": "national_id",
+    "id_number": "1000000008",
+    "phone": "0512345678",
+    "sex": "male",
+    "birth_date": "1995-12-19",
+    "nationality": "SA"
+   },
+   "ok": true,
+   "value": {
+    "full_name": "سارة محمد العلي",
+    "id_issuing_country": "SA",
+    "id_document_type": "national_id",
+    "id_number": "1000000008",
+    "phone": "+966512345678",
+    "sex": "male",
+    "birth_date": "1995-12-19",
+    "nationality": "SA"
+   }
+  },
+  {
+   "form": {
+    "full_name": "",
+    "id_issuing_country": "",
+    "id_document_type": null,
+    "id_number": "",
+    "phone": "",
+    "sex": null,
+    "birth_date": "",
+    "nationality": ""
+   },
+   "ok": false,
+   "errors": {
+    "full_name": "err.full_name",
+    "id_issuing_country": "err.country",
+    "id_document_type": "err.id_type",
+    "id_number": "err.id_generic",
+    "phone": "err.phone",
+    "sex": "err.sex",
+    "birth_date": "err.birth_date",
+    "nationality": "err.nationality"
+   }
+  },
+  {
+   "form": {
+    "full_name": "Jane Doe",
+    "id_issuing_country": "GB",
+    "id_document_type": "passport",
+    "id_number": "AB12345",
+    "phone": "+447700900123",
+    "sex": "female",
+    "birth_date": "2010-01-01",
+    "nationality": "GB"
+   },
+   "ok": false,
+   "errors": {
+    "birth_date": "err.underage"
+   }
+  }
+ ]
+}

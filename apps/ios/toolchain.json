@@ -1,0 +1,19 @@
+{
+  "rationale": [
+    "The generated .pbxproj and the Pods tree are build artifacts, so what makes an iOS build reproducible is not a committed project file -- it is pinning the tools that produce them. Before this file the CI job ran `brew install xcodegen`, which resolves to whatever Homebrew happens to be serving that day, and `pod install` against whatever CocoaPods the runner image shipped. Two builds of the same commit could therefore differ in both.",
+    "xcodegen is pinned by version AND by content: the release artifact's SHA-256 is recorded here and verified before the archive is unpacked, so a moved or replaced tag fails the build loudly instead of silently changing the project generator. The digest was measured by downloading the artifact twice and confirming both copies hashed identically; it is a measurement, not a transcription.",
+    "cocoapods is pinned by an exact requirement in ios/Gemfile, which CI installs with bundler and invokes through `bundle exec`.",
+    "What is NOT pinned, and must not be pretended otherwise: there is no Gemfile.lock and no Podfile.lock in this repository. Both can only be produced by resolving on a machine with the real toolchain, and no Mac was available to the lane that added this file. Committing either one without generating it would be fabricating a resolution. Until they exist, CocoaPods' own transitive gems and the pod dependency graph remain unlocked -- pinning the pod *tool* narrows the drift, it does not eliminate it."
+  ],
+  "xcodegen": {
+    "version": "2.43.0",
+    "url": "https://github.com/yonaskolb/XcodeGen/releases/download/2.43.0/xcodegen.zip",
+    "sha256": "a4847ed77d3341a4d24049bc4424a3babca4c94ff1dcaaee923eaca2b32c678f",
+    "bytes": 4275931,
+    "binaryPath": "xcodegen/bin/xcodegen"
+  },
+  "cocoapods": {
+    "version": "1.16.2",
+    "declaredIn": "Gemfile"
+  }
+}

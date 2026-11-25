@@ -1,0 +1,125 @@
+{
+ "protocol_version": "capture-spec-v2",
+ "config": {
+  "version": "client-gate-1",
+  "stream": {
+   "preferredSizes": [
+    [
+     3840,
+     2160
+    ],
+    [
+     1920,
+     1080
+    ]
+   ],
+   "minSize": [
+    1280,
+    720
+   ],
+   "preferredMinFps": 15,
+   "jpegQuality": 95
+  },
+  "faces": {
+   "maxFaces": 2
+  },
+  "pose": {
+   "enterDeg": 8,
+   "exitDeg": 12,
+   "rollMessageDeg": 15
+  },
+  "distance": {
+   "enterCm": [
+    35,
+    60
+   ],
+   "exitCm": [
+    32,
+    65
+   ],
+   "irisMm": 11.7
+  },
+  "size": {
+   "minFaceWidthPx": 220,
+   "preferredFaceWidthPx": 350,
+   "maxFaceWidthFrac": 0.7
+  },
+  "centre": {
+   "eyeMidX": [
+    0.4,
+    0.6
+   ],
+   "faceCentreY": [
+    0.35,
+    0.65
+   ],
+   "edgeMarginFrac": 0.05
+  },
+  "light": {
+   "maxClipFrac": 0.01,
+   "maxCrushFrac": 0.02,
+   "cheekRatio": [
+    0.5,
+    2
+   ]
+  },
+  "expression": {
+   "maxSmile": 0.3,
+   "maxJawOpen": 0.05
+  },
+  "eyes": {
+   "maxBlink": 0.5,
+   "minRelativeOpening": 0.7
+  },
+  "sharpness": {
+   "minRelativeToBurstMax": 0.5
+  },
+  "burst": {
+   "targetFrames": 10,
+   "maxDurationMs": 60000,
+   "minSpacingMs": 66,
+   "minCoverageMs": 1000,
+   "holdMs": 500
+  },
+  "labels": {
+   "stream.preferredSizes": "default",
+   "stream.minSize": "default",
+   "stream.preferredMinFps": "default",
+   "stream.jpegQuality": "default",
+   "faces.maxFaces": "default",
+   "pose.enterDeg": "default",
+   "pose.exitDeg": "default",
+   "pose.rollMessageDeg": "default",
+   "distance.enterCm": "default",
+   "distance.exitCm": "default",
+   "distance.irisMm": "default",
+   "size.minFaceWidthPx": "validated",
+   "size.preferredFaceWidthPx": "default",
+   "size.maxFaceWidthFrac": "default",
+   "centre.eyeMidX": "default",
+   "centre.faceCentreY": "default",
+   "centre.edgeMarginFrac": "default",
+   "light.maxClipFrac": "default",
+   "light.maxCrushFrac": "default",
+   "light.cheekRatio": "default",
+   "expression.maxSmile": "research",
+   "expression.maxJawOpen": "research",
+   "eyes.maxBlink": "default",
+   "eyes.minRelativeOpening": "default",
+   "sharpness.minRelativeToBurstMax": "default",
+   "burst.targetFrames": "owner",
+   "burst.maxDurationMs": "owner",
+   "burst.minSpacingMs": "default",
+   "burst.minCoverageMs": "default",
+   "burst.holdMs": "default"
+  }
+ },
+ "canonical_json": "{\"burst\":{\"holdMs\":500,\"maxDurationMs\":60000,\"minCoverageMs\":1000,\"minSpacingMs\":66,\"targetFrames\":10},\"centre\":{\"edgeMarginFrac\":0.05,\"eyeMidX\":[0.4,0.6],\"faceCentreY\":[0.35,0.65]},\"distance\":{\"enterCm\":[35,60],\"exitCm\":[32,65],\"irisMm\":11.7},\"expression\":{\"maxJawOpen\":0.05,\"maxSmile\":0.3},\"eyes\":{\"maxBlink\":0.5,\"minRelativeOpening\":0.7},\"faces\":{\"maxFaces\":2},\"labels\":{\"burst.holdMs\":\"default\",\"burst.maxDurationMs\":\"owner\",\"burst.minCoverageMs\":\"default\",\"burst.minSpacingMs\":\"default\",\"burst.targetFrames\":\"owner\",\"centre.edgeMarginFrac\":\"default\",\"centre.eyeMidX\":\"default\",\"centre.faceCentreY\":\"default\",\"distance.enterCm\":\"default\",\"distance.exitCm\":\"default\",\"distance.irisMm\":\"default\",\"expression.maxJawOpen\":\"research\",\"expression.maxSmile\":\"research\",\"eyes.maxBlink\":\"default\",\"eyes.minRelativeOpening\":\"default\",\"faces.maxFaces\":\"default\",\"light.cheekRatio\":\"default\",\"light.maxClipFrac\":\"default\",\"light.maxCrushFrac\":\"default\",\"pose.enterDeg\":\"default\",\"pose.exitDeg\":\"default\",\"pose.rollMessageDeg\":\"default\",\"sharpness.minRelativeToBurstMax\":\"default\",\"size.maxFaceWidthFrac\":\"default\",\"size.minFaceWidthPx\":\"validated\",\"size.preferredFaceWidthPx\":\"default\",\"stream.jpegQuality\":\"default\",\"stream.minSize\":\"default\",\"stream.preferredMinFps\":\"default\",\"stream.preferredSizes\":\"default\"},\"light\":{\"cheekRatio\":[0.5,2],\"maxClipFrac\":0.01,\"maxCrushFrac\":0.02},\"pose\":{\"enterDeg\":8,\"exitDeg\":12,\"rollMessageDeg\":15},\"sharpness\":{\"minRelativeToBurstMax\":0.5},\"size\":{\"maxFaceWidthFrac\":0.7,\"minFaceWidthPx\":220,\"preferredFaceWidthPx\":350},\"stream\":{\"jpegQuality\":95,\"minSize\":[1280,720],\"preferredMinFps\":15,\"preferredSizes\":[[3840,2160],[1920,1080]]},\"version\":\"client-gate-1\"}",
+ "sha256": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+ "next_burst_options": {
+  "targetFrames": 10,
+  "maxDurationMs": 60000,
+  "minSpacingMs": 66,
+  "minCoverageMs": 1000
+ }
+}

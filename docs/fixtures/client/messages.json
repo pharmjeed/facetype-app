@@ -1,0 +1,408 @@
+{
+ "api_error_keys": {
+  "FT-CLIENT-AUTH-UNCONFIGURED": "signin.server_unconfigured",
+  "FT-CLIENT-NONCE-INVALID": "apierr.nonce_invalid",
+  "FT-CLIENT-ACCOUNT-WITHDRAWING": "apierr.account_withdrawing",
+  "FT-CLIENT-PROFILE-INVALID": "setup.fix_fields",
+  "FT-CLIENT-ID-TAKEN": "apierr.id_taken",
+  "FT-CLIENT-PROFILE-REQUIRED": "apierr.profile_required",
+  "FT-CLIENT-CAPTURE-NOT-FOUND": "apierr.capture_not_found",
+  "FT-CLIENT-CAPTURE-CONFLICT": "apierr.capture_conflict",
+  "FT-CLIENT-CAPTURE-STATE": "apierr.capture_state",
+  "FT-CLIENT-FRAME-IMMUTABLE": "apierr.frame_immutable",
+  "FT-CLIENT-UPLOAD-MISSING": "apierr.upload_missing",
+  "FT-CLIENT-UPLOAD-MISMATCH": "apierr.upload_mismatch",
+  "FT-PRIV-003": "apierr.consent_required",
+  "FT-AUTH-001": "common.session_expired",
+  "FT-AUTH-002": "signin.server_unconfigured",
+  "FT-AUTH-003": "common.session_expired",
+  "FT-SYS-001": "apierr.rate_limited",
+  "FT-SYS-002": "apierr.server"
+ },
+ "api_error_key": [
+  {
+   "code": "FT-CLIENT-ID-TAKEN",
+   "kind": null,
+   "key": "apierr.id_taken"
+  },
+  {
+   "code": "FT-SYS-001",
+   "kind": null,
+   "key": "apierr.rate_limited"
+  },
+  {
+   "code": null,
+   "kind": "network",
+   "key": "common.network"
+  },
+  {
+   "code": null,
+   "kind": "session_expired",
+   "key": "common.session_expired"
+  },
+  {
+   "code": null,
+   "kind": "unauthorized",
+   "key": "common.session_expired"
+  },
+  {
+   "code": null,
+   "kind": "rate_limited",
+   "key": "apierr.rate_limited"
+  },
+  {
+   "code": null,
+   "kind": "server",
+   "key": "apierr.server"
+  },
+  {
+   "code": "UNKNOWN-CODE",
+   "kind": "validation",
+   "key": null
+  },
+  {
+   "code": null,
+   "kind": null,
+   "key": null
+  }
+ ],
+ "profile_field_error_key": [
+  {
+   "field": "birth_date",
+   "reason": "under_18",
+   "key": "err.underage"
+  },
+  {
+   "field": "birth_date",
+   "reason": "invalid",
+   "key": "err.birth_date"
+  },
+  {
+   "field": "id_number",
+   "reason": "checksum",
+   "key": "err.id_checksum"
+  },
+  {
+   "field": "id_number",
+   "reason": "format",
+   "key": "err.id_generic"
+  },
+  {
+   "field": "phone",
+   "reason": "invalid",
+   "key": "err.phone"
+  },
+  {
+   "field": "full_name",
+   "reason": "x",
+   "key": "err.full_name"
+  },
+  {
+   "field": "nationality",
+   "reason": "x",
+   "key": "err.nationality"
+  },
+  {
+   "field": "id_issuing_country",
+   "reason": "x",
+   "key": "err.country"
+  },
+  {
+   "field": "id_document_type",
+   "reason": "x",
+   "key": "err.id_type"
+  },
+  {
+   "field": "sex",
+   "reason": "x",
+   "key": "err.sex"
+  },
+  {
+   "field": "unknown_field",
+   "reason": "x",
+   "key": null
+  }
+ ],
+ "verdict_reason_key": [
+  {
+   "reason": "upload_integrity",
+   "key": "reason.upload_integrity"
+  },
+  {
+   "reason": "glasses_detected",
+   "key": "reason.glasses"
+  },
+  {
+   "reason": "face_covered",
+   "key": "reason.face_covered"
+  },
+  {
+   "reason": "occluded",
+   "key": "reason.face_covered"
+  },
+  {
+   "reason": "mask",
+   "key": "reason.face_covered"
+  },
+  {
+   "reason": "second_face",
+   "key": "reason.second_face"
+  },
+  {
+   "reason": "multiple_faces",
+   "key": "reason.second_face"
+  },
+  {
+   "reason": "too_few_frames",
+   "key": "reason.too_few_frames"
+  },
+  {
+   "reason": "frames_short",
+   "key": "reason.too_few_frames"
+  },
+  {
+   "reason": "low_quality",
+   "key": "reason.quality"
+  },
+  {
+   "reason": "blur",
+   "key": "reason.quality"
+  },
+  {
+   "reason": "light",
+   "key": "reason.quality"
+  },
+  {
+   "reason": "sharpness",
+   "key": "reason.quality"
+  },
+  {
+   "reason": "whatever",
+   "key": "reason.generic"
+  }
+ ],
+ "more_reason_key": [
+  {
+   "reason": "remove_glasses",
+   "key": "more.remove_glasses"
+  },
+  {
+   "reason": "face_camera",
+   "key": "more.face_camera"
+  },
+  {
+   "reason": "neutral_face",
+   "key": "more.neutral_face"
+  },
+  {
+   "reason": "open_eyes",
+   "key": "more.open_eyes"
+  },
+  {
+   "reason": "hold_still",
+   "key": "more.hold_still"
+  },
+  {
+   "reason": "one_face",
+   "key": "more.one_face"
+  },
+  {
+   "reason": "same_person",
+   "key": "more.same_person"
+  },
+  {
+   "reason": "more_photos",
+   "key": "more.more_photos"
+  },
+  {
+   "reason": "other",
+   "key": "more.more_photos"
+  },
+  {
+   "reason": null,
+   "key": "more.more_photos"
+  }
+ ],
+ "reject_reason_key": [
+  {
+   "reason": "oneFace",
+   "current": "move_closer",
+   "key": "guide.multiple_faces"
+  },
+  {
+   "reason": "oneFace",
+   "current": "move_back",
+   "key": "guide.multiple_faces"
+  },
+  {
+   "reason": "oneFace",
+   "current": "centre",
+   "key": "guide.multiple_faces"
+  },
+  {
+   "reason": "distanceOrSize",
+   "current": "move_closer",
+   "key": "guide.move_closer"
+  },
+  {
+   "reason": "distanceOrSize",
+   "current": "move_back",
+   "key": "guide.move_back"
+  },
+  {
+   "reason": "distanceOrSize",
+   "current": "centre",
+   "key": "guide.move_closer"
+  },
+  {
+   "reason": "centred",
+   "current": "move_closer",
+   "key": "guide.centre"
+  },
+  {
+   "reason": "centred",
+   "current": "move_back",
+   "key": "guide.centre"
+  },
+  {
+   "reason": "centred",
+   "current": "centre",
+   "key": "guide.centre"
+  },
+  {
+   "reason": "facing",
+   "current": "move_closer",
+   "key": "guide.look_straight"
+  },
+  {
+   "reason": "facing",
+   "current": "move_back",
+   "key": "guide.look_straight"
+  },
+  {
+   "reason": "facing",
+   "current": "centre",
+   "key": "guide.look_straight"
+  },
+  {
+   "reason": "light",
+   "current": "move_closer",
+   "key": "guide.light"
+  },
+  {
+   "reason": "light",
+   "current": "move_back",
+   "key": "guide.light"
+  },
+  {
+   "reason": "light",
+   "current": "centre",
+   "key": "guide.light"
+  },
+  {
+   "reason": "expression",
+   "current": "move_closer",
+   "key": "guide.no_smile"
+  },
+  {
+   "reason": "expression",
+   "current": "move_back",
+   "key": "guide.no_smile"
+  },
+  {
+   "reason": "expression",
+   "current": "centre",
+   "key": "guide.no_smile"
+  },
+  {
+   "reason": "eyes",
+   "current": "move_closer",
+   "key": "guide.eyes"
+  },
+  {
+   "reason": "eyes",
+   "current": "move_back",
+   "key": "guide.eyes"
+  },
+  {
+   "reason": "eyes",
+   "current": "centre",
+   "key": "guide.eyes"
+  },
+  {
+   "reason": "sharp",
+   "current": "move_closer",
+   "key": "guide.hold_still"
+  },
+  {
+   "reason": "sharp",
+   "current": "move_back",
+   "key": "guide.hold_still"
+  },
+  {
+   "reason": "sharp",
+   "current": "centre",
+   "key": "guide.hold_still"
+  },
+  {
+   "reason": "effects_active",
+   "current": "move_closer",
+   "key": "burst.effects"
+  },
+  {
+   "reason": "effects_active",
+   "current": "move_back",
+   "key": "burst.effects"
+  },
+  {
+   "reason": "effects_active",
+   "current": "centre",
+   "key": "burst.effects"
+  },
+  {
+   "reason": "internal",
+   "current": "move_closer",
+   "key": "burst.internal"
+  },
+  {
+   "reason": "internal",
+   "current": "move_back",
+   "key": "burst.internal"
+  },
+  {
+   "reason": "internal",
+   "current": "centre",
+   "key": "burst.internal"
+  },
+  {
+   "reason": "unknown",
+   "current": "move_closer",
+   "key": null
+  },
+  {
+   "reason": "unknown",
+   "current": "move_back",
+   "key": null
+  },
+  {
+   "reason": "unknown",
+   "current": "centre",
+   "key": null
+  },
+  {
+   "reason": null,
+   "current": "move_closer",
+   "key": null
+  },
+  {
+   "reason": null,
+   "current": "move_back",
+   "key": null
+  },
+  {
+   "reason": null,
+   "current": "centre",
+   "key": null
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+# Generated
+FaceType.xcodeproj/
+FaceType.xcworkspace/
+Pods/
+Podfile.lock
+build/
+Models/
+vendor/
+.bundle/

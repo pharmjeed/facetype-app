@@ -1,0 +1,2620 @@
+{
+ "note": "ISO 3166-1 alpha-2 with Arabic and English names; order_* is the display order of each language.",
+ "countries": [
+  {
+   "code": "IS",
+   "ar": "آيسلندا",
+   "en": "Iceland"
+  },
+  {
+   "code": "ET",
+   "ar": "إثيوبيا",
+   "en": "Ethiopia"
+  },
+  {
+   "code": "AZ",
+   "ar": "أذربيجان",
+   "en": "Azerbaijan"
+  },
+  {
+   "code": "AM",
+   "ar": "أرمينيا",
+   "en": "Armenia"
+  },
+  {
+   "code": "AW",
+   "ar": "أروبا",
+   "en": "Aruba"
+  },
+  {
+   "code": "ER",
+   "ar": "إريتريا",
+   "en": "Eritrea"
+  },
+  {
+   "code": "ES",
+   "ar": "إسبانيا",
+   "en": "Spain"
+  },
+  {
+   "code": "AU",
+   "ar": "أستراليا",
+   "en": "Australia"
+  },
+  {
+   "code": "EE",
+   "ar": "إستونيا",
+   "en": "Estonia"
+  },
+  {
+   "code": "IL",
+   "ar": "إسرائيل",
+   "en": "Israel"
+  },
+  {
+   "code": "SZ",
+   "ar": "إسواتيني",
+   "en": "Eswatini"
+  },
+  {
+   "code": "AF",
+   "ar": "أفغانستان",
+   "en": "Afghanistan"
+  },
+  {
+   "code": "IO",
+   "ar": "إقليم المحيط الهندي البريطاني",
+   "en": "British Indian Ocean Territory"
+  },
+  {
+   "code": "AR",
+   "ar": "الأرجنتين",
+   "en": "Argentina"
+  },
+  {
+   "code": "JO",
+   "ar": "الأردن",
+   "en": "Jordan"
+  },
+  {
+   "code": "TF",
+   "ar": "الأقاليم الجنوبية الفرنسية",
+   "en": "French Southern Territories"
+  },
+  {
+   "code": "EC",
+   "ar": "الإكوادور",
+   "en": "Ecuador"
+  },
+  {
+   "code": "AE",
+   "ar": "الإمارات العربية المتحدة",
+   "en": "United Arab Emirates"
+  },
+  {
+   "code": "UY",
+   "ar": "الأوروغواي",
+   "en": "Uruguay"
+  },
+  {
+   "code": "AL",
+   "ar": "ألبانيا",
+   "en": "Albania"
+  },
+  {
+   "code": "BH",
+   "ar": "البحرين",
+   "en": "Bahrain"
+  },
+  {
+   "code": "BR",
+   "ar": "البرازيل",
+   "en": "Brazil"
+  },
+  {
+   "code": "PT",
+   "ar": "البرتغال",
+   "en": "Portugal"
+  },
+  {
+   "code": "BA",
+   "ar": "البوسنة والهرسك",
+   "en": "Bosnia & Herzegovina"
+  },
+  {
+   "code": "CZ",
+   "ar": "التشيك",
+   "en": "Czechia"
+  },
+  {
+   "code": "ME",
+   "ar": "الجبل الأسود",
+   "en": "Montenegro"
+  },
+  {
+   "code": "DZ",
+   "ar": "الجزائر",
+   "en": "Algeria"
+  },
+  {
+   "code": "BQ",
+   "ar": "الجزر الكاريبية الهولندية",
+   "en": "Caribbean Netherlands"
+  },
+  {
+   "code": "DK",
+   "ar": "الدنمارك",
+   "en": "Denmark"
+  },
+  {
+   "code": "CV",
+   "ar": "الرأس الأخضر",
+   "en": "Cape Verde"
+  },
+  {
+   "code": "SA",
+   "ar": "السعودية",
+   "en": "Saudi Arabia"
+  },
+  {
+   "code": "SV",
+   "ar": "السلفادور",
+   "en": "El Salvador"
+  },
+  {
+   "code": "SN",
+   "ar": "السنغال",
+   "en": "Senegal"
+  },
+  {
+   "code": "SD",
+   "ar": "السودان",
+   "en": "Sudan"
+  },
+  {
+   "code": "SE",
+   "ar": "السويد",
+   "en": "Sweden"
+  },
+  {
+   "code": "EH",
+   "ar": "الصحراء الغربية",
+   "en": "Western Sahara"
+  },
+  {
+   "code": "SO",
+   "ar": "الصومال",
+   "en": "Somalia"
+  },
+  {
+   "code": "CN",
+   "ar": "الصين",
+   "en": "China"
+  },
+  {
+   "code": "IQ",
+   "ar": "العراق",
+   "en": "Iraq"
+  },
+  {
+   "code": "GA",
+   "ar": "الغابون",
+   "en": "Gabon"
+  },
+  {
+   "code": "VA",
+   "ar": "الفاتيكان",
+   "en": "Vatican City"
+  },
+  {
+   "code": "PH",
+   "ar": "الفلبين",
+   "en": "Philippines"
+  },
+  {
+   "code": "CM",
+   "ar": "الكاميرون",
+   "en": "Cameroon"
+  },
+  {
+   "code": "KW",
+   "ar": "الكويت",
+   "en": "Kuwait"
+  },
+  {
+   "code": "DE",
+   "ar": "ألمانيا",
+   "en": "Germany"
+  },
+  {
+   "code": "HU",
+   "ar": "المجر",
+   "en": "Hungary"
+  },
+  {
+   "code": "MA",
+   "ar": "المغرب",
+   "en": "Morocco"
+  },
+  {
+   "code": "MX",
+   "ar": "المكسيك",
+   "en": "Mexico"
+  },
+  {
+   "code": "GB",
+   "ar": "المملكة المتحدة",
+   "en": "United Kingdom"
+  },
+  {
+   "code": "NO",
+   "ar": "النرويج",
+   "en": "Norway"
+  },
+  {
+   "code": "AT",
+   "ar": "النمسا",
+   "en": "Austria"
+  },
+  {
+   "code": "NE",
+   "ar": "النيجر",
+   "en": "Niger"
+  },
+  {
+   "code": "IN",
+   "ar": "الهند",
+   "en": "India"
+  },
+  {
+   "code": "US",
+   "ar": "الولايات المتحدة",
+   "en": "United States"
+  },
+  {
+   "code": "JP",
+   "ar": "اليابان",
+   "en": "Japan"
+  },
+  {
+   "code": "YE",
+   "ar": "اليمن",
+   "en": "Yemen"
+  },
+  {
+   "code": "GR",
+   "ar": "اليونان",
+   "en": "Greece"
+  },
+  {
+   "code": "AQ",
+   "ar": "أنتاركتيكا",
+   "en": "Antarctica"
+  },
+  {
+   "code": "AG",
+   "ar": "أنتيغوا وبربودا",
+   "en": "Antigua & Barbuda"
+  },
+  {
+   "code": "AD",
+   "ar": "أندورا",
+   "en": "Andorra"
+  },
+  {
+   "code": "ID",
+   "ar": "إندونيسيا",
+   "en": "Indonesia"
+  },
+  {
+   "code": "AO",
+   "ar": "أنغولا",
+   "en": "Angola"
+  },
+  {
+   "code": "AI",
+   "ar": "أنغويلا",
+   "en": "Anguilla"
+  },
+  {
+   "code": "UZ",
+   "ar": "أوزبكستان",
+   "en": "Uzbekistan"
+  },
+  {
+   "code": "UG",
+   "ar": "أوغندا",
+   "en": "Uganda"
+  },
+  {
+   "code": "UA",
+   "ar": "أوكرانيا",
+   "en": "Ukraine"
+  },
+  {
+   "code": "IR",
+   "ar": "إيران",
+   "en": "Iran"
+  },
+  {
+   "code": "IE",
+   "ar": "أيرلندا",
+   "en": "Ireland"
+  },
+  {
+   "code": "IT",
+   "ar": "إيطاليا",
+   "en": "Italy"
+  },
+  {
+   "code": "PG",
+   "ar": "بابوا غينيا الجديدة",
+   "en": "Papua New Guinea"
+  },
+  {
+   "code": "PY",
+   "ar": "باراغواي",
+   "en": "Paraguay"
+  },
+  {
+   "code": "BB",
+   "ar": "باربادوس",
+   "en": "Barbados"
+  },
+  {
+   "code": "PK",
+   "ar": "باكستان",
+   "en": "Pakistan"
+  },
+  {
+   "code": "PW",
+   "ar": "بالاو",
+   "en": "Palau"
+  },
+  {
+   "code": "BM",
+   "ar": "برمودا",
+   "en": "Bermuda"
+  },
+  {
+   "code": "BN",
+   "ar": "بروناي",
+   "en": "Brunei"
+  },
+  {
+   "code": "BE",
+   "ar": "بلجيكا",
+   "en": "Belgium"
+  },
+  {
+   "code": "BG",
+   "ar": "بلغاريا",
+   "en": "Bulgaria"
+  },
+  {
+   "code": "BZ",
+   "ar": "بليز",
+   "en": "Belize"
+  },
+  {
+   "code": "BD",
+   "ar": "بنغلاديش",
+   "en": "Bangladesh"
+  },
+  {
+   "code": "PA",
+   "ar": "بنما",
+   "en": "Panama"
+  },
+  {
+   "code": "BJ",
+   "ar": "بنين",
+   "en": "Benin"
+  },
+  {
+   "code": "BT",
+   "ar": "بوتان",
+   "en": "Bhutan"
+  },
+  {
+   "code": "BW",
+   "ar": "بوتسوانا",
+   "en": "Botswana"
+  },
+  {
+   "code": "PR",
+   "ar": "بورتوريكو",
+   "en": "Puerto Rico"
+  },
+  {
+   "code": "BF",
+   "ar": "بوركينا فاسو",
+   "en": "Burkina Faso"
+  },
+  {
+   "code": "BI",
+   "ar": "بوروندي",
+   "en": "Burundi"
+  },
+  {
+   "code": "PL",
+   "ar": "بولندا",
+   "en": "Poland"
+  },
+  {
+   "code": "BO",
+   "ar": "بوليفيا",
+   "en": "Bolivia"
+  },
+  {
+   "code": "PF",
+   "ar": "بولينيزيا الفرنسية",
+   "en": "French Polynesia"
+  },
+  {
+   "code": "PE",
+   "ar": "بيرو",
+   "en": "Peru"
+  },
+  {
+   "code": "BY",
+   "ar": "بيلاروس",
+   "en": "Belarus"
+  },
+  {
+   "code": "TH",
+   "ar": "تايلاند",
+   "en": "Thailand"
+  },
+  {
+   "code": "TW",
+   "ar": "تايوان",
+   "en": "Taiwan"
+  },
+  {
+   "code": "TM",
+   "ar": "تركمانستان",
+   "en": "Turkmenistan"
+  },
+  {
+   "code": "TR",
+   "ar": "تركيا",
+   "en": "Türkiye"
+  },
+  {
+   "code": "TT",
+   "ar": "ترينيداد وتوباغو",
+   "en": "Trinidad & Tobago"
+  },
+  {
+   "code": "TD",
+   "ar": "تشاد",
+   "en": "Chad"
+  },
+  {
+   "code": "CL",
+   "ar": "تشيلي",
+   "en": "Chile"
+  },
+  {
+   "code": "TZ",
+   "ar": "تنزانيا",
+   "en": "Tanzania"
+  },
+  {
+   "code": "TG",
+   "ar": "توغو",
+   "en": "Togo"
+  },
+  {
+   "code": "TV",
+   "ar": "توفالو",
+   "en": "Tuvalu"
+  },
+  {
+   "code": "TK",
+   "ar": "توكيلاو",
+   "en": "Tokelau"
+  },
+  {
+   "code": "TN",
+   "ar": "تونس",
+   "en": "Tunisia"
+  },
+  {
+   "code": "TO",
+   "ar": "تونغا",
+   "en": "Tonga"
+  },
+  {
+   "code": "TL",
+   "ar": "تيمور الشرقية",
+   "en": "Timor-Leste"
+  },
+  {
+   "code": "JM",
+   "ar": "جامايكا",
+   "en": "Jamaica"
+  },
+  {
+   "code": "GI",
+   "ar": "جبل طارق",
+   "en": "Gibraltar"
+  },
+  {
+   "code": "BS",
+   "ar": "جزر البهاما",
+   "en": "Bahamas"
+  },
+  {
+   "code": "VI",
+   "ar": "جزر العذراء الأمريكية",
+   "en": "U.S. Virgin Islands"
+  },
+  {
+   "code": "VG",
+   "ar": "جزر العذراء البريطانية",
+   "en": "British Virgin Islands"
+  },
+  {
+   "code": "KM",
+   "ar": "جزر القمر",
+   "en": "Comoros"
+  },
+  {
+   "code": "MV",
+   "ar": "جزر المالديف",
+   "en": "Maldives"
+  },
+  {
+   "code": "UM",
+   "ar": "جزر الولايات المتحدة الصغيرة النائية",
+   "en": "U.S. Outlying Islands"
+  },
+  {
+   "code": "AX",
+   "ar": "جزر أولاند",
+   "en": "Åland Islands"
+  },
+  {
+   "code": "PN",
+   "ar": "جزر بيتكيرن",
+   "en": "Pitcairn Islands"
+  },
+  {
+   "code": "TC",
+   "ar": "جزر توركس وكايكوس",
+   "en": "Turks & Caicos Islands"
+  },
+  {
+   "code": "SB",
+   "ar": "جزر سليمان",
+   "en": "Solomon Islands"
+  },
+  {
+   "code": "FO",
+   "ar": "جزر فارو",
+   "en": "Faroe Islands"
+  },
+  {
+   "code": "FK",
+   "ar": "جزر فوكلاند",
+   "en": "Falkland Islands"
+  },
+  {
+   "code": "KY",
+   "ar": "جزر كايمان",
+   "en": "Cayman Islands"
+  },
+  {
+   "code": "CK",
+   "ar": "جزر كوك",
+   "en": "Cook Islands"
+  },
+  {
+   "code": "CC",
+   "ar": "جزر كوكوس",
+   "en": "Cocos (Keeling) Islands"
+  },
+  {
+   "code": "MH",
+   "ar": "جزر مارشال",
+   "en": "Marshall Islands"
+  },
+  {
+   "code": "MP",
+   "ar": "جزر ماريانا الشمالية",
+   "en": "Northern Mariana Islands"
+  },
+  {
+   "code": "BV",
+   "ar": "جزيرة بوفيه",
+   "en": "Bouvet Island"
+  },
+  {
+   "code": "CX",
+   "ar": "جزيرة عيد الميلاد",
+   "en": "Christmas Island"
+  },
+  {
+   "code": "IM",
+   "ar": "جزيرة مان",
+   "en": "Isle of Man"
+  },
+  {
+   "code": "NF",
+   "ar": "جزيرة نورفولك",
+   "en": "Norfolk Island"
+  },
+  {
+   "code": "HM",
+   "ar": "جزيرة هيرد وجزر ماكدونالد",
+   "en": "Heard & McDonald Islands"
+  },
+  {
+   "code": "CF",
+   "ar": "جمهورية أفريقيا الوسطى",
+   "en": "Central African Republic"
+  },
+  {
+   "code": "DO",
+   "ar": "جمهورية الدومينيكان",
+   "en": "Dominican Republic"
+  },
+  {
+   "code": "CG",
+   "ar": "جمهورية الكونغو",
+   "en": "Congo - Brazzaville"
+  },
+  {
+   "code": "CD",
+   "ar": "جمهورية الكونغو الديمقراطية",
+   "en": "Congo - Kinshasa"
+  },
+  {
+   "code": "ZA",
+   "ar": "جنوب أفريقيا",
+   "en": "South Africa"
+  },
+  {
+   "code": "SS",
+   "ar": "جنوب السودان",
+   "en": "South Sudan"
+  },
+  {
+   "code": "GE",
+   "ar": "جورجيا",
+   "en": "Georgia"
+  },
+  {
+   "code": "GS",
+   "ar": "جورجيا الجنوبية وجزر ساندويتش الجنوبية",
+   "en": "South Georgia & South Sandwich Islands"
+  },
+  {
+   "code": "DJ",
+   "ar": "جيبوتي",
+   "en": "Djibouti"
+  },
+  {
+   "code": "JE",
+   "ar": "جيرسي",
+   "en": "Jersey"
+  },
+  {
+   "code": "DM",
+   "ar": "دومينيكا",
+   "en": "Dominica"
+  },
+  {
+   "code": "RW",
+   "ar": "رواندا",
+   "en": "Rwanda"
+  },
+  {
+   "code": "RU",
+   "ar": "روسيا",
+   "en": "Russia"
+  },
+  {
+   "code": "RO",
+   "ar": "رومانيا",
+   "en": "Romania"
+  },
+  {
+   "code": "ZM",
+   "ar": "زامبيا",
+   "en": "Zambia"
+  },
+  {
+   "code": "ZW",
+   "ar": "زيمبابوي",
+   "en": "Zimbabwe"
+  },
+  {
+   "code": "CI",
+   "ar": "ساحل العاج",
+   "en": "Côte d’Ivoire"
+  },
+  {
+   "code": "WS",
+   "ar": "ساموا",
+   "en": "Samoa"
+  },
+  {
+   "code": "AS",
+   "ar": "ساموا الأمريكية",
+   "en": "American Samoa"
+  },
+  {
+   "code": "BL",
+   "ar": "سان بارتيلمي",
+   "en": "St. Barthélemy"
+  },
+  {
+   "code": "PM",
+   "ar": "سان بيير وميكلون",
+   "en": "St. Pierre & Miquelon"
+  },
+  {
+   "code": "MF",
+   "ar": "سان مارتن",
+   "en": "St. Martin"
+  },
+  {
+   "code": "SM",
+   "ar": "سان مارينو",
+   "en": "San Marino"
+  },
+  {
+   "code": "VC",
+   "ar": "سانت فنسنت والغرينادين",
+   "en": "St. Vincent & Grenadines"
+  },
+  {
+   "code": "KN",
+   "ar": "سانت كيتس ونيفيس",
+   "en": "St. Kitts & Nevis"
+  },
+  {
+   "code": "LC",
+   "ar": "سانت لوسيا",
+   "en": "St. Lucia"
+  },
+  {
+   "code": "SH",
+   "ar": "سانت هيلينا",
+   "en": "St. Helena"
+  },
+  {
+   "code": "ST",
+   "ar": "ساو تومي وبرينسيب",
+   "en": "São Tomé & Príncipe"
+  },
+  {
+   "code": "LK",
+   "ar": "سريلانكا",
+   "en": "Sri Lanka"
+  },
+  {
+   "code": "SJ",
+   "ar": "سفالبارد ويان ماين",
+   "en": "Svalbard & Jan Mayen"
+  },
+  {
+   "code": "SK",
+   "ar": "سلوفاكيا",
+   "en": "Slovakia"
+  },
+  {
+   "code": "SI",
+   "ar": "سلوفينيا",
+   "en": "Slovenia"
+  },
+  {
+   "code": "SG",
+   "ar": "سنغافورة",
+   "en": "Singapore"
+  },
+  {
+   "code": "SY",
+   "ar": "سوريا",
+   "en": "Syria"
+  },
+  {
+   "code": "SR",
+   "ar": "سورينام",
+   "en": "Suriname"
+  },
+  {
+   "code": "CH",
+   "ar": "سويسرا",
+   "en": "Switzerland"
+  },
+  {
+   "code": "SL",
+   "ar": "سيراليون",
+   "en": "Sierra Leone"
+  },
+  {
+   "code": "SC",
+   "ar": "سيشل",
+   "en": "Seychelles"
+  },
+  {
+   "code": "SX",
+   "ar": "سينت مارتن",
+   "en": "Sint Maarten"
+  },
+  {
+   "code": "RS",
+   "ar": "صربيا",
+   "en": "Serbia"
+  },
+  {
+   "code": "TJ",
+   "ar": "طاجيكستان",
+   "en": "Tajikistan"
+  },
+  {
+   "code": "OM",
+   "ar": "عُمان",
+   "en": "Oman"
+  },
+  {
+   "code": "GM",
+   "ar": "غامبيا",
+   "en": "Gambia"
+  },
+  {
+   "code": "GH",
+   "ar": "غانا",
+   "en": "Ghana"
+  },
+  {
+   "code": "GD",
+   "ar": "غرينادا",
+   "en": "Grenada"
+  },
+  {
+   "code": "GL",
+   "ar": "غرينلاند",
+   "en": "Greenland"
+  },
+  {
+   "code": "GT",
+   "ar": "غواتيمالا",
+   "en": "Guatemala"
+  },
+  {
+   "code": "GP",
+   "ar": "غوادلوب",
+   "en": "Guadeloupe"
+  },
+  {
+   "code": "GU",
+   "ar": "غوام",
+   "en": "Guam"
+  },
+  {
+   "code": "GF",
+   "ar": "غويانا الفرنسية",
+   "en": "French Guiana"
+  },
+  {
+   "code": "GY",
+   "ar": "غيانا",
+   "en": "Guyana"
+  },
+  {
+   "code": "GG",
+   "ar": "غيرنزي",
+   "en": "Guernsey"
+  },
+  {
+   "code": "GN",
+   "ar": "غينيا",
+   "en": "Guinea"
+  },
+  {
+   "code": "GQ",
+   "ar": "غينيا الاستوائية",
+   "en": "Equatorial Guinea"
+  },
+  {
+   "code": "GW",
+   "ar": "غينيا بيساو",
+   "en": "Guinea-Bissau"
+  },
+  {
+   "code": "VU",
+   "ar": "فانواتو",
+   "en": "Vanuatu"
+  },
+  {
+   "code": "FR",
+   "ar": "فرنسا",
+   "en": "France"
+  },
+  {
+   "code": "PS",
+   "ar": "فلسطين",
+   "en": "Palestinian Territories"
+  },
+  {
+   "code": "VE",
+   "ar": "فنزويلا",
+   "en": "Venezuela"
+  },
+  {
+   "code": "FI",
+   "ar": "فنلندا",
+   "en": "Finland"
+  },
+  {
+   "code": "VN",
+   "ar": "فيتنام",
+   "en": "Vietnam"
+  },
+  {
+   "code": "FJ",
+   "ar": "فيجي",
+   "en": "Fiji"
+  },
+  {
+   "code": "CY",
+   "ar": "قبرص",
+   "en": "Cyprus"
+  },
+  {
+   "code": "QA",
+   "ar": "قطر",
+   "en": "Qatar"
+  },
+  {
+   "code": "KG",
+   "ar": "قيرغيزستان",
+   "en": "Kyrgyzstan"
+  },
+  {
+   "code": "KZ",
+   "ar": "كازاخستان",
+   "en": "Kazakhstan"
+  },
+  {
+   "code": "NC",
+   "ar": "كاليدونيا الجديدة",
+   "en": "New Caledonia"
+  },
+  {
+   "code": "HR",
+   "ar": "كرواتيا",
+   "en": "Croatia"
+  },
+  {
+   "code": "KH",
+   "ar": "كمبوديا",
+   "en": "Cambodia"
+  },
+  {
+   "code": "CA",
+   "ar": "كندا",
+   "en": "Canada"
+  },
+  {
+   "code": "CU",
+   "ar": "كوبا",
+   "en": "Cuba"
+  },
+  {
+   "code": "CW",
+   "ar": "كوراساو",
+   "en": "Curaçao"
+  },
+  {
+   "code": "KR",
+   "ar": "كوريا الجنوبية",
+   "en": "South Korea"
+  },
+  {
+   "code": "KP",
+   "ar": "كوريا الشمالية",
+   "en": "North Korea"
+  },
+  {
+   "code": "CR",
+   "ar": "كوستاريكا",
+   "en": "Costa Rica"
+  },
+  {
+   "code": "CO",
+   "ar": "كولومبيا",
+   "en": "Colombia"
+  },
+  {
+   "code": "KI",
+   "ar": "كيريباتي",
+   "en": "Kiribati"
+  },
+  {
+   "code": "KE",
+   "ar": "كينيا",
+   "en": "Kenya"
+  },
+  {
+   "code": "RE",
+   "ar": "لا ريونيون",
+   "en": "Réunion"
+  },
+  {
+   "code": "LV",
+   "ar": "لاتفيا",
+   "en": "Latvia"
+  },
+  {
+   "code": "LA",
+   "ar": "لاوس",
+   "en": "Laos"
+  },
+  {
+   "code": "LB",
+   "ar": "لبنان",
+   "en": "Lebanon"
+  },
+  {
+   "code": "LU",
+   "ar": "لوكسمبورغ",
+   "en": "Luxembourg"
+  },
+  {
+   "code": "LY",
+   "ar": "ليبيا",
+   "en": "Libya"
+  },
+  {
+   "code": "LR",
+   "ar": "ليبيريا",
+   "en": "Liberia"
+  },
+  {
+   "code": "LT",
+   "ar": "ليتوانيا",
+   "en": "Lithuania"
+  },
+  {
+   "code": "LI",
+   "ar": "ليختنشتاين",
+   "en": "Liechtenstein"
+  },
+  {
+   "code": "LS",
+   "ar": "ليسوتو",
+   "en": "Lesotho"
+  },
+  {
+   "code": "MQ",
+   "ar": "مارتينيك",
+   "en": "Martinique"
+  },
+  {
+   "code": "MO",
+   "ar": "ماكاو",
+   "en": "Macao SAR China"
+  },
+  {
+   "code": "MT",
+   "ar": "مالطا",
+   "en": "Malta"
+  },
+  {
+   "code": "ML",
+   "ar": "مالي",
+   "en": "Mali"
+  },
+  {
+   "code": "MY",
+   "ar": "ماليزيا",
+   "en": "Malaysia"
+  },
+  {
+   "code": "YT",
+   "ar": "مايوت",
+   "en": "Mayotte"
+  },
+  {
+   "code": "MG",
+   "ar": "مدغشقر",
+   "en": "Madagascar"
+  },
+  {
+   "code": "EG",
+   "ar": "مصر",
+   "en": "Egypt"
+  },
+  {
+   "code": "MK",
+   "ar": "مقدونيا الشمالية",
+   "en": "North Macedonia"
+  },
+  {
+   "code": "MW",
+   "ar": "ملاوي",
+   "en": "Malawi"
+  },
+  {
+   "code": "MN",
+   "ar": "منغوليا",
+   "en": "Mongolia"
+  },
+  {
+   "code": "MR",
+   "ar": "موريتانيا",
+   "en": "Mauritania"
+  },
+  {
+   "code": "MU",
+   "ar": "موريشيوس",
+   "en": "Mauritius"
+  },
+  {
+   "code": "MZ",
+   "ar": "موزمبيق",
+   "en": "Mozambique"
+  },
+  {
+   "code": "MD",
+   "ar": "مولدوفا",
+   "en": "Moldova"
+  },
+  {
+   "code": "MC",
+   "ar": "موناكو",
+   "en": "Monaco"
+  },
+  {
+   "code": "MS",
+   "ar": "مونتسرات",
+   "en": "Montserrat"
+  },
+  {
+   "code": "MM",
+   "ar": "ميانمار",
+   "en": "Myanmar (Burma)"
+  },
+  {
+   "code": "FM",
+   "ar": "ميكرونيزيا",
+   "en": "Micronesia"
+  },
+  {
+   "code": "NA",
+   "ar": "ناميبيا",
+   "en": "Namibia"
+  },
+  {
+   "code": "NR",
+   "ar": "ناورو",
+   "en": "Nauru"
+  },
+  {
+   "code": "NP",
+   "ar": "نيبال",
+   "en": "Nepal"
+  },
+  {
+   "code": "NG",
+   "ar": "نيجيريا",
+   "en": "Nigeria"
+  },
+  {
+   "code": "NI",
+   "ar": "نيكاراغوا",
+   "en": "Nicaragua"
+  },
+  {
+   "code": "NZ",
+   "ar": "نيوزيلندا",
+   "en": "New Zealand"
+  },
+  {
+   "code": "NU",
+   "ar": "نيوي",
+   "en": "Niue"
+  },
+  {
+   "code": "HT",
+   "ar": "هايتي",
+   "en": "Haiti"
+  },
+  {
+   "code": "HN",
+   "ar": "هندوراس",
+   "en": "Honduras"
+  },
+  {
+   "code": "NL",
+   "ar": "هولندا",
+   "en": "Netherlands"
+  },
+  {
+   "code": "HK",
+   "ar": "هونغ كونغ",
+   "en": "Hong Kong SAR China"
+  },
+  {
+   "code": "WF",
+   "ar": "واليس وفوتونا",
+   "en": "Wallis & Futuna"
+  }
+ ],
+ "order_ar": [
+  "IS",
+  "ET",
+  "AZ",
+  "AM",
+  "AW",
+  "ER",
+  "ES",
+  "AU",
+  "EE",
+  "IL",
+  "SZ",
+  "AF",
+  "IO",
+  "AR",
+  "JO",
+  "TF",
+  "EC",
+  "AE",
+  "UY",
+  "AL",
+  "BH",
+  "BR",
+  "PT",
+  "BA",
+  "CZ",
+  "ME",
+  "DZ",
+  "BQ",
+  "DK",
+  "CV",
+  "SA",
+  "SV",
+  "SN",
+  "SD",
+  "SE",
+  "EH",
+  "SO",
+  "CN",
+  "IQ",
+  "GA",
+  "VA",
+  "PH",
+  "CM",
+  "KW",
+  "DE",
+  "HU",
+  "MA",
+  "MX",
+  "GB",
+  "NO",
+  "AT",
+  "NE",
+  "IN",
+  "US",
+  "JP",
+  "YE",
+  "GR",
+  "AQ",
+  "AG",
+  "AD",
+  "ID",
+  "AO",
+  "AI",
+  "UZ",
+  "UG",
+  "UA",
+  "IR",
+  "IE",
+  "IT",
+  "PG",
+  "PY",
+  "BB",
+  "PK",
+  "PW",
+  "BM",
+  "BN",
+  "BE",
+  "BG",
+  "BZ",
+  "BD",
+  "PA",
+  "BJ",
+  "BT",
+  "BW",
+  "PR",
+  "BF",
+  "BI",
+  "PL",
+  "BO",
+  "PF",
+  "PE",
+  "BY",
+  "TH",
+  "TW",
+  "TM",
+  "TR",
+  "TT",
+  "TD",
+  "CL",
+  "TZ",
+  "TG",
+  "TV",
+  "TK",
+  "TN",
+  "TO",
+  "TL",
+  "JM",
+  "GI",
+  "BS",
+  "VI",
+  "VG",
+  "KM",
+  "MV",
+  "UM",
+  "AX",
+  "PN",
+  "TC",
+  "SB",
+  "FO",
+  "FK",
+  "KY",
+  "CK",
+  "CC",
+  "MH",
+  "MP",
+  "BV",
+  "CX",
+  "IM",
+  "NF",
+  "HM",
+  "CF",
+  "DO",
+  "CG",
+  "CD",
+  "ZA",
+  "SS",
+  "GE",
+  "GS",
+  "DJ",
+  "JE",
+  "DM",
+  "RW",
+  "RU",
+  "RO",
+  "ZM",
+  "ZW",
+  "CI",
+  "WS",
+  "AS",
+  "BL",
+  "PM",
+  "MF",
+  "SM",
+  "VC",
+  "KN",
+  "LC",
+  "SH",
+  "ST",
+  "LK",
+  "SJ",
+  "SK",
+  "SI",
+  "SG",
+  "SY",
+  "SR",
+  "CH",
+  "SL",
+  "SC",
+  "SX",
+  "RS",
+  "TJ",
+  "OM",
+  "GM",
+  "GH",
+  "GD",
+  "GL",
+  "GT",
+  "GP",
+  "GU",
+  "GF",
+  "GY",
+  "GG",
+  "GN",
+  "GQ",
+  "GW",
+  "VU",
+  "FR",
+  "PS",
+  "VE",
+  "FI",
+  "VN",
+  "FJ",
+  "CY",
+  "QA",
+  "KG",
+  "KZ",
+  "NC",
+  "HR",
+  "KH",
+  "CA",
+  "CU",
+  "CW",
+  "KR",
+  "KP",
+  "CR",
+  "CO",
+  "KI",
+  "KE",
+  "RE",
+  "LV",
+  "LA",
+  "LB",
+  "LU",
+  "LY",
+  "LR",
+  "LT",
+  "LI",
+  "LS",
+  "MQ",
+  "MO",
+  "MT",
+  "ML",
+  "MY",
+  "YT",
+  "MG",
+  "EG",
+  "MK",
+  "MW",
+  "MN",
+  "MR",
+  "MU",
+  "MZ",
+  "MD",
+  "MC",
+  "MS",
+  "MM",
+  "FM",
+  "NA",
+  "NR",
+  "NP",
+  "NG",
+  "NI",
+  "NZ",
+  "NU",
+  "HT",
+  "HN",
+  "NL",
+  "HK",
+  "WF"
+ ],
+ "order_en": [
+  "AF",
+  "AX",
+  "AL",
+  "DZ",
+  "AS",
+  "AD",
+  "AO",
+  "AI",
+  "AQ",
+  "AG",
+  "AR",
+  "AM",
+  "AW",
+  "AU",
+  "AT",
+  "AZ",
+  "BS",
+  "BH",
+  "BD",
+  "BB",
+  "BY",
+  "BE",
+  "BZ",
+  "BJ",
+  "BM",
+  "BT",
+  "BO",
+  "BA",
+  "BW",
+  "BV",
+  "BR",
+  "IO",
+  "VG",
+  "BN",
+  "BG",
+  "BF",
+  "BI",
+  "KH",
+  "CM",
+  "CA",
+  "CV",
+  "BQ",
+  "KY",
+  "CF",
+  "TD",
+  "CL",
+  "CN",
+  "CX",
+  "CC",
+  "CO",
+  "KM",
+  "CG",
+  "CD",
+  "CK",
+  "CR",
+  "CI",
+  "HR",
+  "CU",
+  "CW",
+  "CY",
+  "CZ",
+  "DK",
+  "DJ",
+  "DM",
+  "DO",
+  "EC",
+  "EG",
+  "SV",
+  "GQ",
+  "ER",
+  "EE",
+  "SZ",
+  "ET",
+  "FK",
+  "FO",
+  "FJ",
+  "FI",
+  "FR",
+  "GF",
+  "PF",
+  "TF",
+  "GA",
+  "GM",
+  "GE",
+  "DE",
+  "GH",
+  "GI",
+  "GR",
+  "GL",
+  "GD",
+  "GP",
+  "GU",
+  "GT",
+  "GG",
+  "GN",
+  "GW",
+  "GY",
+  "HT",
+  "HM",
+  "HN",
+  "HK",
+  "HU",
+  "IS",
+  "IN",
+  "ID",
+  "IR",
+  "IQ",
+  "IE",
+  "IM",
+  "IL",
+  "IT",
+  "JM",
+  "JP",
+  "JE",
+  "JO",
+  "KZ",
+  "KE",
+  "KI",
+  "KW",
+  "KG",
+  "LA",
+  "LV",
+  "LB",
+  "LS",
+  "LR",
+  "LY",
+  "LI",
+  "LT",
+  "LU",
+  "MO",
+  "MG",
+  "MW",
+  "MY",
+  "MV",
+  "ML",
+  "MT",
+  "MH",
+  "MQ",
+  "MR",
+  "MU",
+  "YT",
+  "MX",
+  "FM",
+  "MD",
+  "MC",
+  "MN",
+  "ME",
+  "MS",
+  "MA",
+  "MZ",
+  "MM",
+  "NA",
+  "NR",
+  "NP",
+  "NL",
+  "NC",
+  "NZ",
+  "NI",
+  "NE",
+  "NG",
+  "NU",
+  "NF",
+  "KP",
+  "MK",
+  "MP",
+  "NO",
+  "OM",
+  "PK",
+  "PW",
+  "PS",
+  "PA",
+  "PG",
+  "PY",
+  "PE",
+  "PH",
+  "PN",
+  "PL",
+  "PT",
+  "PR",
+  "QA",
+  "RE",
+  "RO",
+  "RU",
+  "RW",
+  "WS",
+  "SM",
+  "ST",
+  "SA",
+  "SN",
+  "RS",
+  "SC",
+  "SL",
+  "SG",
+  "SX",
+  "SK",
+  "SI",
+  "SB",
+  "SO",
+  "ZA",
+  "GS",
+  "KR",
+  "SS",
+  "ES",
+  "LK",
+  "BL",
+  "SH",
+  "KN",
+  "LC",
+  "MF",
+  "PM",
+  "VC",
+  "SD",
+  "SR",
+  "SJ",
+  "SE",
+  "CH",
+  "SY",
+  "TW",
+  "TJ",
+  "TZ",
+  "TH",
+  "TL",
+  "TG",
+  "TK",
+  "TO",
+  "TT",
+  "TN",
+  "TR",
+  "TM",
+  "TC",
+  "TV",
+  "UM",
+  "VI",
+  "UG",
+  "UA",
+  "AE",
+  "GB",
+  "US",
+  "UY",
+  "UZ",
+  "VU",
+  "VA",
+  "VE",
+  "VN",
+  "WF",
+  "EH",
+  "YE",
+  "ZM",
+  "ZW"
+ ],
+ "search": [
+  {
+   "lang": "ar",
+   "query": "",
+   "search8": [],
+   "filter": [
+    "IS",
+    "ET",
+    "AZ",
+    "AM",
+    "AW",
+    "ER",
+    "ES",
+    "AU",
+    "EE",
+    "IL",
+    "SZ",
+    "AF",
+    "IO",
+    "AR",
+    "JO",
+    "TF",
+    "EC",
+    "AE",
+    "UY",
+    "AL",
+    "BH",
+    "BR",
+    "PT",
+    "BA",
+    "CZ",
+    "ME",
+    "DZ",
+    "BQ",
+    "DK",
+    "CV",
+    "SA",
+    "SV",
+    "SN",
+    "SD",
+    "SE",
+    "EH",
+    "SO",
+    "CN",
+    "IQ",
+    "GA",
+    "VA",
+    "PH",
+    "CM",
+    "KW",
+    "DE",
+    "HU",
+    "MA",
+    "MX",
+    "GB",
+    "NO",
+    "AT",
+    "NE",
+    "IN",
+    "US",
+    "JP",
+    "YE",
+    "GR",
+    "AQ",
+    "AG",
+    "AD",
+    "ID",
+    "AO",
+    "AI",
+    "UZ",
+    "UG",
+    "UA",
+    "IR",
+    "IE",
+    "IT",
+    "PG",
+    "PY",
+    "BB",
+    "PK",
+    "PW",
+    "BM",
+    "BN",
+    "BE",
+    "BG",
+    "BZ",
+    "BD",
+    "PA",
+    "BJ",
+    "BT",
+    "BW",
+    "PR",
+    "BF",
+    "BI",
+    "PL",
+    "BO",
+    "PF",
+    "PE",
+    "BY",
+    "TH",
+    "TW",
+    "TM",
+    "TR",
+    "TT",
+    "TD",
+    "CL",
+    "TZ",
+    "TG",
+    "TV",
+    "TK",
+    "TN",
+    "TO",
+    "TL",
+    "JM",
+    "GI",
+    "BS",
+    "VI",
+    "VG",
+    "KM",
+    "MV",
+    "UM",
+    "AX",
+    "PN",
+    "TC",
+    "SB",
+    "FO",
+    "FK",
+    "KY",
+    "CK",
+    "CC",
+    "MH",
+    "MP",
+    "BV",
+    "CX",
+    "IM",
+    "NF",
+    "HM",
+    "CF",
+    "DO",
+    "CG",
+    "CD",
+    "ZA",
+    "SS",
+    "GE",
+    "GS",
+    "DJ",
+    "JE",
+    "DM",
+    "RW",
+    "RU",
+    "RO",
+    "ZM",
+    "ZW",
+    "CI",
+    "WS",
+    "AS",
+    "BL",
+    "PM",
+    "MF",
+    "SM",
+    "VC",
+    "KN",
+    "LC",
+    "SH",
+    "ST",
+    "LK",
+    "SJ",
+    "SK",
+    "SI",
+    "SG",
+    "SY",
+    "SR",
+    "CH",
+    "SL",
+    "SC",
+    "SX",
+    "RS",
+    "TJ",
+    "OM",
+    "GM",
+    "GH",
+    "GD",
+    "GL",
+    "GT",
+    "GP",
+    "GU",
+    "GF",
+    "GY",
+    "GG",
+    "GN",
+    "GQ",
+    "GW",
+    "VU",
+    "FR",
+    "PS",
+    "VE",
+    "FI",
+    "VN",
+    "FJ",
+    "CY",
+    "QA",
+    "KG",
+    "KZ",
+    "NC",
+    "HR",
+    "KH",
+    "CA",
+    "CU",
+    "CW",
+    "KR",
+    "KP",
+    "CR",
+    "CO",
+    "KI",
+    "KE",
+    "RE",
+    "LV",
+    "LA",
+    "LB",
+    "LU",
+    "LY",
+    "LR",
+    "LT",
+    "LI",
+    "LS",
+    "MQ",
+    "MO",
+    "MT",
+    "ML",
+    "MY",
+    "YT",
+    "MG",
+    "EG",
+    "MK",
+    "MW",
+    "MN",
+    "MR",
+    "MU",
+    "MZ",
+    "MD",
+    "MC",
+    "MS",
+    "MM",
+    "FM",
+    "NA",
+    "NR",
+    "NP",
+    "NG",
+    "NI",
+    "NZ",
+    "NU",
+    "HT",
+    "HN",
+    "NL",
+    "HK",
+    "WF"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "sa",
+   "search8": [
+    "SA"
+   ],
+   "filter": [
+    "SA"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "SA",
+   "search8": [
+    "SA"
+   ],
+   "filter": [
+    "SA"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "سعود",
+   "search8": [
+    "SA"
+   ],
+   "filter": [
+    "SA"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "السعودية",
+   "search8": [
+    "SA"
+   ],
+   "filter": [
+    "SA"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "الامارات",
+   "search8": [
+    "AE"
+   ],
+   "filter": [
+    "AE"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "امارات",
+   "search8": [
+    "AE"
+   ],
+   "filter": [
+    "AE"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "مصر",
+   "search8": [
+    "EG"
+   ],
+   "filter": [
+    "EG"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "egy",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "ar",
+   "query": "aland",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "ar",
+   "query": "Åland",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "ar",
+   "query": "united",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "ar",
+   "query": "كوريا",
+   "search8": [
+    "KR",
+    "KP"
+   ],
+   "filter": [
+    "KR",
+    "KP"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": "xx",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "ar",
+   "query": "غ",
+   "search8": [
+    "AF",
+    "UY",
+    "PT",
+    "SN",
+    "EH",
+    "GA",
+    "MA",
+    "AG"
+   ],
+   "filter": [
+    "AF",
+    "UY",
+    "PT",
+    "SN",
+    "EH",
+    "GA",
+    "MA",
+    "AG",
+    "AO",
+    "AI",
+    "UG",
+    "PG",
+    "PY",
+    "BG",
+    "BD",
+    "TT",
+    "TG",
+    "TO",
+    "UM",
+    "CG",
+    "CD",
+    "VC",
+    "SG",
+    "GM",
+    "GH",
+    "GD",
+    "GL",
+    "GT",
+    "GP",
+    "GU",
+    "GF",
+    "GY",
+    "GG",
+    "GN",
+    "GQ",
+    "GW",
+    "KG",
+    "LU",
+    "MG",
+    "MN",
+    "NI",
+    "HK"
+   ]
+  },
+  {
+   "lang": "ar",
+   "query": " us ",
+   "search8": [
+    "US"
+   ],
+   "filter": [
+    "US"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "",
+   "search8": [],
+   "filter": [
+    "AF",
+    "AX",
+    "AL",
+    "DZ",
+    "AS",
+    "AD",
+    "AO",
+    "AI",
+    "AQ",
+    "AG",
+    "AR",
+    "AM",
+    "AW",
+    "AU",
+    "AT",
+    "AZ",
+    "BS",
+    "BH",
+    "BD",
+    "BB",
+    "BY",
+    "BE",
+    "BZ",
+    "BJ",
+    "BM",
+    "BT",
+    "BO",
+    "BA",
+    "BW",
+    "BV",
+    "BR",
+    "IO",
+    "VG",
+    "BN",
+    "BG",
+    "BF",
+    "BI",
+    "KH",
+    "CM",
+    "CA",
+    "CV",
+    "BQ",
+    "KY",
+    "CF",
+    "TD",
+    "CL",
+    "CN",
+    "CX",
+    "CC",
+    "CO",
+    "KM",
+    "CG",
+    "CD",
+    "CK",
+    "CR",
+    "CI",
+    "HR",
+    "CU",
+    "CW",
+    "CY",
+    "CZ",
+    "DK",
+    "DJ",
+    "DM",
+    "DO",
+    "EC",
+    "EG",
+    "SV",
+    "GQ",
+    "ER",
+    "EE",
+    "SZ",
+    "ET",
+    "FK",
+    "FO",
+    "FJ",
+    "FI",
+    "FR",
+    "GF",
+    "PF",
+    "TF",
+    "GA",
+    "GM",
+    "GE",
+    "DE",
+    "GH",
+    "GI",
+    "GR",
+    "GL",
+    "GD",
+    "GP",
+    "GU",
+    "GT",
+    "GG",
+    "GN",
+    "GW",
+    "GY",
+    "HT",
+    "HM",
+    "HN",
+    "HK",
+    "HU",
+    "IS",
+    "IN",
+    "ID",
+    "IR",
+    "IQ",
+    "IE",
+    "IM",
+    "IL",
+    "IT",
+    "JM",
+    "JP",
+    "JE",
+    "JO",
+    "KZ",
+    "KE",
+    "KI",
+    "KW",
+    "KG",
+    "LA",
+    "LV",
+    "LB",
+    "LS",
+    "LR",
+    "LY",
+    "LI",
+    "LT",
+    "LU",
+    "MO",
+    "MG",
+    "MW",
+    "MY",
+    "MV",
+    "ML",
+    "MT",
+    "MH",
+    "MQ",
+    "MR",
+    "MU",
+    "YT",
+    "MX",
+    "FM",
+    "MD",
+    "MC",
+    "MN",
+    "ME",
+    "MS",
+    "MA",
+    "MZ",
+    "MM",
+    "NA",
+    "NR",
+    "NP",
+    "NL",
+    "NC",
+    "NZ",
+    "NI",
+    "NE",
+    "NG",
+    "NU",
+    "NF",
+    "KP",
+    "MK",
+    "MP",
+    "NO",
+    "OM",
+    "PK",
+    "PW",
+    "PS",
+    "PA",
+    "PG",
+    "PY",
+    "PE",
+    "PH",
+    "PN",
+    "PL",
+    "PT",
+    "PR",
+    "QA",
+    "RE",
+    "RO",
+    "RU",
+    "RW",
+    "WS",
+    "SM",
+    "ST",
+    "SA",
+    "SN",
+    "RS",
+    "SC",
+    "SL",
+    "SG",
+    "SX",
+    "SK",
+    "SI",
+    "SB",
+    "SO",
+    "ZA",
+    "GS",
+    "KR",
+    "SS",
+    "ES",
+    "LK",
+    "BL",
+    "SH",
+    "KN",
+    "LC",
+    "MF",
+    "PM",
+    "VC",
+    "SD",
+    "SR",
+    "SJ",
+    "SE",
+    "CH",
+    "SY",
+    "TW",
+    "TJ",
+    "TZ",
+    "TH",
+    "TL",
+    "TG",
+    "TK",
+    "TO",
+    "TT",
+    "TN",
+    "TR",
+    "TM",
+    "TC",
+    "TV",
+    "UM",
+    "VI",
+    "UG",
+    "UA",
+    "AE",
+    "GB",
+    "US",
+    "UY",
+    "UZ",
+    "VU",
+    "VA",
+    "VE",
+    "VN",
+    "WF",
+    "EH",
+    "YE",
+    "ZM",
+    "ZW"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "sa",
+   "search8": [
+    "SA",
+    "AS",
+    "CD",
+    "SV",
+    "GW",
+    "HK",
+    "MO",
+    "WS"
+   ],
+   "filter": [
+    "SA",
+    "AS",
+    "CD",
+    "SV",
+    "GW",
+    "HK",
+    "MO",
+    "WS",
+    "SM",
+    "ST",
+    "GS",
+    "EH"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "SA",
+   "search8": [
+    "SA",
+    "AS",
+    "CD",
+    "SV",
+    "GW",
+    "HK",
+    "MO",
+    "WS"
+   ],
+   "filter": [
+    "SA",
+    "AS",
+    "CD",
+    "SV",
+    "GW",
+    "HK",
+    "MO",
+    "WS",
+    "SM",
+    "ST",
+    "GS",
+    "EH"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "سعود",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "السعودية",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "الامارات",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "امارات",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "مصر",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "egy",
+   "search8": [
+    "EG"
+   ],
+   "filter": [
+    "EG"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "aland",
+   "search8": [
+    "AX",
+    "NZ"
+   ],
+   "filter": [
+    "AX",
+    "NZ"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "Åland",
+   "search8": [
+    "AX",
+    "NZ"
+   ],
+   "filter": [
+    "AX",
+    "NZ"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "united",
+   "search8": [
+    "AE",
+    "GB",
+    "US"
+   ],
+   "filter": [
+    "AE",
+    "GB",
+    "US"
+   ]
+  },
+  {
+   "lang": "en",
+   "query": "كوريا",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "xx",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": "غ",
+   "search8": [],
+   "filter": []
+  },
+  {
+   "lang": "en",
+   "query": " us ",
+   "search8": [
+    "US",
+    "AU",
+    "AT",
+    "BY",
+    "CY",
+    "MU",
+    "RU"
+   ],
+   "filter": [
+    "US",
+    "AU",
+    "AT",
+    "BY",
+    "CY",
+    "MU",
+    "RU"
+   ]
+  }
+ ]
+}

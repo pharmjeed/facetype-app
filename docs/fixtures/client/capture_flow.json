@@ -1,0 +1,2257 @@
+{
+ "guidance_limit_ms": 60000,
+ "burst_disposition": [
+  {
+   "status": "complete",
+   "count": 10,
+   "keep": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9"
+   ],
+   "discard": []
+  },
+  {
+   "status": "complete",
+   "count": 9,
+   "keep": [],
+   "discard": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8"
+   ]
+  },
+  {
+   "status": "partial",
+   "count": 3,
+   "keep": [],
+   "discard": [
+    "f0",
+    "f1",
+    "f2"
+   ]
+  }
+ ],
+ "sequences": [
+  {
+   "name": "happy",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 1000
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_PROGRESS",
+      "progress": {
+       "accepted": 4,
+       "target": 10,
+       "elapsedMs": 900,
+       "topRejectReason": null
+      }
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 4,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "complete",
+       "frames": [
+        {
+         "id": "f0",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f1",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f2",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f3",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f4",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f5",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f6",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f7",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f8",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f9",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        }
+       ],
+       "topRejectReason": null
+      },
+      "nowMs": 3000
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 0,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [
+       {
+        "id": "f0",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f1",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f2",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f3",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f4",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f5",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f6",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f7",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f8",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f9",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       }
+      ],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "ENQUEUED"
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 0,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "waiting",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "uploading",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": null,
+        "checkingSinceMs": null,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       },
+       "retryInMs": 2000,
+       "reason": "server"
+      },
+      "nowMs": 4000
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 3,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "waiting",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "checking",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": null,
+        "checkingSinceMs": 1000,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       },
+       "retryInMs": 2000,
+       "reason": "checking"
+      },
+      "nowMs": 5000
+     },
+     "state": {
+      "phase": {
+       "name": "checking",
+       "slow": false,
+       "measuring": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 1000,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "partial_then_help",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "partial",
+       "frames": [
+        {
+         "id": "f0",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f1",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f2",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f3",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        }
+       ],
+       "topRejectReason": "facing"
+      },
+      "nowMs": 30000
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": "facing",
+       "retrying": true
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {
+       "facing": 1
+      },
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "TICK",
+      "nowMs": 61000
+     },
+     "state": {
+      "phase": {
+       "name": "help"
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {
+       "facing": 1
+      },
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": true
+     }
+    },
+    {
+     "event": {
+      "type": "RESUME",
+      "nowMs": 62000
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {
+       "facing": 1
+      },
+      "guidanceStartedAtMs": 62000,
+      "sessionStartedAtMs": 0,
+      "helpShown": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "partial_late",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "partial",
+       "frames": [],
+       "topRejectReason": "light"
+      },
+      "nowMs": 61000
+     },
+     "state": {
+      "phase": {
+       "name": "help"
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {
+       "light": 1
+      },
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "camera_errors",
+   "steps": [
+    {
+     "event": {
+      "type": "CAMERA_ERROR",
+      "code": "internal"
+     },
+     "state": {
+      "phase": {
+       "name": "tips"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": null,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "CAMERA_ERROR",
+      "code": "permission_denied"
+     },
+     "state": {
+      "phase": {
+       "name": "permission_denied"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "RESUME",
+      "nowMs": 10
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 10,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "CAMERA_ERROR",
+      "code": "camera_interrupted"
+     },
+     "state": {
+      "phase": {
+       "name": "interrupted"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 10,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "RESUME",
+      "nowMs": 20
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 20,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "CAMERA_ERROR",
+      "code": "model_unavailable"
+     },
+     "state": {
+      "phase": {
+       "name": "camera_error",
+       "code": "model_unavailable"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 20,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "cancelled_burst",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "cancelled",
+       "frames": [],
+       "topRejectReason": null
+      },
+      "nowMs": 100
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 2,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_FAILED",
+      "nowMs": 200
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 2,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "more_then_continue",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "complete",
+       "frames": [
+        {
+         "id": "f0",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f1",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f2",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f3",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f4",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f5",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f6",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f7",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f8",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f9",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        }
+       ],
+       "topRejectReason": null
+      },
+      "nowMs": 3000
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 0,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [
+       {
+        "id": "f0",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f1",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f2",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f3",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f4",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f5",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f6",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f7",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f8",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f9",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       }
+      ],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "ENQUEUED"
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 0,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "terminal",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "needs_more",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": {
+         "id": "cap-1",
+         "status": "needs_more",
+         "accepted_frames": 10,
+         "reasons": [
+          "glasses_detected"
+         ]
+        },
+        "checkingSinceMs": null,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       }
+      },
+      "nowMs": 9000
+     },
+     "state": {
+      "phase": {
+       "name": "more",
+       "reasons": [
+        "glasses_detected"
+       ]
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "CONTINUE",
+      "nowMs": 9500
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 9500,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "retake",
+   "steps": [
+    {
+     "event": {
+      "type": "START",
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "guiding",
+       "partialReason": null,
+       "retrying": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_STARTED",
+      "target": 10
+     },
+     "state": {
+      "phase": {
+       "name": "bursting",
+       "accepted": 0,
+       "target": 10,
+       "topRejectReason": null
+      },
+      "kept": [],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "BURST_RESULT",
+      "result": {
+       "status": "complete",
+       "frames": [
+        {
+         "id": "f0",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f1",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f2",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f3",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f4",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f5",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f6",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f7",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f8",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        },
+        {
+         "id": "f9",
+         "width": 1,
+         "height": 1,
+         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "bytes": 1,
+         "meta": {}
+        }
+       ],
+       "topRejectReason": null
+      },
+      "nowMs": 3000
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 0,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [
+       {
+        "id": "f0",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f1",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f2",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f3",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f4",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f5",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f6",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f7",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f8",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f9",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       }
+      ],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "terminal",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "needs_retake",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": {
+         "id": "cap-1",
+         "status": "needs_retake",
+         "accepted_frames": 10,
+         "reasons": [
+          "glasses_detected"
+         ]
+        },
+        "checkingSinceMs": null,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       }
+      },
+      "nowMs": 9000
+     },
+     "state": {
+      "phase": {
+       "name": "retake",
+       "reasons": [
+        "glasses_detected"
+       ]
+      },
+      "kept": [
+       {
+        "id": "f0",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f1",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f2",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f3",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f4",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f5",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f6",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f7",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f8",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       },
+       {
+        "id": "f9",
+        "width": 1,
+        "height": 1,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "bytes": 1,
+        "meta": {}
+       }
+      ],
+      "attempts": 1,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": 0,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "RETAKE"
+     },
+     "state": {
+      "phase": {
+       "name": "tips"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": null,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  },
+  {
+   "name": "spool_during_tips_ignored",
+   "steps": [
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "terminal",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "complete",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": {
+         "id": "cap-1",
+         "status": "complete",
+         "accepted_frames": 10,
+         "reasons": [
+          "glasses_detected"
+         ]
+        },
+        "checkingSinceMs": null,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       }
+      },
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "tips"
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": null,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    },
+    {
+     "event": {
+      "type": "SPOOL_STATUS",
+      "outcome": {
+       "kind": "waiting",
+       "manifest": {
+        "version": 2,
+        "accountId": "acc-1",
+        "clientCaptureId": "cc-1",
+        "createdAtMs": 0,
+        "updatedAtMs": 0,
+        "stage": "uploading",
+        "captureId": "cap-1",
+        "attempt": 1,
+        "protocolVersion": "capture-spec-v2",
+        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "device": {},
+        "camera": {},
+        "verdict": null,
+        "checkingSinceMs": null,
+        "error": null,
+        "attemptTelemetry": null,
+        "frames": [
+         {
+          "index": 0,
+          "nativeId": "f0",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 1,
+          "nativeId": "f1",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 2,
+          "nativeId": "f2",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": true
+         },
+         {
+          "index": 3,
+          "nativeId": "f3",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": true,
+          "completed": false
+         },
+         {
+          "index": 4,
+          "nativeId": "f4",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 5,
+          "nativeId": "f5",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 6,
+          "nativeId": "f6",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 7,
+          "nativeId": "f7",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 8,
+          "nativeId": "f8",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         },
+         {
+          "index": 9,
+          "nativeId": "f9",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "bytes": 1,
+          "width": 1,
+          "height": 1,
+          "uploaded": false,
+          "completed": false
+         }
+        ]
+       },
+       "retryInMs": 2000,
+       "reason": "server"
+      },
+      "nowMs": 0
+     },
+     "state": {
+      "phase": {
+       "name": "uploading",
+       "done": 3,
+       "total": 10,
+       "offline": false
+      },
+      "kept": [],
+      "attempts": 0,
+      "reasonCounts": {},
+      "guidanceStartedAtMs": null,
+      "sessionStartedAtMs": 0,
+      "helpShown": false
+     }
+    }
+   ]
+  }
+ ]
+}

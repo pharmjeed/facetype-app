@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>ar</string>
+	<key>CFBundleDisplayName</key>
+	<string>FaceType AI</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ar</string>
+		<string>en</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+	</dict>
+	<!-- No NSFaceIDUsageDescription: the app never calls LocalAuthentication and must never be able to. -->
+	<key>NSCameraUsageDescription</key>
+	<string>يستخدم التطبيق الكاميرا الأمامية لتصوير وجهك تلقائيًا وقياس ملامحه. تُحفظ الصور المقبولة مشفّرة على جهازك ثم تُرفع إلى حسابك وفق موافقتك. لا يستخدم التطبيق Face ID.</string>
+	<key>NSCameraReactionEffectGesturesEnabledDefault</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
+	<!-- Google Sign-In returns through the reversed iOS client id (public identifier). -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>google-sign-in</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(FACETYPE_GOOGLE_IOS_URL_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Build-time public settings read by AppConfig.swift. -->
+	<key>FTApiBaseURL</key>
+	<string>$(FACETYPE_API_URL)</string>
+	<key>FTGoogleIOSClientID</key>
+	<string>$(FACETYPE_GOOGLE_IOS_CLIENT_ID)</string>
+	<key>FTGoogleWebClientID</key>
+	<string>$(FACETYPE_GOOGLE_WEB_CLIENT_ID)</string>
+	<key>FTSupportContact</key>
+	<string>$(FACETYPE_CLIENT_SUPPORT_CONTACT)</string>
+	<key>FTMockAuth</key>
+	<string>$(FACETYPE_CLIENT_MOCK_AUTH)</string>
+</dict>
+</plist>

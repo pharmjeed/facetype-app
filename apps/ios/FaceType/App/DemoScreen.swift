@@ -1,0 +1,77 @@
+//
+//  DemoScreen.swift
+//  Screenshot mode for CI (`-FTDemo <screen> -FTLang <ar|en>` launch arguments): the real screens with a
+//  synthetic, made-up profile and no network. Used only to review the layout in both directions before a build
+//  is uploaded; nothing here can be reached by a normal launch.
+//
+
+import SwiftUI
+
+enum DemoScreen: String {
+  case signin, setup, setupErrors = "setup-errors", profile, tips
+
+  static var requested: DemoScreen? {
+    let args = ProcessInfo.processInfo.arguments
+    guard let i = args.firstIndex(of: "-FTDemo"), i + 1 < args.count else { return nil }
+    return DemoScreen(rawValue: args[i + 1])
+  }
+
+  static var language: Lang? {
+    let args = ProcessInfo.processInfo.arguments
+    guard let i = args.firstIndex(of: "-FTLang"), i + 1 < args.count else { return nil }
+    return Lang(rawValue: args[i + 1])
+  }
+}
+
+struct DemoRoot: View {
+  let screen: DemoScreen
+  @EnvironmentObject private var model: AppModel
+
+  var body: some View {
+    Group {
+      switch screen {
+      case .signin: SignInView()
+      case .setup, .setupErrors: ProfileSetupView()
+      case .profile: ProfileScreen()
+      case .tips: CaptureScreen()
+      }
+    }
+    .onAppear { model.applyDemo(screen) }
+  }
+}
+
+extension AppModel {
+  /// Synthetic state for screenshots only.
+  func applyDemo(_ screen: DemoScreen) {
+    if let lang = DemoScreen.language { setLanguage(lang) }
+    let profile = ProfileView(
+      revision_id: "demo", revision: 1, full_name: "سارة محمد العلي", id_issuing_country: "SA",
+      id_document_type: "national_id", id_number: "1000000008", phone: "+966512345678", sex: "female",
+      birth_date: "1995-04-23", nationality: "SA", age_years: 31, identity_verification: "self_declared",
+      updated_at: nil)
+    let me = ClientMe(
+      account: AccountView(id: "demo", provider: "apple", state: "active", created_at: nil),
+      profile: screen == .profile ? profile : nil,
+      consent: screen == .profile ? ConsentView(id: "c", version: "client-notice-v1", store_accepted: true,
+                                                research_use: true, created_at: nil) : nil,
+      captures: CaptureSummary(count: 1, last_at: "2026-11-25T09:00:00Z", latest_status: "complete",
+                               next_repeat_due_at: "2026-12-02T09:00:00Z"),
+      personality: PersonalityView(status: "unavailable"))
+    switch screen {
+    case .signin:
+      demoState(ClientState(screen: .signedOut))
+    case .setup:
+      form = ProfileForm(full_name: "سارة محمد العلي", id_issuing_country: "SA", id_document_type: .national_id,
+                         id_number: "1000000008", phone: "0512345678", sex: .female, birth_date: "1995-04-23",
+                         nationality: "SA")
+      demoState(ClientState(screen: .profileSetup, me: me))
+    case .setupErrors:
+      form = ProfileForm()
+      _ = Validation.validateProfile(form)
+      if case .failure(let e) = Validation.validateProfile(form) { formErrors = e.fields }
+      demoState(ClientState(screen: .profileSetup, me: me))
+    case .profile, .tips:
+      demoState(ClientState(screen: screen == .profile ? .profile : .capture, me: me))
+    }
+  }
+}

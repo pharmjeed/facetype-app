@@ -1,0 +1,54 @@
+{
+ "months_ar": [
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر"
+ ],
+ "months_en": [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+ ],
+ "format_birth_date": [
+  {
+   "input": "1995-12-19",
+   "output": "19 ديسمبر 1995"
+  },
+  {
+   "input": "2000-02-29",
+   "output": "29 فبراير 2000"
+  },
+  {
+   "input": "",
+   "output": ""
+  },
+  {
+   "input": "1995-12-19",
+   "lang": "en",
+   "output": "19 December 1995"
+  },
+  {
+   "input": "2000-02-29",
+   "lang": "en",
+   "output": "29 February 2000"
+  }
+ ]
+}

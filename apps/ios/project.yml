@@ -1,0 +1,98 @@
+# FaceType client app — native iOS (SwiftUI). XcodeGen project; the .xcodeproj is generated, never committed.
+# Owner decision 2026-11-25: the whole client app native (docs/adr/ADR-017). Same bundle id and App Store Connect
+# app as before; no React Native, no JavaScript.
+name: FaceType
+options:
+  bundleIdPrefix: ai.facetype
+  xcodeVersion: "15.4"
+  projectFormat: xcode15_3
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+
+targets:
+  FaceType:
+    type: application
+    platform: iOS
+    scheme:
+      testTargets:
+        - FaceTypeTests
+    sources:
+      - path: FaceType
+        excludes:
+          - Info.plist
+          - FaceType.entitlements
+    info:
+      path: FaceType/Info.plist
+    # Sign in with Apple only. LocalAuthentication is never linked (no Face ID, no Secure Enclave).
+    entitlements:
+      path: FaceType/FaceType.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ai.facetype
+        PRODUCT_NAME: FaceType AI
+        # iPhone only: a universal bundle with a portrait-only Info.plist is refused at upload (ITMS-90474).
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MARKETING_VERSION: "2.1.0"
+        CURRENT_PROJECT_VERSION: "5"
+        # Public identifiers read by AppConfig.swift through Info.plist (never a secret).
+        FACETYPE_API_URL: "https://facetype.193-122-83-224.sslip.io"
+        FACETYPE_GOOGLE_IOS_CLIENT_ID: "967286092515-0is8o69h01lrbkljr5dshlp2547hla4o.apps.googleusercontent.com"
+        FACETYPE_GOOGLE_WEB_CLIENT_ID: "967286092515-25tgr9nlrnan7aj082saei9m2lmd7luh.apps.googleusercontent.com"
+        FACETYPE_GOOGLE_IOS_URL_SCHEME: "com.googleusercontent.apps.967286092515-0is8o69h01lrbkljr5dshlp2547hla4o"
+        FACETYPE_CLIENT_SUPPORT_CONTACT: ""
+        FACETYPE_CLIENT_MOCK_AUTH: "false"
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
+        "CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]": NO
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(FACETYPE_DEVELOPMENT_TEAM)
+    postCompileScripts:
+      # The MediaPipe face-landmarker model, fetched from its pinned URL and checked against its pinned SHA-256
+      # (the same pin as Android); FaceTypeClientFrameAnalyzer re-hashes the bundled file at runtime.
+      - name: Bundle the pinned MediaPipe face-landmarker model
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          MODEL_CACHE="$SRCROOT/Models/face_landmarker.task"
+          BUNDLE_RESOURCES="$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH"
+          /bin/sh "$SRCROOT/scripts/fetch-face-landmarker.sh" "$MODEL_CACHE" "$BUNDLE_RESOURCES"
+    dependencies:
+      - sdk: Accelerate.framework
+      - sdk: AVFoundation.framework
+      - sdk: AuthenticationServices.framework
+      - sdk: CoreMedia.framework
+      - sdk: CoreMotion.framework
+      - sdk: CryptoKit.framework
+      - sdk: CoreVideo.framework
+      - sdk: CoreImage.framework
+      - sdk: ImageIO.framework
+      - sdk: QuartzCore.framework
+      - sdk: Security.framework
+      - sdk: UIKit.framework
+
+  FaceTypeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: FaceTypeTests
+      # The behaviour frozen from the TypeScript client (apps/mobile/scripts/export-native-fixtures.ts).
+      - path: ../../docs/fixtures/client
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - target: FaceType
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: ai.facetype.tests
+        "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO

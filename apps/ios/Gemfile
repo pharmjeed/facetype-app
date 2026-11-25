@@ -1,0 +1,19 @@
+# CocoaPods, pinned.
+#
+# `pod install` was previously run with whatever CocoaPods the macOS runner
+# image happened to ship, so two builds of the same commit could resolve two
+# different pod graphs. An exact requirement plus `bundle exec` makes the pod
+# tool itself deterministic. The version is mirrored in `toolchain.json`, and a
+# contract test fails if the two disagree.
+#
+# There is deliberately no Gemfile.lock committed alongside this. Generating
+# one means resolving against RubyGems on a machine with the real toolchain,
+# and the lane that added this file had no Mac; a hand-written lock would be a
+# fabricated resolution, which is worse than an honest gap. Until a Mac run
+# produces one, bundler resolves CocoaPods exactly and its transitive gems
+# freely -- see `toolchain.json` for the full statement of what is and is not
+# pinned.
+
+source 'https://rubygems.org'
+
+gem 'cocoapods', '1.16.2'

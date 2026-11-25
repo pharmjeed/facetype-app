@@ -1,0 +1,250 @@
+{
+ "cases": [
+  {
+   "status": 401,
+   "body": null,
+   "context": "other",
+   "kind": "unauthorized",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 409,
+   "body": null,
+   "context": "profile",
+   "kind": "identifier_taken",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 409,
+   "body": null,
+   "context": "capture",
+   "kind": "unknown",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 503,
+   "body": null,
+   "context": "auth",
+   "kind": "provider_unconfigured",
+   "code": null,
+   "retryable": true,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 503,
+   "body": null,
+   "context": "other",
+   "kind": "server",
+   "code": null,
+   "retryable": true,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 400,
+   "body": null,
+   "context": "other",
+   "kind": "validation",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 422,
+   "body": {
+    "error_code": "FT-SYS-003",
+    "retryable": true,
+    "errors": [
+     {
+      "field": "body.phone",
+      "message": "bad"
+     }
+    ]
+   },
+   "context": "profile",
+   "kind": "validation",
+   "code": "FT-SYS-003",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {
+    "phone": "bad"
+   }
+  },
+  {
+   "status": 422,
+   "body": {
+    "error_code": "FT-CLIENT-PROFILE-INVALID",
+    "action": {
+     "fields": {
+      "birth_date": "under_18",
+      "id_number": "checksum"
+     }
+    }
+   },
+   "context": "profile",
+   "kind": "validation",
+   "code": "FT-CLIENT-PROFILE-INVALID",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {
+    "birth_date": "under_18",
+    "id_number": "checksum"
+   }
+  },
+  {
+   "status": 409,
+   "body": {
+    "error_code": "FT-CLIENT-ID-TAKEN"
+   },
+   "context": "profile",
+   "kind": "identifier_taken",
+   "code": "FT-CLIENT-ID-TAKEN",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 404,
+   "body": null,
+   "context": "other",
+   "kind": "not_found",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 429,
+   "body": {
+    "retry_after_seconds": 7
+   },
+   "context": "other",
+   "kind": "rate_limited",
+   "code": null,
+   "retryable": true,
+   "retry_after_seconds": 7,
+   "field_errors": {}
+  },
+  {
+   "status": 500,
+   "body": null,
+   "context": "other",
+   "kind": "server",
+   "code": null,
+   "retryable": true,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 502,
+   "body": {
+    "retryable": false
+   },
+   "context": "other",
+   "kind": "server",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 418,
+   "body": null,
+   "context": "other",
+   "kind": "unknown",
+   "code": null,
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 409,
+   "body": {
+    "error_code": "FT-CLIENT-UPLOAD-MISMATCH",
+    "action": {
+     "reason": "jpeg_invalid"
+    }
+   },
+   "context": "capture",
+   "kind": "upload_mismatch",
+   "code": "FT-CLIENT-UPLOAD-MISMATCH",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 409,
+   "body": {
+    "error_code": "FT-CLIENT-UPLOAD-MISMATCH",
+    "action": {
+     "reason": "sha256_mismatch"
+    }
+   },
+   "context": "capture",
+   "kind": "upload_mismatch",
+   "code": "FT-CLIENT-UPLOAD-MISMATCH",
+   "retryable": true,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 409,
+   "body": {
+    "error_code": "FT-CLIENT-UPLOAD-MISSING"
+   },
+   "context": "capture",
+   "kind": "upload_missing",
+   "code": "FT-CLIENT-UPLOAD-MISSING",
+   "retryable": true,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 403,
+   "body": {
+    "error_code": "FT-PRIV-003"
+   },
+   "context": "capture",
+   "kind": "consent_required",
+   "code": "FT-PRIV-003",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 403,
+   "body": {
+    "error_code": "FT-CLIENT-ACCOUNT-WITHDRAWING"
+   },
+   "context": "other",
+   "kind": "account_withdrawing",
+   "code": "FT-CLIENT-ACCOUNT-WITHDRAWING",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  },
+  {
+   "status": 400,
+   "body": {
+    "error_code": "FT-CLIENT-NONCE-INVALID"
+   },
+   "context": "auth",
+   "kind": "nonce_invalid",
+   "code": "FT-CLIENT-NONCE-INVALID",
+   "retryable": false,
+   "retry_after_seconds": null,
+   "field_errors": {}
+  }
+ ]
+}

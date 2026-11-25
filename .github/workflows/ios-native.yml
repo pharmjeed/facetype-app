@@ -1,0 +1,86 @@
+name: iOS native app
+# The native SwiftUI client (apps/ios): unit tests against the shared fixtures, a simulator build, screenshots of
+# every screen in Arabic (right to left) and English, and the generated Xcode project for signed builds elsewhere.
+# No credentials.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: ios-native-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: Xcode
+        run: bash ci/select-xcode.sh
+      - name: Generate the Xcode project (xcodegen pinned by toolchain.json)
+        working-directory: apps/ios
+        run: |
+          set -euo pipefail
+          url=$(jq -r '.xcodegen.url' toolchain.json)
+          expected=$(jq -r '.xcodegen.sha256' toolchain.json)
+          binary=$(jq -r '.xcodegen.binaryPath' toolchain.json)
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" "$url"
+          actual=$(shasum -a 256 "$RUNNER_TEMP/xcodegen.zip" | cut -d ' ' -f 1)
+          [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
+          "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+          mkdir -p "$RUNNER_TEMP/xcodeproj" && cp -R FaceType.xcodeproj "$RUNNER_TEMP/xcodeproj/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-native-xcodeproj
+          path: ${{ runner.temp }}/xcodeproj
+      - name: Pods (CocoaPods pinned by Gemfile)
+        working-directory: apps/ios
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+          for attempt in 1 2 3; do
+            if bundle exec pod install --repo-update; then exit 0; fi
+            rm -rf Pods FaceType.xcworkspace
+          done
+          exit 1
+      - name: Simulator
+        run: |
+          udid=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | test("^iPhone [0-9]+$"))] | last | .udid')
+          [ -n "$udid" ] && [ "$udid" != "null" ] || { xcrun simctl list devices available; exit 1; }
+          echo "SIM=$udid" >> "$GITHUB_ENV"
+          xcrun simctl boot "$udid" || true
+      - name: Unit tests (fixtures exported from the TypeScript client)
+        working-directory: apps/ios
+        run: |
+          set -o pipefail
+          xcodebuild -workspace FaceType.xcworkspace -scheme FaceType -configuration Debug \
+            -destination "id=$SIM" -derivedDataPath build test > test.log 2>&1 \
+            || { grep -n -E "error:|failed|XCTAssert|Test Case .* failed" test.log | head -150; tail -60 test.log; exit 1; }
+          grep -E "Executed [0-9]+ tests" test.log | tail -2
+      - name: Screenshots, Arabic and English
+        working-directory: apps/ios
+        run: |
+          set -euo pipefail
+          app=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name '*.app' | head -1)
+          xcrun simctl install "$SIM" "$app"
+          mkdir -p shots
+          for lang in ar en; do
+            for screen in signin setup setup-errors profile tips; do
+              xcrun simctl terminate "$SIM" ai.facetype || true
+              xcrun simctl launch "$SIM" ai.facetype -FTDemo "$screen" -FTLang "$lang"
+              sleep 6
+              xcrun simctl io "$SIM" screenshot "shots/$lang-$screen.png"
+            done
+          done
+          ls -la shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-native-shots-and-logs
+          path: |
+            apps/ios/shots
+            apps/ios/test.log
+          if-no-files-found: ignore

@@ -1,0 +1,310 @@
+{
+ "timing": {
+  "renewMarginMs": 60000,
+  "pollFastMs": 2000,
+  "pollSlowMs": 5000,
+  "checkingNoticeMs": 30000,
+  "backoffBaseMs": 2000,
+  "backoffMaxMs": 60000
+ },
+ "max_age_ms": 172800000,
+ "manifest_version": 2,
+ "terminal_stages": [
+  "received",
+  "stored",
+  "needs_retake",
+  "needs_more",
+  "complete",
+  "failed",
+  "abandoned"
+ ],
+ "backoff_ms": [
+  {
+   "n": 0,
+   "ms": 2000
+  },
+  {
+   "n": 1,
+   "ms": 4000
+  },
+  {
+   "n": 2,
+   "ms": 8000
+  },
+  {
+   "n": 3,
+   "ms": 16000
+  },
+  {
+   "n": 4,
+   "ms": 32000
+  },
+  {
+   "n": 5,
+   "ms": 60000
+  },
+  {
+   "n": 6,
+   "ms": 60000
+  },
+  {
+   "n": 7,
+   "ms": 60000
+  },
+  {
+   "n": 8,
+   "ms": 60000
+  },
+  {
+   "n": 9,
+   "ms": 60000
+  },
+  {
+   "n": 10,
+   "ms": 60000
+  },
+  {
+   "n": 11,
+   "ms": 60000
+  },
+  {
+   "n": 12,
+   "ms": 60000
+  }
+ ],
+ "next_run_in_ms": [
+  {
+   "outcome": {
+    "kind": "idle"
+   },
+   "ms": null
+  },
+  {
+   "outcome": {
+    "kind": "idle",
+    "telemetryRetryInMs": 4000
+   },
+   "ms": 4000
+  },
+  {
+   "outcome": {
+    "kind": "waiting",
+    "retryInMs": 9000,
+    "telemetryRetryInMs": 4000
+   },
+   "ms": 4000
+  }
+ ],
+ "phase_from_spool": [
+  {
+   "name": "idle",
+   "now_ms": 0,
+   "outcome_kind": "idle",
+   "stage": null,
+   "phase": null
+  },
+  {
+   "name": "uploading",
+   "now_ms": 0,
+   "outcome_kind": "waiting",
+   "stage": "uploading",
+   "phase": {
+    "name": "uploading",
+    "done": 3,
+    "total": 10,
+    "offline": false
+   }
+  },
+  {
+   "name": "uploading_offline",
+   "now_ms": 0,
+   "outcome_kind": "waiting",
+   "stage": "uploading",
+   "phase": {
+    "name": "uploading",
+    "done": 3,
+    "total": 10,
+    "offline": true
+   }
+  },
+  {
+   "name": "pending_create",
+   "now_ms": 0,
+   "outcome_kind": "waiting",
+   "stage": "pending_create",
+   "phase": {
+    "name": "uploading",
+    "done": 3,
+    "total": 10,
+    "offline": true
+   }
+  },
+  {
+   "name": "checking_fresh",
+   "now_ms": 5000,
+   "outcome_kind": "waiting",
+   "stage": "checking",
+   "phase": {
+    "name": "checking",
+    "slow": false,
+    "measuring": false
+   }
+  },
+  {
+   "name": "checking_slow",
+   "now_ms": 40000,
+   "outcome_kind": "waiting",
+   "stage": "checking",
+   "phase": {
+    "name": "checking",
+    "slow": true,
+    "measuring": false
+   }
+  },
+  {
+   "name": "checking_measuring",
+   "now_ms": 3000,
+   "outcome_kind": "waiting",
+   "stage": "checking",
+   "phase": {
+    "name": "checking",
+    "slow": false,
+    "measuring": true
+   }
+  },
+  {
+   "name": "finalizing",
+   "now_ms": 0,
+   "outcome_kind": "waiting",
+   "stage": "finalizing",
+   "phase": {
+    "name": "checking",
+    "slow": false,
+    "measuring": false
+   }
+  },
+  {
+   "name": "received",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "received",
+   "phase": {
+    "name": "received"
+   }
+  },
+  {
+   "name": "stored",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "stored",
+   "phase": {
+    "name": "done"
+   }
+  },
+  {
+   "name": "needs_retake",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "needs_retake",
+   "phase": {
+    "name": "retake",
+    "reasons": [
+     "glasses_detected"
+    ]
+   }
+  },
+  {
+   "name": "needs_more",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "needs_more",
+   "phase": {
+    "name": "more",
+    "reasons": [
+     "glasses_detected"
+    ]
+   }
+  },
+  {
+   "name": "complete",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "complete",
+   "phase": {
+    "name": "complete"
+   }
+  },
+  {
+   "name": "failed",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "failed",
+   "phase": {
+    "name": "failed",
+    "code": "upload_rejected_415"
+   }
+  },
+  {
+   "name": "abandoned",
+   "now_ms": 0,
+   "outcome_kind": "terminal",
+   "stage": "abandoned",
+   "phase": {
+    "name": "lost"
+   }
+  },
+  {
+   "name": "blocked",
+   "now_ms": 0,
+   "outcome_kind": "blocked",
+   "stage": null,
+   "phase": null
+  }
+ ],
+ "outcome_for_stage": [
+  {
+   "stage": "pending_create",
+   "outcome": null
+  },
+  {
+   "stage": "uploading",
+   "outcome": null
+  },
+  {
+   "stage": "finalizing",
+   "outcome": null
+  },
+  {
+   "stage": "checking",
+   "outcome": null
+  },
+  {
+   "stage": "received",
+   "outcome": "received"
+  },
+  {
+   "stage": "stored",
+   "outcome": "stored"
+  },
+  {
+   "stage": "needs_retake",
+   "outcome": "needs_retake"
+  },
+  {
+   "stage": "needs_more",
+   "outcome": "needs_more"
+  },
+  {
+   "stage": "complete",
+   "outcome": "complete"
+  },
+  {
+   "stage": "failed",
+   "outcome": "abandoned"
+  },
+  {
+   "stage": "abandoned",
+   "outcome": "abandoned"
+  }
+ ]
+}

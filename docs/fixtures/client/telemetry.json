@@ -1,0 +1,68 @@
+{
+ "max_reason_keys": 64,
+ "queue_max": 200,
+ "attempt_limits": {
+  "durationMs": 3600000,
+  "attempts": 10000,
+  "reasonCount": 1000000
+ },
+ "wire_reason": [
+  {
+   "reason": "oneFace",
+   "wire": "one_face"
+  },
+  {
+   "reason": "distanceOrSize",
+   "wire": "distance_or_size"
+  },
+  {
+   "reason": "centred",
+   "wire": "centred"
+  },
+  {
+   "reason": "facing",
+   "wire": "facing"
+  },
+  {
+   "reason": "light",
+   "wire": "light"
+  },
+  {
+   "reason": "expression",
+   "wire": "expression"
+  },
+  {
+   "reason": "eyes",
+   "wire": "eyes"
+  },
+  {
+   "reason": "sharp",
+   "wire": "sharp"
+  },
+  {
+   "reason": "someNewReason",
+   "wire": "some_new_reason"
+  },
+  {
+   "reason": "BAD-reason!",
+   "wire": null
+  },
+  {
+   "reason": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "wire": null
+  }
+ ],
+ "wire_reason_counts": [
+  {
+   "input": {
+    "oneFace": 2,
+    "facing": 1,
+    "BAD!": 3
+   },
+   "output": {
+    "one_face": 2,
+    "facing": 1
+   }
+  }
+ ]
+}
