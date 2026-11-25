@@ -90,6 +90,20 @@ jobs:
               done
             done
           done
+          # A switch inside the app (the stored language differs from the requested one), as the owner does it.
+          for phone in en ar; do
+            locale=en_US; [ "$phone" = ar ] && locale=ar_SA
+            for pair in "ar en" "en ar"; do
+              set -- $pair
+              xcrun simctl terminate "$SIM" ai.facetype || true
+              xcrun simctl launch "$SIM" ai.facetype -FTDemo setup -FTLang "$1" -AppleLanguages "($phone)" -AppleLocale "$locale"
+              sleep 6
+              xcrun simctl terminate "$SIM" ai.facetype || true
+              xcrun simctl launch "$SIM" ai.facetype -FTDemo setup -FTLang "$2" -AppleLanguages "($phone)" -AppleLocale "$locale"
+              sleep 6
+              xcrun simctl io "$SIM" screenshot "shots/phone-$phone-switch-$1-to-$2-setup.png"
+            done
+          done
           ls -la shots
       - uses: actions/upload-artifact@v4
         if: always()

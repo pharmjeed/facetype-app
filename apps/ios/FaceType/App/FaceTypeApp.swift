@@ -16,7 +16,7 @@ struct FaceTypeApp: App {
     WindowGroup {
       RootView()
         .environmentObject(model)
-        .environment(\.layoutDirection, model.language.layoutDirection)
+        .modifier(LanguageDirection(language: model.language))
         .environment(\.locale, Locale(identifier: model.language == .ar ? "ar@numbers=latn" : "en"))
         .onOpenURL { url in _ = GIDSignIn.sharedInstance.handle(url) }
     }
@@ -76,5 +76,22 @@ struct LanguageToggle: View {
   var body: some View {
     Button(s("lang.switch")) { model.setLanguage(model.language.other) }
       .accessibilityLabel(s("lang.switch"))
+  }
+}
+
+/// One source for the interface direction. On iOS 17+ it is the window's layout-direction trait (`AppWindows`),
+/// which SwiftUI reads into its environment — so SwiftUI and the UIKit pieces under it can never disagree. Setting
+/// the environment as well left the form mirrored after an Arabic → English switch inside the app (UI test
+/// 2026-11-25: the header sat at exactly the mirror of its place; a relaunch was correct). iOS 16 has no trait
+/// override, so there the environment carries the direction.
+struct LanguageDirection: ViewModifier {
+  let language: Lang
+
+  func body(content: Content) -> some View {
+    if #available(iOS 17.0, *) {
+      content
+    } else {
+      content.environment(\.layoutDirection, language.layoutDirection)
+    }
   }
 }
