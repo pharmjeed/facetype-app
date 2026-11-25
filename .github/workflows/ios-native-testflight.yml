@@ -62,7 +62,8 @@ jobs:
           body=$(printf '%s' "$P8" | tr -d '\r' | sed -e 's/-----BEGIN PRIVATE KEY-----//g' -e 's/-----END PRIVATE KEY-----//g' | tr -d ' \n\t')
           echo "key body length: ${#body}"
           { echo "-----BEGIN PRIVATE KEY-----"; printf '%s\n' "$body" | fold -w 64; echo "-----END PRIVATE KEY-----"; } > "$key"
-          openssl pkey -in "$key" -noout && echo "the key parses as a private key"
+          openssl pkey -in "$key" -noout 2>/dev/null || { echo "ASC_KEY_P8 is not a complete private key (body length ${#body}; a P-256 key has about 184)"; exit 1; }
+          echo "the key parses as a private key"
           echo "KEY_PATH=$key" >> "$GITHUB_ENV"
       - name: Archive (Release, unsigned)
         working-directory: apps/ios
