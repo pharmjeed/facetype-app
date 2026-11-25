@@ -61,14 +61,19 @@ final class AppModel: ObservableObject {
 
   /// UIKit-backed pieces (lists, text fields, navigation bars) take their direction from the phone's language,
   /// SwiftUI from the environment. When the two disagree (English chosen on an Arabic phone) UIKit content is
-  /// drawn mirrored. Forcing UIKit's semantic direction to the chosen language keeps them in agreement; the tree
-  /// is rebuilt on a switch (`.id(language)`), so every new view picks it up.
+  /// drawn mirrored. Three levers keep them in agreement:
+  /// - the window's layout-direction trait, at once (iOS 17+, `AppWindows`);
+  /// - UIKit's semantic direction for views created from now on (the tree is rebuilt on a switch, `.id(language)`);
+  /// - the app's own `AppleLanguages`, the same setting as iOS's per-app language in Settings: from the next
+  ///   launch the whole app, system pieces included (the Sign in with Apple button), starts in this language.
   static func applyUIKitDirection(_ language: Lang) {
     let attribute: UISemanticContentAttribute = language.isRTL ? .forceRightToLeft : .forceLeftToRight
     UIView.appearance().semanticContentAttribute = attribute
     UINavigationBar.appearance().semanticContentAttribute = attribute
     UISearchBar.appearance().semanticContentAttribute = attribute
     UITextField.appearance().semanticContentAttribute = attribute
+    UserDefaults.standard.set([language.rawValue], forKey: "AppleLanguages")
+    AppWindows.applyDirection(language)
   }
 
   func setLanguage(_ next: Lang) {

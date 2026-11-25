@@ -43,20 +43,50 @@ final class KeyboardDismisser: NSObject, UIGestureRecognizerDelegate {
   }
 }
 
-/// Placed behind the root view; installs the recognizer on the window that shows the app.
-struct KeyboardDismissInstaller: UIViewRepresentable {
-  func makeUIView(context: Context) -> InstallerView {
-    let view = InstallerView()
+/// The windows that show the app (never the keyboard's), and the interface direction applied to them.
+///
+/// SwiftUI lists and forms are hosted in UIKit cells that take their direction from the trait collection, which
+/// follows the phone's language — not from the SwiftUI environment. English chosen on an Arabic phone was drawn
+/// right to left inside every Form (CI test `testLayoutFollowsTheAppLanguage`, 2026-11-25). Overriding the
+/// window's layout-direction trait makes UIKit agree with the chosen language at once (iOS 17+); the app's own
+/// `AppleLanguages` (AppModel.applyUIKitDirection) makes the next launch agree from the start on every iOS.
+@MainActor
+enum AppWindows {
+  private static let windows = NSHashTable<UIWindow>.weakObjects()
+
+  static func register(_ window: UIWindow) {
+    windows.add(window)
+    apply(L10n.lang, to: window)
+  }
+
+  static func applyDirection(_ language: Lang) {
+    for window in windows.allObjects { apply(language, to: window) }
+  }
+
+  private static func apply(_ language: Lang, to window: UIWindow) {
+    if #available(iOS 17.0, *) {
+      window.traitOverrides.layoutDirection = language.isRTL ? .rightToLeft : .leftToRight
+    }
+  }
+}
+
+/// Placed behind the root view: registers the window that shows the app (direction) and installs the
+/// keyboard-dismiss recognizer on it.
+struct AppWindowHook: UIViewRepresentable {
+  func makeUIView(context: Context) -> HookView {
+    let view = HookView()
     view.isUserInteractionEnabled = false
     return view
   }
 
-  func updateUIView(_ uiView: InstallerView, context: Context) {}
+  func updateUIView(_ uiView: HookView, context: Context) {}
 
-  final class InstallerView: UIView {
+  final class HookView: UIView {
     override func didMoveToWindow() {
       super.didMoveToWindow()
-      if let window { KeyboardDismisser.shared.install(on: window) }
+      guard let window else { return }
+      AppWindows.register(window)
+      KeyboardDismisser.shared.install(on: window)
     }
   }
 }

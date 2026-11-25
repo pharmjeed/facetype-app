@@ -43,7 +43,7 @@ struct RootView: View {
     }
     // A language switch rebuilds the tree so every string is read again; form input lives in the model.
     .id(model.language)
-    .background(KeyboardDismissInstaller().frame(width: 0, height: 0))
+    .background(AppWindowHook().frame(width: 0, height: 0))
     .task { if DemoScreen.requested == nil { await model.boot() } }
     .onChange(of: scenePhase) { phase in
       if phase == .active { model.pump() }
