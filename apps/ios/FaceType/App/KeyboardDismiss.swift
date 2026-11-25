@@ -54,6 +54,8 @@ final class KeyboardDismisser: NSObject, UIGestureRecognizerDelegate {
 enum AppWindows {
   private static let windows = NSHashTable<UIWindow>.weakObjects()
 
+  static var first: UIWindow? { windows.allObjects.first }
+
   static func register(_ window: UIWindow) {
     windows.add(window)
     apply(L10n.lang, to: window)

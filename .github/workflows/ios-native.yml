@@ -63,6 +63,8 @@ jobs:
             || { grep -n -E "error:|failed|XCTAssert|Test Case .* failed" test.log | head -150; tail -60 test.log; exit 1; }
           grep -E "Executed [0-9]+ tests" test.log | tail -2
       - name: Screenshots, Arabic and English
+        # Also after a failed test, so the failure can be seen.
+        if: success() || failure()
         working-directory: apps/ios
         run: |
           set -euo pipefail

@@ -64,22 +64,31 @@ final class FormBehaviourUITests: XCTestCase {
     }
   }
 
-  /// The «Full name» header sits on the reading side of the chosen language on both phone languages.
+  /// The «Full name» header sits on the reading side of the chosen language on both phone languages, on the
+  /// launch that switches the language and on the next launch (which starts in the stored language).
   func testLayoutFollowsTheAppLanguage() {
+    continueAfterFailure = true
     for phone in ["ar", "en"] {
       for lang in ["ar", "en"] {
-        let app = launch(app: lang, phone: phone)
-        let header = app.staticTexts["header.full_name"]
-        XCTAssertTrue(header.waitForExistence(timeout: 30), "header missing (phone \(phone), app \(lang))")
-        let width = app.windows.firstMatch.frame.width
-        if lang == "ar" {
-          XCTAssertGreaterThan(header.frame.maxX, width * 0.7,
-                               "Arabic header not on the right (phone \(phone)): \(header.frame)")
-        } else {
-          XCTAssertLessThan(header.frame.minX, width * 0.3,
-                            "English header not on the left (phone \(phone)): \(header.frame)")
+        for round in ["switch", "relaunch"] {
+          let app = launch(app: lang, phone: phone)
+          let header = app.staticTexts["header.full_name"]
+          XCTAssertTrue(header.waitForExistence(timeout: 30), "header missing (phone \(phone), app \(lang))")
+          RunLoop.current.run(until: Date().addingTimeInterval(2))
+          let probe = app.staticTexts["debug.direction"]
+          let diag = probe.exists ? probe.label : "probe missing"
+          let width = app.windows.firstMatch.frame.width
+          let frame = header.frame
+          print("LAYOUT phone=\(phone) app=\(lang) \(round) header=\(frame) width=\(width) | \(diag)")
+          if lang == "ar" {
+            XCTAssertGreaterThan(frame.maxX, width * 0.7,
+                                 "Arabic header not on the right (phone \(phone), \(round)): \(frame) | \(diag)")
+          } else {
+            XCTAssertLessThan(frame.minX, width * 0.3,
+                              "English header not on the left (phone \(phone), \(round)): \(frame) | \(diag)")
+          }
+          app.terminate()
         }
-        app.terminate()
       }
     }
   }

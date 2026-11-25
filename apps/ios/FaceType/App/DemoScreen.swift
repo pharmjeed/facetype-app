@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum DemoScreen: String {
   case signin, setup, setupErrors = "setup-errors", profile, tips
@@ -36,7 +37,34 @@ struct DemoRoot: View {
       case .tips: CaptureScreen()
       }
     }
-    .onAppear { model.applyDemo(screen) }
+    .onAppear {
+      model.applyDemo(screen)
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) { probe = DirectionProbe.describe() }
+    }
+    // Demo mode only: how UIKit sees the direction, for the UI tests' failure messages.
+    .overlay(alignment: .bottomLeading) {
+      Text(probe).font(.system(size: 2)).foregroundStyle(.clear).accessibilityIdentifier("debug.direction")
+    }
+  }
+
+  @State private var probe = ""
+}
+
+enum DirectionProbe {
+  @MainActor static func describe() -> String {
+    func uiName(_ d: UIUserInterfaceLayoutDirection) -> String { d == .rightToLeft ? "rtl" : "ltr" }
+    func traitName(_ d: UITraitEnvironmentLayoutDirection) -> String {
+      switch d { case .rightToLeft: return "rtl"; case .leftToRight: return "ltr"; default: return "unspecified" }
+    }
+    let window = AppWindows.first
+    return [
+      "app=\(uiName(UIApplication.shared.userInterfaceLayoutDirection))",
+      "windowTrait=\(window.map { traitName($0.traitCollection.layoutDirection) } ?? "none")",
+      "windowEffective=\(window.map { uiName($0.effectiveUserInterfaceLayoutDirection) } ?? "none")",
+      "appearance=\(UIView.appearance().semanticContentAttribute.rawValue)",
+      "bundle=\(Bundle.main.preferredLocalizations.first ?? "-")",
+      "lang=\(L10n.lang.rawValue)",
+    ].joined(separator: " ")
   }
 }
 
