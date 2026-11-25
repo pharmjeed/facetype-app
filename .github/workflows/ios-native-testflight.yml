@@ -1,0 +1,110 @@
+name: TestFlight upload (native iOS)
+# Manual. Builds the native SwiftUI app (apps/ios) and uploads it to TestFlight with the App Store Connect key.
+# Needs the repository secret ASC_KEY_P8 (set by the owner) and the variables APPLE_TEAM_ID, ASC_KEY_ID, ASC_ISSUER_ID.
+# The team has no registered devices, so the archive is made unsigned and the export signs it for the App Store
+# with a cloud-managed distribution certificate (the route proven on another app of the same team).
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  upload:
+    runs-on: macos-15
+    timeout-minutes: 75
+    env:
+      TEAM: ${{ vars.APPLE_TEAM_ID }}
+      KEY_ID: ${{ vars.ASC_KEY_ID }}
+      ISSUER: ${{ vars.ASC_ISSUER_ID }}
+      # Build numbers from 100 up stay clear of the numbers used by the earlier uploads (1–5).
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check configuration
+        run: |
+          for v in TEAM KEY_ID ISSUER; do [ -n "${!v}" ] || { echo "missing variable $v"; exit 1; }; done
+          [ -n "${{ secrets.ASC_KEY_P8 }}" ] || { echo "missing secret ASC_KEY_P8"; exit 1; }
+          echo "BUILD=$((100 + BUILD_NUMBER))" >> "$GITHUB_ENV"
+      - name: Xcode
+        run: bash ci/select-xcode.sh
+      - name: Generate the Xcode project (xcodegen pinned by toolchain.json)
+        working-directory: apps/ios
+        run: |
+          set -euo pipefail
+          url=$(jq -r '.xcodegen.url' toolchain.json)
+          expected=$(jq -r '.xcodegen.sha256' toolchain.json)
+          binary=$(jq -r '.xcodegen.binaryPath' toolchain.json)
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" "$url"
+          actual=$(shasum -a 256 "$RUNNER_TEMP/xcodegen.zip" | cut -d ' ' -f 1)
+          [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
+          "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+      - name: Pods (CocoaPods pinned by Gemfile)
+        working-directory: apps/ios
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+          for attempt in 1 2 3; do
+            if bundle exec pod install --repo-update; then exit 0; fi
+            rm -rf Pods FaceType.xcworkspace
+          done
+          exit 1
+      - name: App Store Connect key
+        env:
+          P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/keys"
+          printf '%s\n' "$P8" > "$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8"
+          echo "KEY_PATH=$RUNNER_TEMP/keys/AuthKey_$KEY_ID.p8" >> "$GITHUB_ENV"
+      - name: Archive (Release, unsigned)
+        working-directory: apps/ios
+        run: |
+          xcodebuild -workspace FaceType.xcworkspace -scheme FaceType -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/FaceType.xcarchive \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic CURRENT_PROJECT_VERSION="$BUILD" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            archive > archive.log 2>&1 || { grep -E "error:|requires a provisioning|No Accounts|No profiles" archive.log | sort -u | head -60; tail -60 archive.log; exit 1; }
+          tail -5 archive.log
+      # An unsigned archive carries no entitlements; the export re-signs with those it finds in the binary, so sign
+      # the archived app ad hoc with ours (Sign in with Apple) first.
+      - name: Embed entitlements
+        working-directory: apps/ios
+        run: |
+          APP=$(find build/FaceType.xcarchive/Products/Applications -maxdepth 1 -name '*.app' | head -1)
+          codesign --force --sign - --timestamp=none --entitlements FaceType/FaceType.entitlements "$APP"
+          codesign -d --entitlements - "$APP" 2>/dev/null | grep -q applesignin || { echo "entitlements missing in the archive"; exit 1; }
+      - name: Export locally and check the signed app
+        working-directory: apps/ios
+        run: |
+          sed -e "s/__TEAM__/$TEAM/" -e "s#<string>upload</string>#<string>export</string>#" "$GITHUB_WORKSPACE/ci/ExportOptions.plist" > build/ExportLocal.plist
+          xcodebuild -exportArchive -archivePath build/FaceType.xcarchive -exportOptionsPlist build/ExportLocal.plist \
+            -exportPath build/local -allowProvisioningUpdates -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" > export-local.log 2>&1 \
+            || { grep -E "error|Error" export-local.log | sort -u | head -60; tail -60 export-local.log; exit 1; }
+          mkdir -p build/check && unzip -q -o build/local/*.ipa -d build/check
+          APP=$(find build/check/Payload -maxdepth 1 -name '*.app' | head -1)
+          codesign -d --entitlements - "$APP" 2>/dev/null | tee entitlements.txt
+          grep -q applesignin entitlements.txt || { echo "Sign in with Apple entitlement missing from the signed app"; exit 1; }
+          plutil -p "$APP/Info.plist" | grep -E "CFBundleShortVersionString|CFBundleVersion|UILaunchScreen|FTApiBaseURL"
+          ls "$APP" | grep -q face_landmarker.task || { echo "MediaPipe model missing"; exit 1; }
+      - name: Export and upload to App Store Connect
+        working-directory: apps/ios
+        run: |
+          sed "s/__TEAM__/$TEAM/" "$GITHUB_WORKSPACE/ci/ExportOptions.plist" > build/ExportOptions.plist
+          xcodebuild -exportArchive -archivePath build/FaceType.xcarchive -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/export -allowProvisioningUpdates -authenticationKeyPath "$KEY_PATH" \
+            -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER" > export.log 2>&1 \
+            || { grep -E "error|Error" export.log | sort -u | head -60; tail -60 export.log; exit 1; }
+          tail -20 export.log
+      - name: Remove the key
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/keys"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testflight-native-logs
+          path: |
+            apps/ios/archive.log
+            apps/ios/export-local.log
+            apps/ios/entitlements.txt
+            apps/ios/export.log
+          if-no-files-found: ignore
