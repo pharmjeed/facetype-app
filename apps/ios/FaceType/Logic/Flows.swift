@@ -103,7 +103,7 @@ enum ClientFlow {
 // MARK: - capture flow
 
 enum CameraErrorCode: String {
-  case permission_denied, camera_unavailable, camera_interrupted, model_unavailable, effects_active, internal
+  case permission_denied, camera_unavailable, camera_interrupted, model_unavailable, effects_active, `internal`
 }
 
 enum CapturePhase: Equatable {
