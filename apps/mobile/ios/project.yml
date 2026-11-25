@@ -54,6 +54,11 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ai.facetype
         PRODUCT_NAME: FaceType AI
+        # iPhone only. XcodeGen's application preset is universal ("1,2"), and a
+        # universal bundle whose Info.plist allows portrait only is refused at
+        # App Store Connect upload (ITMS-90474: iPad multitasking needs all four
+        # orientations). The capture flow is designed for a hand-held phone.
+        TARGETED_DEVICE_FAMILY: "1"
         MARKETING_VERSION: "2.0.0"
         CURRENT_PROJECT_VERSION: "1"
         # Google Sign-In callback URL scheme, substituted into Info.plist's

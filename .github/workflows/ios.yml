@@ -41,6 +41,13 @@ jobs:
           [ "$actual" = "$expected" ] || { echo "xcodegen digest mismatch"; exit 1; }
           unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen-dist"
           "$RUNNER_TEMP/xcodegen-dist/$binary" generate
+          # The generated project before CocoaPods touches it, for builds on other macOS hosts (EAS).
+          mkdir -p "$RUNNER_TEMP/xcodeproj" && cp -R FaceType.xcodeproj "$RUNNER_TEMP/xcodeproj/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-xcodeproj
+          path: ${{ runner.temp }}/xcodeproj
+          if-no-files-found: error
       - name: Pods (CocoaPods pinned by Gemfile)
         working-directory: apps/mobile/ios
         run: |
