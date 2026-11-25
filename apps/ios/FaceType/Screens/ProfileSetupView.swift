@@ -73,7 +73,6 @@ struct ProfileSetupView: View {
               .keyboardType(.asciiCapable)
               .textInputAutocapitalization(.characters)
               .autocorrectionDisabled()
-              .environment(\.layoutDirection, .leftToRight)
               .id(ProfileField.id_number)
           } header: {
             Text(s("setup.id_type"))
@@ -89,7 +88,6 @@ struct ProfileSetupView: View {
             TextField(s("setup.phone"), text: $model.form.phone)
               .keyboardType(.phonePad)
               .textContentType(.telephoneNumber)
-              .environment(\.layoutDirection, .leftToRight)
           } header: {
             Text(s("setup.phone"))
           } footer: {

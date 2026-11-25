@@ -7,6 +7,7 @@
 
 import AuthenticationServices
 import SwiftUI
+import UIKit
 
 enum SetupError: Equatable {
   case identifierTaken
@@ -45,6 +46,7 @@ final class AppModel: ObservableObject {
     let stored = UserDefaults.standard.string(forKey: Self.languageKey).flatMap(Lang.init(rawValue:)) ?? .ar
     language = stored
     L10n.lang = stored
+    Self.applyUIKitDirection(stored)
     let base = AppConfig.configError == nil ? AppConfig.apiBaseURL : "https://invalid.invalid"
     api = ClientAPI(baseURL: base, tokens: tokens) { [weak self] in
       Task { @MainActor in self?.sessionEnded() }
@@ -57,9 +59,22 @@ final class AppModel: ObservableObject {
 
   // MARK: language
 
+  /// UIKit-backed pieces (lists, text fields, navigation bars) take their direction from the phone's language,
+  /// SwiftUI from the environment. When the two disagree (English chosen on an Arabic phone) UIKit content is
+  /// drawn mirrored. Forcing UIKit's semantic direction to the chosen language keeps them in agreement; the tree
+  /// is rebuilt on a switch (`.id(language)`), so every new view picks it up.
+  static func applyUIKitDirection(_ language: Lang) {
+    let attribute: UISemanticContentAttribute = language.isRTL ? .forceRightToLeft : .forceLeftToRight
+    UIView.appearance().semanticContentAttribute = attribute
+    UINavigationBar.appearance().semanticContentAttribute = attribute
+    UISearchBar.appearance().semanticContentAttribute = attribute
+    UITextField.appearance().semanticContentAttribute = attribute
+  }
+
   func setLanguage(_ next: Lang) {
     guard next != language else { return }
     L10n.lang = next
+    Self.applyUIKitDirection(next)
     language = next
     UserDefaults.standard.set(next.rawValue, forKey: Self.languageKey)
   }

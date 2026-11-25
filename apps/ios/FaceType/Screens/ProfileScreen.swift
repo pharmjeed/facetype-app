@@ -40,8 +40,8 @@ struct ProfileScreen: View {
             Section {
               LabeledContent(s("setup.full_name"), value: p.full_name)
               LabeledContent(s("setup.id_type"), value: "\(s(docKey(p.id_document_type))) · \(Countries.name(p.id_issuing_country))")
-              LabeledContent(s("setup.id_number")) { Text(p.id_number).environment(\.layoutDirection, .leftToRight) }
-              LabeledContent(s("setup.phone")) { Text(p.phone).environment(\.layoutDirection, .leftToRight) }
+              LabeledContent(s("setup.id_number"), value: p.id_number)
+              LabeledContent(s("setup.phone"), value: p.phone)
               LabeledContent(s("setup.sex"), value: s(p.sex == "female" ? "sex.female" : "sex.male"))
               LabeledContent(s("setup.birth_date"), value: DateWheel.formatBirthDate(p.birth_date))
               if let age = p.age_years { Text(s("profile.age", ["value": age])) }

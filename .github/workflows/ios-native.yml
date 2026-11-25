@@ -73,12 +73,20 @@ jobs:
           mkdir -p shots
           # The first launch after an install is slower; warm it up before the captures.
           xcrun simctl launch "$SIM" ai.facetype -FTDemo signin -FTLang ar; sleep 10
-          for lang in ar en; do
-            for screen in signin setup setup-errors profile tips; do
-              xcrun simctl terminate "$SIM" ai.facetype || true
-              xcrun simctl launch "$SIM" ai.facetype -FTDemo "$screen" -FTLang "$lang"
-              sleep 6
-              xcrun simctl io "$SIM" screenshot "shots/$lang-$screen.png"
+          # Two phone languages: the simulator's English, and Arabic (as on the owner's iPhone), where an app
+          # running in English must still draw left to right and not mirror UIKit-backed lists and fields.
+          for phone in en ar; do
+            for lang in ar en; do
+              for screen in signin setup setup-errors profile tips; do
+                xcrun simctl terminate "$SIM" ai.facetype || true
+                if [ "$phone" = ar ]; then
+                  xcrun simctl launch "$SIM" ai.facetype -FTDemo "$screen" -FTLang "$lang" -AppleLanguages "(ar)" -AppleLocale ar_SA
+                else
+                  xcrun simctl launch "$SIM" ai.facetype -FTDemo "$screen" -FTLang "$lang"
+                fi
+                sleep 6
+                xcrun simctl io "$SIM" screenshot "shots/phone-$phone-app-$lang-$screen.png"
+              done
             done
           done
           ls -la shots
