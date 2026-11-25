@@ -244,7 +244,8 @@ actor ClientAPI {
     _ method: String, _ path: String, body: Any? = nil, auth: Bool = true, context: ProblemContext = .other,
     idempotencyKey: String? = nil
   ) async throws -> Data {
-    var used = auth ? try await freshAccessToken() : nil
+    var used: String? = nil
+    if auth { used = try await freshAccessToken() }
     var (data, response) = try await send(method, path, body: body, token: used, idempotencyKey: idempotencyKey)
     if auth && response.statusCode == 401 {
       if let current = currentTokens(), current.accessToken != used {

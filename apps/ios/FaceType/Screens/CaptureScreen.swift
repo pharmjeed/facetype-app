@@ -194,8 +194,12 @@ struct CaptureScreen: View {
 private struct CaptureContent: View {
   @EnvironmentObject private var app: AppModel
   @Environment(\.scenePhase) private var scenePhase
-  @StateObject var model: CaptureModel
+  @StateObject private var model: CaptureModel
   @State private var lastAnnounced = ""
+
+  init(model: @autoclosure @escaping () -> CaptureModel) {
+    _model = StateObject(wrappedValue: model())
+  }
 
   var body: some View {
     ZStack {
@@ -313,7 +317,7 @@ private struct CaptureContent: View {
     case .permissionDenied:
       Text(s("camera.permission_denied")).font(.title3)
       primary("camera.open_settings") {
-        if let url = URL(string: UIApplication.openSettingsURLString) { await UIApplication.shared.open(url) }
+        if let url = URL(string: UIApplication.openSettingsURLString) { _ = await UIApplication.shared.open(url) }
       }
       secondary("common.retry") { model.resume() }
       secondary("common.cancel") { await model.cancel() }

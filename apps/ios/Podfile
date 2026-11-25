@@ -21,6 +21,9 @@ post_install do |installer|
       path = aggregate.xcconfig_path(config_name)
       text = File.read(path)
       fixed = text.gsub(/ -l"GTMSessionFetcher"/, '')
+      # The unit tests run inside the app (TEST_HOST/BUNDLE_LOADER) and use its copy of every pod. Linking the pods
+      # into the test bundle as well loads MediaPipe twice, and its calculator registry aborts at launch.
+      fixed = fixed.gsub(/^OTHER_LDFLAGS = .*$/, 'OTHER_LDFLAGS = $(inherited)') if aggregate.name == 'Pods-FaceTypeTests'
       File.write(path, fixed) if fixed != text
     end
   end

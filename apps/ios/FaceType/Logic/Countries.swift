@@ -69,9 +69,9 @@ enum Countries {
     var scalars = String.UnicodeScalarView()
     for scalar in value.unicodeScalars {
       switch scalar.value {
-      case 0x0622, 0x0623, 0x0625: scalars.append(UnicodeScalar(0x0627)!)  // آ أ إ → ا
-      case 0x0629: scalars.append(UnicodeScalar(0x0647)!)  // ة → ه
-      case 0x0649: scalars.append(UnicodeScalar(0x064A)!)  // ى → ي
+      case 0x0622, 0x0623, 0x0625: scalars.append(Unicode.Scalar(UInt32(0x0627))!)  // آ أ إ → ا
+      case 0x0629: scalars.append(Unicode.Scalar(UInt32(0x0647))!)  // ة → ه
+      case 0x0649: scalars.append(Unicode.Scalar(UInt32(0x064A))!)  // ى → ي
       case 0x064B...0x0670, 0x065F, 0x0640: continue  // the original's [ً-ٰٟـ]
       default: scalars.append(scalar)
       }

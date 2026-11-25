@@ -169,11 +169,13 @@ enum Validation {
   }
 
   static func checkSex(_ raw: String?) -> Checked<Sex> {
-    raw.flatMap(Sex.init(rawValue:)).map { .ok($0) } ?? .error("err.sex")
+    if let sex = raw.flatMap(Sex.init(rawValue:)) { return .ok(sex) }
+    return .error("err.sex")
   }
 
   static func checkIdType(_ raw: String?) -> Checked<IdDocumentType> {
-    raw.flatMap(IdDocumentType.init(rawValue:)).map { .ok($0) } ?? .error("err.id_type")
+    if let type = raw.flatMap(IdDocumentType.init(rawValue:)) { return .ok(type) }
+    return .error("err.id_type")
   }
 
   /// Completed years between a birth date and `today` (UTC calendar dates).

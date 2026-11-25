@@ -137,7 +137,12 @@ enum Guidance {
 
   static func smooth(_ window: [FrameMeasure]) -> Smoothed {
     func pick(_ read: (FrameMeasure) -> Double?) -> Double? { median(window.map(read)) }
-    let box = (0..<4).map { i in pick { m in (m.faceBox.flatMap { $0.count > i ? $0[i] : nil }) } }
+    let box: [Double?] = (0..<4).map { i in
+      pick { m -> Double? in
+        guard let values = m.faceBox, values.count > i else { return nil }
+        return values[i]
+      }
+    }
     return Smoothed(
       faces: pick(\.faces), yaw: pick(\.yaw), pitch: pick(\.pitch), roll: pick(\.roll),
       faceBox: box.allSatisfy({ $0 != nil }) ? box.map { $0! } : nil,
