@@ -48,26 +48,38 @@ final class SetupWindowsUITests: XCTestCase {
     (element.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
   }
 
-  /// Scrolls the form until the element can be tapped. The drag starts inside the part of the form that shows:
-  /// above the pinned bar (and the keyboard above which it then sits); a swipe from the middle of the screen
-  /// lands on the bar when the keyboard is open and scrolls nothing (CI 2026-11-26).
+  /// The top of whatever covers the bottom of the form: the pinned bar (terms row and save button) or, while
+  /// typing, the keyboard.
+  private func coverTop(_ app: XCUIApplication) -> CGFloat {
+    var top = app.windows.firstMatch.frame.height
+    let box = app.buttons["terms.checkbox"]
+    let save = app.buttons["setup.save"]
+    if box.exists { top = min(top, box.frame.minY - 8) } else if save.exists { top = min(top, save.frame.minY - 8) }
+    let keyboard = app.keyboards.firstMatch
+    if keyboard.exists { top = min(top, keyboard.frame.minY) }
+    return top
+  }
+
+  /// Scrolls the form until the element lies wholly above the bar and the keyboard. `isHittable` alone is not
+  /// enough: a row under the translucent bar still reports hittable while a real tap lands on the bar (CI
+  /// 2026-11-26). Each drag starts in the visible part of the form and ends at rest, so the list is not gliding
+  /// when the row is tapped (a tap on a gliding list only stops it).
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
     var tries = 0
-    while !element.isHittable && tries < 6 {
+    while !(element.isHittable && element.frame.maxY <= coverTop(app)) && tries < 8 {
       let window = app.windows.firstMatch.frame
-      var bottom = window.height
-      let save = app.buttons["setup.save"]
-      if save.exists { bottom = min(bottom, save.frame.minY - 70) }  // the terms row sits above the button
-      let keyboard = app.keyboards.firstMatch
-      if keyboard.exists { bottom = min(bottom, keyboard.frame.minY) }
-      let startY = min(bottom - 40, window.height * 0.45)
+      let cover = coverTop(app)
+      let below = !element.exists || element.frame.minY > window.height * 0.5  // a row not yet built lies below
       let origin = app.coordinate(withNormalizedOffset: .zero)
-      let start = origin.withOffset(CGVector(dx: window.width / 2, dy: startY))
-      let end = origin.withOffset(CGVector(dx: window.width / 2, dy: window.height * 0.18))
-      // Hold before lifting so the list does not keep gliding: a tap on a moving list only stops it.
+      let upper = window.height * 0.2
+      let lower = min(cover - 40, window.height * 0.45)
+      let start = origin.withOffset(CGVector(dx: window.width / 2, dy: below ? lower : upper))
+      let end = origin.withOffset(CGVector(dx: window.width / 2, dy: below ? upper : lower))
       start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.4)
       tries += 1
     }
+    XCTAssertTrue(element.isHittable && element.frame.maxY <= coverTop(app),
+                  "could not scroll \(element) clear of the bar: \(element.frame) cover \(coverTop(app))")
   }
 
   // MARK: the save bar
@@ -161,6 +173,7 @@ final class SetupWindowsUITests: XCTestCase {
       shot("\(lang)-date-chosen")
 
       // A tap above the window closes it too.
+      reveal(row, in: app)
       row.tap()
       XCTAssertTrue(done.waitForExistence(timeout: 5), "date window did not open again (\(lang))")
       app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12)).tap()
@@ -192,15 +205,6 @@ final class SetupWindowsUITests: XCTestCase {
         }
         let row = app.buttons[field]
         reveal(row, in: app)
-        if !row.isHittable {
-          // Evidence first: where the row, the save bar and the keyboard are.
-          shot("\(label)-unreachable")
-          let keyboard = app.keyboards.firstMatch
-          XCTFail("row not reachable (\(label)): row \(row.frame) save \(app.buttons["setup.save"].frame) "
-                  + "keyboard \(keyboard.exists ? "\(keyboard.frame)" : "none") window \(app.windows.firstMatch.frame)")
-          app.terminate()
-          continue
-        }
         row.tap()
         // Snapshots while the window opens, to catch a jump or a blank list.
         RunLoop.current.run(until: Date().addingTimeInterval(0.25))
@@ -226,7 +230,8 @@ final class SetupWindowsUITests: XCTestCase {
         XCTAssertTrue(app.buttons["setup.save"].waitForExistence(timeout: 5), "save bar did not come back (\(label))")
         shot("\(label)-chosen")
 
-        // «إلغاء» closes without changing the choice.
+        // «إلغاء» closes without changing the choice. Closing the keyboard brought the bar back over the bottom rows.
+        reveal(row, in: app)
         row.tap()
         let cancel = app.buttons["country.cancel"]
         XCTAssertTrue(cancel.waitForExistence(timeout: 5), "country window did not open again (\(label))")
