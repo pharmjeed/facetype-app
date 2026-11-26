@@ -48,11 +48,19 @@ final class SetupWindowsUITests: XCTestCase {
     (element.value(forKey: "hasKeyboardFocus") as? Bool) ?? false
   }
 
-  /// Scrolls the form until the element can be tapped (the pinned bar never needs this).
+  /// Scrolls the form until the element can be tapped. The drag starts inside the part of the form that shows:
+  /// above the pinned bar (and the keyboard above which it then sits); a swipe from the middle of the screen
+  /// lands on the bar when the keyboard is open and scrolls nothing (CI 2026-11-26).
   private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
     var tries = 0
-    while !element.isHittable && tries < 4 {
-      app.swipeUp()
+    while !element.isHittable && tries < 6 {
+      let window = app.windows.firstMatch.frame
+      let barTop = app.buttons["setup.save"].frame.minY - 70  // the terms row sits above the button
+      let startY = min(barTop - 40, window.height * 0.45)
+      let origin = app.coordinate(withNormalizedOffset: .zero)
+      let start = origin.withOffset(CGVector(dx: window.width / 2, dy: startY))
+      let end = origin.withOffset(CGVector(dx: window.width / 2, dy: window.height * 0.18))
+      start.press(forDuration: 0.05, thenDragTo: end)
       tries += 1
     }
   }
