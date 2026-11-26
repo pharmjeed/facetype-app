@@ -53,7 +53,7 @@ final class LockedSpoolTests: XCTestCase {
     let manifest = SpoolManifest(
       accountId: "a", clientCaptureId: "c", createdAtMs: now, updatedAtMs: now, stage: .uploading, captureId: "cap",
       attempt: 1, protocolVersion: "capture-spec-v2", gateConfigHash: "h", device: [:], camera: [:],
-      frames: [ManifestFrame(index: 0, nativeId: "frame-0", sha256: "x", bytes: 1, width: 1, height: 1,
+      frames: [ManifestFrame(index: 0, nativeId: "frame-0", sha256: String(repeating: "a", count: 64), bytes: 1, width: 1, height: 1,
                              uploaded: false, completed: false)],
       verdict: nil, checkingSinceMs: nil, error: nil, attemptTelemetry: nil)
     try manifestFile.write(JSONEncoder().encode(manifest))
