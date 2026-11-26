@@ -130,7 +130,16 @@ final class MainTabsUITests: XCTestCase {
       XCTAssertTrue(anything(app, containing: lang == "ar" ? "لا يمكن التراجع" : "cannot be undone").exists,
                     "the confirmation says it cannot be undone (\(lang))")
       shot("\(lang)-tab-info-delete-confirm")
-      app.buttons[lang == "ar" ? "إلغاء" : "Cancel"].firstMatch.tap()
+      // iOS 26 shows the confirmation as a popover from the button, without a cancel button: tapping outside it
+      // cancels. Older systems show an action sheet with «إلغاء».
+      let cancel = app.buttons[lang == "ar" ? "إلغاء" : "Cancel"].firstMatch
+      if cancel.exists {
+        cancel.tap()
+      } else if app.otherElements["PopoverDismissRegion"].exists {
+        app.otherElements["PopoverDismissRegion"].tap()
+      } else {
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.35)).tap()
+      }
       XCTAssertFalse(confirm.waitForExistence(timeout: 2), "confirmation still shown after cancel (\(lang))")
       XCTAssertTrue(bar.exists, "left the signed-in pages after cancel (\(lang))")
       app.terminate()

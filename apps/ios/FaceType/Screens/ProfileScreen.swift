@@ -145,6 +145,7 @@ struct AccountSection: View {
       } label: {
         Label(s("account.delete"), systemImage: "trash")
       }
+      .tint(.red)  // the icon too, not only the text
       .accessibilityIdentifier("account.delete")
       if model.accountBusy {
         ProgressView().frame(maxWidth: .infinity)
