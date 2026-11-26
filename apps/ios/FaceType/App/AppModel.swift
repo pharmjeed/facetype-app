@@ -71,6 +71,34 @@ final class AppModel: ObservableObject {
       api: api, camera: camera, manifestFile: ProtectedFile(name: "spool-manifest.json"),
       queue: AttemptQueue(file: ProtectedFile(name: "attempt-queue.json")), gateHash: camera.gateHash,
       protocolVersion: "capture-spec-v2")
+    watchProtectedData()
+  }
+
+  /// The spool's files are unreadable while the phone is locked (complete data protection). When it locks, the run
+  /// stops before they go dark and the upload assertion is let go; when it unlocks, the pump starts again. Build 12
+  /// kept running after the lock and could take an unreadable frame for a lost one.
+  private func watchProtectedData() {
+    ProtectedData.shared.set(UIApplication.shared.isProtectedDataAvailable)
+    let center = NotificationCenter.default
+    center.addObserver(
+      forName: UIApplication.protectedDataWillBecomeUnavailableNotification, object: nil, queue: .main
+    ) { [weak self] _ in
+      ProtectedData.shared.set(false)
+      MainActor.assumeIsolated { self?.pauseForLock() }
+    }
+    center.addObserver(
+      forName: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil, queue: .main
+    ) { [weak self] _ in
+      ProtectedData.shared.set(true)
+      MainActor.assumeIsolated { self?.pump() }
+    }
+  }
+
+  private func pauseForLock() {
+    pumpTask?.cancel()
+    pumpTask = nil
+    upload.release()
+    Task { await runner.pause() }
   }
 
   // MARK: language

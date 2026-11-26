@@ -140,6 +140,28 @@ private struct Superseded: Error {}
 private struct Retryable: Error { let reason: SpoolOutcome.Reason }
 private struct Fatal: Error { let code: String }
 
+/// Whether files with complete data protection can be read now. iOS makes them unreadable about ten seconds after
+/// the phone locks, until it is unlocked; the spooled frames and their metadata are such files. While they are
+/// unreadable a missing frame or metadata is not evidence of loss: the run waits instead of abandoning the burst.
+/// AppModel sets it from UIApplication's protected-data notifications; read from any thread.
+final class ProtectedData: @unchecked Sendable {
+  static let shared = ProtectedData()
+  private let lock = NSLock()
+  private var value = true
+
+  var available: Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return value
+  }
+
+  func set(_ next: Bool) {
+    lock.lock()
+    value = next
+    lock.unlock()
+  }
+}
+
 actor SpoolRunner {
   private let api: SpoolAPI
   private let camera: SpoolCamera
@@ -148,6 +170,7 @@ actor SpoolRunner {
   private let now: () -> Double
   private let gateHash: String
   private let protocolVersion: String
+  private let protectedData: @Sendable () -> Bool
 
   private(set) var accountId: String?
   private var generation = 0
@@ -159,8 +182,10 @@ actor SpoolRunner {
   private var telemetryNextAtMs: Double = 0
 
   init(api: SpoolAPI, camera: SpoolCamera, manifestFile: ProtectedFile, queue: AttemptQueue, gateHash: String,
-       protocolVersion: String, now: @escaping () -> Double = { Date().timeIntervalSince1970 * 1000 }) {
+       protocolVersion: String, now: @escaping () -> Double = { Date().timeIntervalSince1970 * 1000 },
+       protectedData: @escaping @Sendable () -> Bool = { ProtectedData.shared.available }) {
     self.api = api
+    self.protectedData = protectedData
     self.camera = camera
     self.manifestFile = manifestFile
     self.queue = queue
@@ -199,6 +224,12 @@ actor SpoolRunner {
     accountId = account
     invalidate()
     if previous != nil && account != nil { discardNow(keepTelemetry: false) }
+  }
+
+  /// Stop the run in progress without touching anything stored (the phone is locking): every later step of the
+  /// old run finds itself superseded and writes nothing.
+  func pause() {
+    invalidate()
   }
 
   /// Delete everything local about the current capture (session end, account switch).
@@ -318,11 +349,12 @@ actor SpoolRunner {
   }
 
   private func end(_ g: Int, _ m: SpoolManifest, _ stage: SpoolStage, _ code: String) throws -> SpoolOutcome {
-    camera.deleteFrames(m.frames.map(\.nativeId))
+    // The manifest first: a superseded run (or one that cannot write) never deletes the frames.
     let next = try save(g, m) {
       $0.stage = stage
       $0.error = code
     }
+    camera.deleteFrames(m.frames.map(\.nativeId))
     targets.removeAll()
     return try terminal(g, next)
   }
@@ -470,6 +502,10 @@ actor SpoolRunner {
     let m = loadOwn() ?? stale
     if let fatal = error as? Fatal {
       let lost = ["frames_lost", "spool_unreadable", "meta_lost"].contains(fatal.code)
+      if lost && !protectedData() {
+        failures += 1
+        return .waiting(m, SpoolTiming.backoffMs(failures), .offline)
+      }
       return try end(g, m, lost ? .abandoned : .failed, fatal.code)
     }
     let api = error as? ClientAPIError
@@ -493,6 +529,7 @@ actor SpoolRunner {
   private func preflight(_ m: SpoolManifest) throws -> String? {
     let pending = m.frames.filter { !$0.completed }
     guard !pending.isEmpty else { return nil }
+    guard protectedData() else { throw Retryable(reason: .offline) }
     let spool: Set<String>
     do {
       spool = Set(try camera.listSpool().map(\.id))
@@ -501,7 +538,10 @@ actor SpoolRunner {
     }
     for frame in pending {
       if !frame.uploaded && !spool.contains(frame.nativeId) { return "frames_lost" }
-      if camera.frameMeta(id: frame.nativeId) == nil { return "meta_lost" }
+      if camera.frameMeta(id: frame.nativeId) == nil {
+        guard protectedData() else { throw Retryable(reason: .offline) }
+        return "meta_lost"
+      }
     }
     return nil
   }
@@ -546,6 +586,9 @@ actor SpoolRunner {
         throw Superseded()
       } catch let error as SpoolNativeError {
         try live(g)
+        if !protectedData() && (error.code == "not_found" || error.code == "spool_unreadable") {
+          throw Retryable(reason: .offline)
+        }
         switch error.code {
         case "not_found": throw Fatal(code: "frames_lost")
         case "spool_unreadable": throw Fatal(code: "spool_unreadable")
@@ -586,7 +629,10 @@ actor SpoolRunner {
   private func uploadAndComplete(_ g: Int, _ start: SpoolManifest, _ index: Int) async throws -> SpoolManifest {
     var m = start
     var frame = m.frames.first { $0.index == index }!
-    guard let meta = camera.frameMeta(id: frame.nativeId) else { throw Fatal(code: "meta_lost") }
+    guard let meta = camera.frameMeta(id: frame.nativeId) else {
+      if protectedData() { throw Fatal(code: "meta_lost") }
+      throw Retryable(reason: .offline)
+    }
     for attempt in 0..<2 {
       if !frame.uploaded {
         try await putBytes(g, m, index, frame.nativeId)
