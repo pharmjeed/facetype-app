@@ -213,21 +213,25 @@ struct SaveBar: View {
 
   private var agreeText: String { s("terms.agree", ["link": s("terms.link")]) }
 
-  /// «أوافق على الشروط والأحكام» with the last words as a link that opens the terms.
-  private var agreeLine: Text {
-    var text = AttributedString(agreeText)
-    if let range = text.range(of: s("terms.link")) { text[range].link = URL(string: "facetype-terms:open") }
-    return Text(text)
+  /// The words around «الشروط والأحكام» in «أوافق على {link}» (English: "I agree to the {link}").
+  private var agreeParts: (before: String, after: String) {
+    let parts = s("terms.agree").components(separatedBy: "{link}")
+    let trim = { (text: String) in text.trimmingCharacters(in: .whitespaces) }
+    return (trim(parts.first ?? ""), parts.count > 1 ? trim(parts[1]) : "")
+  }
+
+  private func toggle() {
+    model.termsAccepted.toggle()
+    if model.termsAccepted { model.termsMissing = false }
   }
 
   var body: some View {
     VStack(spacing: 8) {
       if model.needsConsent {
-        HStack(spacing: 6) {
-          Button {
-            model.termsAccepted.toggle()
-            if model.termsAccepted { model.termsMissing = false }
-          } label: {
+        // The box and «أوافق على» tick; «الشروط والأحكام» is a button of its own that opens the terms (a link inside
+        // one Text could not be tapped reliably: UI test 2026-11-26).
+        HStack(spacing: 4) {
+          Button(action: toggle) {
             Image(systemName: model.termsAccepted ? "checkmark.square.fill" : "square")
               .font(.title2)
               .foregroundStyle(model.termsMissing ? Color.red : Color.accentColor)
@@ -240,16 +244,21 @@ struct SaveBar: View {
           .accessibilityValue(model.termsAccepted ? "1" : "0")
           .accessibilityAddTraits(model.termsAccepted ? [.isSelected] : [])
 
-          agreeLine
-            .font(.subheadline)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .environment(\.openURL, OpenURLAction { url in
-              guard url.scheme == "facetype-terms" else { return .systemAction }
-              showTerms()
-              return .handled
-            })
-            .accessibilityIdentifier("terms.line")
+          if !agreeParts.before.isEmpty {
+            Button(action: toggle) { Text(agreeParts.before).foregroundStyle(.primary) }
+              .buttonStyle(.plain)
+              .accessibilityHidden(true)
+          }
+          Button(action: showTerms) { Text(s("terms.link")).underline().foregroundStyle(Color.accentColor) }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("terms.link")
+          if !agreeParts.after.isEmpty {
+            Text(agreeParts.after)
+          }
+          Spacer(minLength: 0)
         }
+        .font(.subheadline)
+        .lineLimit(2)
         if model.termsMissing {
           Text(s("terms.required"))
             .font(.footnote)
@@ -300,6 +309,9 @@ struct ChoiceRow: View {
       }
       .contentShape(Rectangle())
     }
+    // The default Form button style tints the whole label blue (CI screenshot 2026-11-26); plain keeps the title
+    // black and the prompt grey, as in the system's own forms.
+    .buttonStyle(.plain)
     .accessibilityIdentifier(identifier)
   }
 }
@@ -319,6 +331,13 @@ struct BirthDateSheet: View {
           .datePickerStyle(.wheel)
           .labelsHidden()
           .environment(\.timeZone, TimeZone(identifier: "UTC")!)
+          // Gregorian whatever the phone's calendar: on a Saudi-region phone the wheels showed the Hijri year
+          // (1416 Sha'ban) while the row, the server and validation use the Gregorian date (CI 2026-11-26).
+          .environment(\.calendar, {
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = TimeZone(identifier: "UTC")!
+            return calendar
+          }())
           .onChange(of: date) { _ in commit() }
           .accessibilityIdentifier("date.wheels")
         Spacer(minLength: 0)

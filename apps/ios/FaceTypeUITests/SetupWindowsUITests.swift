@@ -96,9 +96,9 @@ final class SetupWindowsUITests: XCTestCase {
       shot("\(lang)-terms-required")
 
       // The link opens the terms; «إغلاق» closes them without ticking.
-      let linkName = lang == "ar" ? "الشروط والأحكام" : "Terms and Conditions"
-      let link = app.links[linkName].exists ? app.links[linkName] : app.links.firstMatch
+      let link = app.buttons["terms.link"]
       XCTAssertTrue(link.waitForExistence(timeout: 5), "no terms link (\(lang))")
+      XCTAssertEqual(link.label, lang == "ar" ? "الشروط والأحكام" : "Terms and Conditions")
       link.tap()
       let close = app.buttons["terms.close"]
       XCTAssertTrue(close.waitForExistence(timeout: 5), "terms window did not open (\(lang))")
@@ -137,8 +137,11 @@ final class SetupWindowsUITests: XCTestCase {
       row.tap()
       let done = app.buttons["date.done"]
       XCTAssertTrue(done.waitForExistence(timeout: 5), "date window did not open (\(lang))")
-      XCTAssertTrue(app.datePickers.firstMatch.exists || app.pickerWheels.firstMatch.exists, "no wheels (\(lang))")
+      let wheels = app.pickerWheels.allElementsBoundByIndex.compactMap { $0.value as? String }
       shot("\(lang)-date-window")
+      // Gregorian on an Arabic, Saudi-region phone too: the wheels open on 1 January, thirty years ago.
+      let year = String(Calendar(identifier: .gregorian).component(.year, from: Date()) - 30)
+      XCTAssertTrue(wheels.contains { $0.contains(year) }, "wheels not Gregorian (\(lang)): \(wheels)")
       done.tap()
       waitGone(done, "«تم» did not close the date window (\(lang))")
       XCTAssertNotEqual(row.label, before, "«تم» did not keep a date (\(lang)): \(row.label)")
@@ -156,6 +159,8 @@ final class SetupWindowsUITests: XCTestCase {
   // MARK: countries
 
   func testCountryWindowsOpenSearchAndClose() {
+    // Every language and path runs even when one fails, so the screenshots cover them all.
+    continueAfterFailure = true
     for lang in ["ar", "en"] {
       for (field, keyboardFirst) in [("field.nationality", false), ("field.nationality", true),
                                      ("field.id_issuing_country", false)] {
@@ -172,7 +177,15 @@ final class SetupWindowsUITests: XCTestCase {
         }
         let row = app.buttons[field]
         reveal(row, in: app)
-        XCTAssertTrue(row.isHittable, "row not reachable (\(label))")
+        if !row.isHittable {
+          // Evidence first: where the row, the save bar and the keyboard are.
+          shot("\(label)-unreachable")
+          let keyboard = app.keyboards.firstMatch
+          XCTFail("row not reachable (\(label)): row \(row.frame) save \(app.buttons["setup.save"].frame) "
+                  + "keyboard \(keyboard.exists ? "\(keyboard.frame)" : "none") window \(app.windows.firstMatch.frame)")
+          app.terminate()
+          continue
+        }
         row.tap()
         // Snapshots while the window opens, to catch a jump or a blank list.
         RunLoop.current.run(until: Date().addingTimeInterval(0.25))
