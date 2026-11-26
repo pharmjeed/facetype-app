@@ -1,9 +1,11 @@
 //
 //  ProfileScreen.swift
 //  After sign-in: three pages in a tab bar (owner request 2026-11-26):
-//   - «معلوماتي»: the person's own details (unmasked, owner decision 2026-11-24);
-//   - «التصوير»: the capture status, and the button that opens the camera. Photos are taken once: the button is
-//     not offered once they are complete (owner 2026-11-26), and there is no repeat invitation;
+//   - «معلوماتي»: the person's own details (unmasked, owner decision 2026-11-24), then the account: sign out, and
+//     delete the account and its data (owner 2026-11-26);
+//   - «التصوير»: the capture status, and the button that opens the camera. It is offered again after complete
+//     photos (build 12, owner 2026-11-26 «ارجع الكاميرا لي لنجرب عليها»), labelled «تصوير جديد»; never while a
+//     burst is still on its way. There is no repeat invitation;
 //   - «ملفي»: the person's profile. Today it shows who the person is and the personality block, which always reads
 //     «النتيجة غير متاحة بعد»: there is no validated model, so there is nothing else it could truthfully say.
 //  Refresh: pull to refresh, or the toolbar button on «التصوير» and «ملفي».
@@ -22,15 +24,14 @@ enum ProfileStatus {
     return CaptureStatus(rawValue: latest).map { "status.\($0.rawValue)" } ?? "status.unknown"
   }
 
-  /// Photos are taken once (owner 2026-11-26 «التصوير المفترض مره واحدة وخلاص»). The camera is offered before the
-  /// first photos and when the server asks for more or for a retake. It is not offered once the photos are
-  /// complete, or while a burst is still on its way.
+  /// The camera is offered unless a burst is still on its way (uploading, waiting offline, or with the server).
+  /// Build 11 also withheld it after complete photos; build 12 offers it again for testing (owner 2026-11-26).
   static func offersCamera(_ statusKey: String) -> Bool {
-    !["status.complete", "status.stored", "status.received", "status.uploading", "status.checking",
-      "status.measuring", "status.queued_offline"].contains(statusKey)
+    !["status.received", "status.uploading", "status.checking", "status.measuring",
+      "status.queued_offline"].contains(statusKey)
   }
 
-  /// The photos are done: nothing more is needed from the person.
+  /// The photos are done: the camera button then reads «تصوير جديد».
   static func isDone(_ statusKey: String) -> Bool {
     statusKey == "status.complete" || statusKey == "status.stored"
   }
@@ -116,10 +117,53 @@ struct InfoPage: View {
             LabeledContent(s("setup.nationality"), value: Countries.name(p.nationality))
           }
         }
+        AccountSection()
       }
       .listStyle(.insetGrouped)
       .navigationTitle(s("tab.info"))
       .modifier(PageToolbar(refresh: false))
+    }
+  }
+}
+
+/// The account: sign out, and delete the account with everything stored for it (`DELETE /client/me`). Deleting
+/// asks first, in a sheet that says what goes and that it cannot be undone.
+struct AccountSection: View {
+  @EnvironmentObject private var model: AppModel
+  @State private var confirmDelete = false
+
+  var body: some View {
+    Section {
+      Button {
+        Task { await model.signOut() }
+      } label: {
+        Label(s("account.sign_out"), systemImage: "rectangle.portrait.and.arrow.right")
+      }
+      .accessibilityIdentifier("account.sign_out")
+      Button(role: .destructive) {
+        confirmDelete = true
+      } label: {
+        Label(s("account.delete"), systemImage: "trash")
+      }
+      .accessibilityIdentifier("account.delete")
+      if model.accountBusy {
+        ProgressView().frame(maxWidth: .infinity)
+      }
+      if let key = model.accountError {
+        Text(s(key)).foregroundStyle(.red).accessibilityIdentifier("account.error")
+      }
+    } header: {
+      Text(s("account.title"))
+    }
+    .disabled(model.accountBusy)
+    .confirmationDialog(s("account.delete_title"), isPresented: $confirmDelete, titleVisibility: .visible) {
+      Button(s("account.delete_confirm"), role: .destructive) {
+        Task { await model.deleteAccount() }
+      }
+      .accessibilityIdentifier("account.delete_confirm")
+      Button(s("common.cancel"), role: .cancel) {}
+    } message: {
+      Text(s("account.delete_body"))
     }
   }
 }
@@ -136,10 +180,6 @@ struct CapturePage: View {
           Section {
             Label(s(statusKey), systemImage: "camera.viewfinder")
               .accessibilityIdentifier("capture.status")
-            if ProfileStatus.isDone(statusKey) {
-              Text(s("capture.done")).foregroundStyle(.secondary)
-                .accessibilityIdentifier("capture.done")
-            }
             if let captures = me.captures {
               Text(s("profile.capture_count", ["count": captures.count])).foregroundStyle(.secondary)
               if let last = captures.last_at, !ProfileStatus.isoDay(last).isEmpty {
@@ -153,7 +193,8 @@ struct CapturePage: View {
                 model.mainTab = .capture  // back on this page, with its status, when the camera closes
                 model.openCapture()
               } label: {
-                Label(s("profile.capture"), systemImage: "camera.fill").frame(maxWidth: .infinity, minHeight: 44)
+                Label(s(ProfileStatus.isDone(statusKey) ? "capture.again" : "profile.capture"), systemImage: "camera.fill")
+                  .frame(maxWidth: .infinity, minHeight: 44)
               }
               .buttonStyle(.borderedProminent)
               .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))

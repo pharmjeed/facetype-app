@@ -356,4 +356,27 @@ actor ClientAPI {
   func postAttempt(_ telemetry: [String: Any]) async throws {
     _ = try await request("POST", "/attempts", body: telemetry)
   }
+
+  // MARK: leaving
+
+  /// Sign out: the server revokes this session's refresh tokens (best effort: offline, the tokens are still
+  /// forgotten here), then the stored tokens are deleted. Does not report a session end: the person chose it.
+  func logout() async {
+    if currentTokens() != nil { _ = try? await request("POST", "/auth/logout", context: .auth) }
+    forgetSession()
+  }
+
+  /// `DELETE /client/me` (ADR-015 §10): the account turns `withdrawing` at once, its tokens are revoked, and the
+  /// photos, measurements and rows are erased by the worker. The caller forgets the session on success.
+  func deleteMe() async throws {
+    _ = try await request("DELETE", "/me", context: .other)
+  }
+
+  /// Delete the stored tokens without reporting a session end.
+  func forgetSession() {
+    cached = .some(nil)
+    refreshing = nil
+    tokens.clear()
+    ended = true
+  }
 }

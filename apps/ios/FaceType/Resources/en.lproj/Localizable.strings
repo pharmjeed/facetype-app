@@ -106,7 +106,15 @@
 "tab.capture" = "Photos";
 "tab.profile" = "My profile";
 "profile.summary_age" = "{value} years";
-"capture.done" = "No more photos are needed.";
+"capture.again" = "Take new photos";
+"account.title" = "Account";
+"account.sign_out" = "Sign out";
+"account.delete" = "Delete my account and data";
+"account.delete_title" = "Delete your account and all your data?";
+"account.delete_body" = "Your photos, their measurements, your details and your consent will be deleted from the server. This cannot be undone.";
+"account.delete_confirm" = "Delete permanently";
+"account.delete_failed" = "The account could not be deleted. Try again.";
+"account.deleted" = "Your account and data were deleted.";
 "status.none" = "No photos yet";
 "status.uploading" = "Uploading";
 "status.checking" = "Checking";

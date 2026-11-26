@@ -45,6 +45,11 @@ struct SignInView: View {
             Label(s("common.session_expired"), systemImage: "clock.badge.exclamationmark")
               .foregroundStyle(.orange)
           }
+          if model.state.notice == "account_deleted" {
+            Label(s("account.deleted"), systemImage: "checkmark.circle")
+              .foregroundStyle(.secondary)
+              .accessibilityIdentifier("account.deleted")
+          }
           if let code = model.state.configError {
             Label(s("config.api_error", ["code": code]), systemImage: "exclamationmark.triangle")
               .foregroundStyle(.red)

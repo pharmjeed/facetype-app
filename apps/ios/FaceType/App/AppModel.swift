@@ -41,8 +41,15 @@ final class AppModel: ObservableObject {
   /// The page shown after sign-in («معلوماتي» / «التصوير» / «ملفي»). Kept here so the person comes back to the same
   /// page after the camera closes; nil until the person picks one.
   @Published var mainTab: MainTab?
+  /// Signing out or deleting the account is in progress.
+  @Published private(set) var accountBusy = false
+  /// Why the last account deletion failed (a string key), if it did.
+  @Published private(set) var accountError: String?
 
   let camera = CameraService.shared
+  /// Keeps a burst going for a short while when the person leaves the app (owner's 4th capture, 2026-11-26:
+  /// two frames went up, the other eight waited three hours until the app was opened again).
+  private let upload = UploadAssertion()
   private let tokens: TokenStore = KeychainTokenStore()
   private var api: ClientAPI!
   private var runner: SpoolRunner!
@@ -131,17 +138,55 @@ final class AppModel: ObservableObject {
   }
 
   private func sessionEnded() {
+    leaveSession(notice: "session_expired", keepTelemetry: true)
+  }
+
+  /// Everything local about the session goes: the pump, the spool, the Google sign-in; then the sign-in screen
+  /// with `notice`.
+  private func leaveSession(notice: String, keepTelemetry: Bool) {
     signedIn = false
     mainTab = nil
     pumpTask?.cancel()
     pumpTask = nil
+    upload.release()
     spool = .idle
     Task {
-      await self.runner.discard(keepTelemetry: true)
+      await self.runner.discard(keepTelemetry: keepTelemetry)
       await self.runner.bindAccount(nil)
     }
     GoogleAuth.signOut()
-    state = ClientFlow.reduce(state, .signedOut(reason: "session_expired"))
+    state = ClientFlow.reduce(state, .signedOut(reason: notice))
+  }
+
+  // MARK: account (owner 2026-11-26: sign out, and delete the account and its data from the app)
+
+  func signOut() async {
+    accountBusy = true
+    defer { accountBusy = false }
+    await api.logout()
+    leaveSession(notice: "signed_out", keepTelemetry: true)
+  }
+
+  /// `DELETE /client/me`, then the session ends here with nothing kept on the phone. On failure the person stays
+  /// signed in and `accountError` says why.
+  func deleteAccount() async {
+    accountError = nil
+    accountBusy = true
+    defer { accountBusy = false }
+    do {
+      try await api.deleteMe()
+    } catch let error as ClientAPIError {
+      // Already being deleted: the server has it; the session ends below as after a fresh request.
+      if error.kind != .account_withdrawing {
+        accountError = error.kind == .network ? "common.network" : "account.delete_failed"
+        return
+      }
+    } catch {
+      accountError = "account.delete_failed"
+      return
+    }
+    await api.forgetSession()
+    leaveSession(notice: "account_deleted", keepTelemetry: false)
   }
 
   // MARK: sign-in
@@ -304,8 +349,16 @@ final class AppModel: ObservableObject {
   }
 
   private func runPump() async {
-    guard signedIn else { return }
+    guard signedIn else {
+      upload.release()
+      return
+    }
+    // iOS suspends an app a few seconds after it leaves the screen; the assertion asks for the time to finish
+    // sending the burst (one run creates, uploads every frame and finalizes). It is held across a retry wait while
+    // frames are still to be sent, and let go once the server has the burst or nothing is owed.
+    upload.hold()
     let outcome = await runner.runOnce()
+    if !Self.stillSending(outcome) { upload.release() }
     guard !Task.isCancelled else { return }
     spool = outcome
     if outcome.kind == .terminal, let m = outcome.manifest, lastTerminal != "\(m.clientCaptureId):\(m.stage)" {
@@ -316,6 +369,13 @@ final class AppModel: ObservableObject {
       try? await Task.sleep(nanoseconds: UInt64(max(delay, 250) * 1_000_000))
       if !Task.isCancelled { pump() }
     }
+  }
+
+  /// Frames are still on the phone: the burst is created, uploading or finalizing and the run is waiting to retry.
+  /// From `checking` on the server works alone, so the phone need not stay awake.
+  nonisolated static func stillSending(_ outcome: SpoolOutcome) -> Bool {
+    guard outcome.kind == .waiting, let stage = outcome.manifest?.stage else { return false }
+    return stage == .pending_create || stage == .uploading || stage == .finalizing
   }
 
   func openCapture() { state = ClientFlow.reduce(state, .openCapture) }
@@ -381,4 +441,26 @@ final class AppModel: ObservableObject {
 
   /// Screenshot mode only (DemoScreen.swift).
   func demoState(_ next: ClientState) { state = next }
+}
+
+/// One `beginBackgroundTask` at a time for the upload. iOS gives an app that leaves the screen a short, limited
+/// time; when it runs out the expiration handler ends the task (an unended task gets the app killed), and the
+/// spool resumes as before when the app is opened again.
+@MainActor
+final class UploadAssertion {
+  private var task: UIBackgroundTaskIdentifier = .invalid
+
+  func hold() {
+    guard task == .invalid else { return }
+    task = UIApplication.shared.beginBackgroundTask(withName: "ai.facetype.upload") { [weak self] in
+      MainActor.assumeIsolated { self?.release() }
+    }
+  }
+
+  func release() {
+    guard task != .invalid else { return }
+    let ending = task
+    task = .invalid
+    UIApplication.shared.endBackgroundTask(ending)
+  }
 }
