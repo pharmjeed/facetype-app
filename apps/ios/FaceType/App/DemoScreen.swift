@@ -22,6 +22,12 @@ enum DemoScreen: String {
     guard let i = args.firstIndex(of: "-FTLang"), i + 1 < args.count else { return nil }
     return Lang(rawValue: args[i + 1])
   }
+
+  /// Demo mode only: the document-number and phone fields as they were up to build 8 (SwiftUI `TextField`), so
+  /// the UI test can compare them with `LatinTextField` on the same simulator.
+  static var legacyTextFields: Bool {
+    requested != nil && ProcessInfo.processInfo.arguments.contains("-FTLegacyTextFields")
+  }
 }
 
 struct DemoRoot: View {

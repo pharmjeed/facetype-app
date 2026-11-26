@@ -86,11 +86,18 @@ struct ProfileSetupView: View {
             }
             .pickerStyle(.segmented)
             .id(ProfileField.id_document_type)
-            HintedTextField(title: s("setup.id_number"), identifier: "field.id_number", text: $model.form.id_number)
-              .keyboardType(.asciiCapable)
-              .textInputAutocapitalization(.characters)
-              .autocorrectionDisabled()
-              .id(ProfileField.id_number)
+            Group {
+              if DemoScreen.legacyTextFields {
+                HintedTextField(title: s("setup.id_number"), identifier: "field.id_number", text: $model.form.id_number)
+                  .keyboardType(.asciiCapable)
+                  .textInputAutocapitalization(.characters)
+                  .autocorrectionDisabled()
+              } else {
+                LatinTextField(placeholder: s("setup.id_number"), identifier: "field.id_number",
+                               text: $model.form.id_number, keyboard: .asciiCapable, capitalization: .allCharacters)
+              }
+            }
+            .id(ProfileField.id_number)
           } header: {
             Text(s("setup.id_type"))
           } footer: {
@@ -102,9 +109,14 @@ struct ProfileSetupView: View {
           }
 
           Section {
-            HintedTextField(title: s("setup.phone"), identifier: "field.phone", text: $model.form.phone)
-              .keyboardType(.phonePad)
-              .textContentType(.telephoneNumber)
+            if DemoScreen.legacyTextFields {
+              HintedTextField(title: s("setup.phone"), identifier: "field.phone", text: $model.form.phone)
+                .keyboardType(.phonePad)
+                .textContentType(.telephoneNumber)
+            } else {
+              LatinTextField(placeholder: s("setup.phone"), identifier: "field.phone", text: $model.form.phone,
+                             keyboard: .phonePad, contentType: .telephoneNumber)
+            }
           } header: {
             Text(s("setup.phone"))
           } footer: {

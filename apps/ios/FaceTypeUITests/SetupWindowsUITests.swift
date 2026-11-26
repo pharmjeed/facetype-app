@@ -20,10 +20,11 @@ final class SetupWindowsUITests: XCTestCase {
     continueAfterFailure = false
   }
 
-  private func launch(_ screen: String, app lang: String, phone: String = "ar") -> XCUIApplication {
+  private func launch(_ screen: String, app lang: String, phone: String = "ar",
+                      extra: [String] = []) -> XCUIApplication {
     let app = XCUIApplication()
     app.launchArguments = ["-FTDemo", screen, "-FTLang", lang,
-                           "-AppleLanguages", "(\(phone))", "-AppleLocale", phone == "ar" ? "ar_SA" : "en_US"]
+                           "-AppleLanguages", "(\(phone))", "-AppleLocale", phone == "ar" ? "ar_SA" : "en_US"] + extra
     app.launch()
     XCTAssertTrue(app.buttons["setup.save"].waitForExistence(timeout: 30), "save button missing (\(lang))")
     return app
@@ -239,6 +240,84 @@ final class SetupWindowsUITests: XCTestCase {
         waitGone(cancel, "«إلغاء» did not close the window (\(label))")
         XCTAssertTrue(row.label.contains(expected), "cancel changed the choice (\(label)): \(row.label)")
         app.terminate()
+      }
+    }
+  }
+
+  // MARK: typing
+
+  /// Text pixels in an element's screenshot: neutral (grey to black or white) pixels far from the most common
+  /// colour, which is the field's background. The caret (tint colour) and the light-grey hint are not counted.
+  private func ink(_ element: XCUIElement) -> Int {
+    guard let image = element.screenshot().image.cgImage else { return -1 }
+    let width = image.width, height = image.height
+    var pixels = [UInt8](repeating: 0, count: width * height * 4)
+    let drawn: Bool = pixels.withUnsafeMutableBytes { buffer in
+      guard let context = CGContext(data: buffer.baseAddress, width: width, height: height, bitsPerComponent: 8,
+                                    bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+                                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { return false }
+      context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+      return true
+    }
+    guard drawn else { return -1 }
+    var counts: [Int: Int] = [:]
+    for i in stride(from: 0, to: pixels.count, by: 4) {
+      counts[Int(pixels[i]) << 16 | Int(pixels[i + 1]) << 8 | Int(pixels[i + 2]), default: 0] += 1
+    }
+    guard let background = counts.max(by: { $0.value < $1.value })?.key else { return -1 }
+    let (br, bg, bb) = (background >> 16 & 0xff, background >> 8 & 0xff, background & 0xff)
+    var count = 0
+    for i in stride(from: 0, to: pixels.count, by: 4) {
+      let (r, g, b) = (Int(pixels[i]), Int(pixels[i + 1]), Int(pixels[i + 2]))
+      if max(r, g, b) - min(r, g, b) < 40 && abs(r - br) + abs(g - bg) + abs(b - bb) > 200 { count += 1 }
+    }
+    return count
+  }
+
+  /// Owner report 2026-11-26 (iPhone, Arabic): the digits of the document number and of the mobile number did
+  /// not show while typing. Each field is typed into on both phone languages and in both app languages. The text
+  /// on screen is measured while the keyboard is still up, then again after leaving the field. The fields as they
+  /// were up to build 8 (`-FTLegacyTextFields`) run too, logged for comparison only.
+  func testTypedTextShowsWhileTyping() {
+    continueAfterFailure = true
+    let fields = [("field.full_name", "Sara Ali"), ("field.id_number", "1234567890"), ("field.phone", "0512345678")]
+    for phone in ["ar", "en"] {
+      for lang in ["ar", "en"] {
+        for legacy in [false, true] {
+          let variant = legacy ? "legacy" : "latin"
+          let app = launch("setup-errors", app: lang, phone: phone, extra: legacy ? ["-FTLegacyTextFields"] : [])
+          for (id, typed) in fields {
+            if legacy && id == "field.full_name" { continue }  // the same field in both variants
+            let label = "phone-\(phone)-app-\(lang)-\(variant)-\(id.dropFirst(6))"
+            let field = app.textFields[id]
+            XCTAssertTrue(field.waitForExistence(timeout: 10), "field missing (\(label))")
+            reveal(field, in: app)
+            field.tap()
+            let focusBy = Date().addingTimeInterval(5)
+            while !hasFocus(field) && Date() < focusBy { RunLoop.current.run(until: Date().addingTimeInterval(0.2)) }
+            XCTAssertTrue(hasFocus(field), "no focus (\(label))")
+            field.typeText(typed)
+            RunLoop.current.run(until: Date().addingTimeInterval(0.8))
+            let typing = ink(field)
+            shot("\(label)-typing")
+            let value = field.value as? String ?? ""
+            app.navigationBars.firstMatch.tap()
+            let closeBy = Date().addingTimeInterval(5)
+            while hasFocus(field) && Date() < closeBy { RunLoop.current.run(until: Date().addingTimeInterval(0.2)) }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+            let after = ink(field)
+            shot("\(label)-after")
+            print("INK \(label) typing=\(typing) after=\(after) value=\(value)")
+            if !legacy {
+              XCTAssertEqual(value, typed, "typed text not in the field (\(label))")
+              if id != "field.full_name" {
+                XCTAssertGreaterThan(typing, 300, "typed text not visible while typing (\(label)): ink \(typing)")
+                XCTAssertGreaterThan(after, 300, "text not visible after leaving the field (\(label)): ink \(after)")
+              }
+            }
+          }
+          app.terminate()
+        }
       }
     }
   }
