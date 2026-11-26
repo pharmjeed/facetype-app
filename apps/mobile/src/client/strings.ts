@@ -19,6 +19,9 @@ import { lang } from './i18n.ts';
 
 export const CONSENT_VERSION = 'client-notice-v1';
 export const CONSENT_VERSION_EN = 'client-notice-v1-en';
+/** The terms and conditions the native apps show above «حفظ ومتابعة» (owner decision 2026-11-26). */
+export const TERMS_VERSION = 'client-terms-v1';
+export const TERMS_VERSION_EN = 'client-terms-v1-en';
 
 export const S = {
   'boot.loading': 'جارٍ التحميل…',
@@ -95,6 +98,30 @@ export const S = {
 
   // The notice (docs/client-notice-v1-ar.md, version client-notice-v1) — verbatim.
   'consent.notice': 'بالمتابعة توافق على حفظ صورك وبياناتك واستخدامها في البحث العلمي غير التجاري.',
+
+  // The terms (docs/client-terms-v1-ar.md, version client-terms-v1) — verbatim. The native apps show them;
+  // this React Native lane still shows the notice above until it is removed (ADR-017).
+  'terms.title': 'الشروط والأحكام',
+  'terms.link': 'الشروط والأحكام',
+  'terms.agree': 'أوافق على {link}',
+  'terms.required': 'ضع علامة على الموافقة على الشروط والأحكام لتتمكن من المتابعة.',
+  'terms.accept': 'أوافق',
+  'terms.close': 'إغلاق',
+  'terms.intro': 'FaceType مشروع بحث علمي أكاديمي غير تجاري يدرس شكل الوجه. اقرأ هذه الشروط قبل أن توافق عليها.',
+  'terms.1.title': 'ما نجمعه',
+  'terms.1.body': 'معرّف حسابك في Apple أو Google، وبياناتك التي تكتبها: الاسم، ودولة إصدار الوثيقة ونوعها ورقمها، ورقم الجوال، والجنس، وتاريخ الميلاد، والجنسية. وصور وجهك الأمامية التي تلتقطها في التطبيق، ومعلومات تصويرها: نوع الجوال ونظامه، وإعدادات الكاميرا، والوقت، وقياسات آلية للوجه والإضاءة وحركة الجوال.',
+  'terms.2.title': 'لماذا نجمعها',
+  'terms.2.body': 'لقياس شكل وجهك، ولبناء معايير علمية لشكل الوجه من صورك مع صور مشاركين آخرين، ولأبحاث أكاديمية غير تجارية. لا توجد الآن نتيجة للشخصية؛ يظهر في ملفك «النتيجة غير متاحة بعد» حتى يوجد نموذج مثبت علميًا.',
+  'terms.3.title': 'ما لا نفعله',
+  'terms.3.body': 'لا تُستخدم صورك ولا بياناتك في أي قرار يخص التوظيف أو التأمين أو الائتمان أو العلاج أو القضاء. لا نبيعها ولا نعطيها لأي جهة تجارية. لا يستخدم التطبيق بصمة الوجه (Face ID) ولا يصل إليها.',
+  'terms.4.title': 'كيف نحميها',
+  'terms.4.body': 'تُحفظ بياناتك الشخصية مشفّرة ومنفصلة عن الصور، ولا تظهر كاملة إلا لك. تبقى الصور على جوالك مشفّرة حتى تُرفع عبر اتصال مشفّر. لا يطّلع على صورك إلا برنامج التحليل وأعضاء فريق البحث المصرّح لهم.',
+  'terms.5.title': 'هويتك وعمرك',
+  'terms.5.body': 'لم نتحقق من رقم هويتك أو جوالك؛ نستخدم رقم الهوية فقط لمنع تكرار الحساب. التطبيق لمن أعمارهم 18 سنة فأكثر.',
+  'terms.6.title': 'مدة الحفظ والحذف',
+  'terms.6.body': 'تبقى صورك وبياناتك ما دام حسابك قائمًا. لحذف حسابك وكل بياناتك تواصل مع فريق البحث؛ عندها تتوقف كل معالجة فورًا، وتُحذف الصور والبيانات خلال 30 يومًا، وتنتهي النسخ الاحتياطية خلال 35 يومًا. وما سُلّم لبحث قبل الحذف لا يمكن استرجاعه، لكنه لا يتضمن اسمك ولا رقم هويتك ولا جوالك.',
+  'terms.7.title': 'التغييرات',
+  'terms.7.body': 'لن نستخدم صورك أو بياناتك لغرض غير المذكور هنا دون موافقة جديدة منك.',
 
   // 3. Profile (home)
   'profile.title': 'ملفي',
@@ -317,6 +344,28 @@ export const EN: { readonly [K in StringKey]: string } = {
 
   'consent.notice':
     'By continuing you agree that your photos and details are stored and used for non-commercial scientific research.',
+
+  'terms.title': 'Terms and Conditions',
+  'terms.link': 'Terms and Conditions',
+  'terms.agree': 'I agree to the {link}',
+  'terms.required': 'Tick the box to agree to the Terms and Conditions before you continue.',
+  'terms.accept': 'I agree',
+  'terms.close': 'Close',
+  'terms.intro': 'FaceType is a non-commercial academic research project that studies the shape of the face. Please read these terms before you agree to them.',
+  'terms.1.title': 'What we collect',
+  'terms.1.body': 'Your Apple or Google account identifier, and the details you type: name, the document\'s issuing country, type and number, mobile number, sex, date of birth and nationality. The frontal photos of your face that you take in the app, and how they were taken: phone model and system, camera settings, time, and automatic measurements of the face, the light and the phone\'s movement.',
+  'terms.2.title': 'Why we collect it',
+  'terms.2.body': 'To measure the shape of your face, to build scientific standards of face shape from your photos together with other participants\' photos, and for non-commercial academic research. There is no personality result yet; your profile shows “The result is not available yet” until a scientifically validated model exists.',
+  'terms.3.title': 'What we do not do',
+  'terms.3.body': 'Your photos and details are not used for any decision about employment, insurance, credit, medical care or legal matters. We do not sell them or give them to any commercial party. The app does not use or access Face ID.',
+  'terms.4.title': 'How we protect it',
+  'terms.4.body': 'Your personal details are stored encrypted and apart from the photos, and only you can see them in full. Photos stay encrypted on your phone until they are uploaded over an encrypted connection. Only the analysis software and authorised members of the research team can see your photos.',
+  'terms.5.title': 'Your identity and age',
+  'terms.5.body': 'We have not verified your ID or mobile number; the ID number is used only to prevent duplicate accounts. The app is for people aged 18 or over.',
+  'terms.6.title': 'Keeping and deleting',
+  'terms.6.body': 'Your photos and details are kept while your account exists. To delete your account and all your data, contact the research team: all processing stops at once, photos and data are deleted within 30 days, and backups expire within 35 days. Data already given to a study before the deletion cannot be recalled, but it never includes your name, ID number or mobile number.',
+  'terms.7.title': 'Changes',
+  'terms.7.body': 'We will not use your photos or details for any purpose not listed here without your new agreement.',
 
   'profile.title': 'My profile',
   'profile.name': 'Name: {value}',

@@ -47,6 +47,23 @@ final class FixtureTests: XCTestCase {
     XCTAssertEqual(L10n.fill("{missing}", [:]), "{missing}")
   }
 
+  /// The agreement records the version of the terms the person saw, in the language they saw them; the terms
+  /// window shows every section of docs/client-terms-v1-ar.md and no more.
+  @MainActor
+  func testTermsVersionAndSections() throws {
+    let f = try fixture("strings")
+    let versions = try XCTUnwrap(f["terms_versions"] as? [String: String])
+    for lang in Lang.allCases {
+      XCTAssertEqual(AppModel.consentVersions[lang], versions[lang.rawValue], lang.rawValue)
+    }
+    let keys = try XCTUnwrap(f["keys"] as? [String])
+    let titles = keys.filter { $0.hasPrefix("terms.") && $0.hasSuffix(".title") && $0 != "terms.title" }
+    XCTAssertEqual(titles.count, TermsView.sectionCount)
+    for i in 1...TermsView.sectionCount {
+      XCTAssertTrue(keys.contains("terms.\(i).title") && keys.contains("terms.\(i).body"), "section \(i)")
+    }
+  }
+
   // MARK: countries
 
   func testCountriesOrderAndSearch() throws {

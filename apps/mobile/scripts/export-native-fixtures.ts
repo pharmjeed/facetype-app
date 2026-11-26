@@ -29,7 +29,7 @@ import { syntheticMeasure } from '../src/client/native/simulator.ts';
 import { SPOOL_MAX_AGE_MS, MANIFEST_VERSION, TERMINAL_STAGES, type SpoolManifest, type SpoolStage } from '../src/client/spool/manifest.ts';
 import { SPOOL_TIMING, nextRunInMs, type SpoolOutcome } from '../src/client/spool/spool.ts';
 import { ATTEMPT_LIMITS, TELEMETRY_QUEUE_MAX } from '../src/client/spool/telemetryQueue.ts';
-import { CONSENT_VERSION, CONSENT_VERSION_EN, EN, S } from '../src/client/strings.ts';
+import { CONSENT_VERSION, CONSENT_VERSION_EN, EN, S, TERMS_VERSION, TERMS_VERSION_EN } from '../src/client/strings.ts';
 import { MAX_REASON_KEYS, outcomeForStage, wireReason, wireReasonCounts } from '../src/client/telemetry.ts';
 import * as V from '../src/client/validation.ts';
 
@@ -46,6 +46,7 @@ mkdirSync(OUT, { recursive: true });
 write('strings.json', {
   note: 'Interface strings, Arabic (default, right to left) and English. {token} placeholders are filled by the app.',
   consent_versions: { ar: CONSENT_VERSION, en: CONSENT_VERSION_EN },
+  terms_versions: { ar: TERMS_VERSION, en: TERMS_VERSION_EN },
   keys: Object.keys(S),
   ar: S,
   en: EN,

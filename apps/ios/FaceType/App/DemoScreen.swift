@@ -80,7 +80,7 @@ extension AppModel {
     let me = ClientMe(
       account: AccountView(id: "demo", provider: "apple", state: "active", created_at: nil),
       profile: screen == .profile ? profile : nil,
-      consent: screen == .profile ? ConsentView(id: "c", version: "client-notice-v1", store_accepted: true,
+      consent: screen == .profile ? ConsentView(id: "c", version: "client-terms-v1", store_accepted: true,
                                                 research_use: true, created_at: nil) : nil,
       captures: CaptureSummary(count: 1, last_at: "2026-11-25T09:00:00Z", latest_status: "complete",
                                next_repeat_due_at: "2026-12-02T09:00:00Z"),

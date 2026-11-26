@@ -1,7 +1,7 @@
 //
 //  AppModel.swift
 //  Owns every side effect of the client app (port of apps/mobile/src/client/ClientApp.tsx): boot, sign-in,
-//  profile save + notice consent, the upload pump, session end, and the interface language. Screens read its
+//  profile save + terms consent, the upload pump, session end, and the interface language. Screens read its
 //  published state; flows are the pure reducers in Flows.swift.
 //
 
@@ -18,7 +18,9 @@ enum SetupError: Equatable {
 
 @MainActor
 final class AppModel: ObservableObject {
-  static let consentVersions: [Lang: String] = [.ar: "client-notice-v1", .en: "client-notice-v1-en"]
+  /// The terms and conditions version recorded with the agreement (docs/client-terms-v1-ar.md; owner decision
+  /// 2026-11-26: a ticked box under the terms replaces the one notice line). Checked against the fixtures.
+  static let consentVersions: [Lang: String] = [.ar: "client-terms-v1", .en: "client-terms-v1-en"]
   private static let languageKey = "ai.facetype.client.language"
   private static let mockSubjectKey = "ai.facetype.client.mock-subject"
 
@@ -28,6 +30,10 @@ final class AppModel: ObservableObject {
   @Published var form = ProfileForm()
   @Published var formErrors: [ProfileField: String] = [:]
   @Published private(set) var saving = false
+  /// The «أوافق على الشروط والأحكام» box; nothing is saved before it is ticked.
+  @Published var termsAccepted = false
+  /// «حفظ ومتابعة» was pressed with the box empty: the box and its message turn red until it is ticked.
+  @Published var termsMissing = false
   @Published private(set) var setupError: SetupError?
   @Published private(set) var refreshing = false
   @Published private(set) var bootFailed = false
@@ -216,16 +222,20 @@ final class AppModel: ObservableObject {
 
   var needsConsent: Bool { state.me?.consent?.store_accepted != true }
 
-  /// Validate, save, then record the notice consent. Returns the first field in error (for scrolling), if any.
+  /// Validate, check the terms box, save, then record the terms consent. Returns the first field in error (for
+  /// scrolling), if any. Nothing reaches the server while a field is wrong or the box is empty.
   @discardableResult
   func saveProfile() async -> ProfileField? {
     setupError = nil
+    let termsOK = termsAccepted || !needsConsent
+    termsMissing = !termsOK
     switch Validation.validateProfile(form) {
     case .failure(let errors):
       formErrors = errors.fields
       return ProfileField.allCases.first { errors.fields[$0] != nil }
     case .success(let values):
       formErrors = [:]
+      guard termsOK else { return nil }
       saving = true
       defer { saving = false }
       do {
@@ -233,7 +243,7 @@ final class AppModel: ObservableObject {
         if needsConsent {
           do {
             try await api.postConsent(
-              version: Self.consentVersions[language] ?? "client-notice-v1", storeAccepted: true, researchUse: true)
+              version: Self.consentVersions[language] ?? "client-terms-v1", storeAccepted: true, researchUse: true)
           } catch let error as ClientAPIError {
             setupError = error.kind == .network ? .network : .consentFailed
             return nil
