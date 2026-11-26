@@ -106,6 +106,7 @@
 "tab.capture" = "Photos";
 "tab.profile" = "My profile";
 "profile.summary_age" = "{value} years";
+"capture.done" = "No more photos are needed.";
 "status.none" = "No photos yet";
 "status.uploading" = "Uploading";
 "status.checking" = "Checking";

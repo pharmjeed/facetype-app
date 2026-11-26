@@ -146,6 +146,7 @@ export const S = {
   'tab.capture': 'التصوير',
   'tab.profile': 'ملفي',
   'profile.summary_age': '{value} سنة',
+  'capture.done': 'لا تحتاج إلى تصوير آخر.',
 
   'status.none': 'لم تصوّر بعد',
   'status.uploading': 'جارٍ الرفع',
@@ -393,6 +394,7 @@ export const EN: { readonly [K in StringKey]: string } = {
   'tab.capture': 'Photos',
   'tab.profile': 'My profile',
   'profile.summary_age': '{value} years',
+  'capture.done': 'No more photos are needed.',
 
   'status.none': 'No photos yet',
   'status.uploading': 'Uploading',

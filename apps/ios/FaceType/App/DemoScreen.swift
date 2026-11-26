@@ -28,6 +28,14 @@ enum DemoScreen: String {
   static var legacyTextFields: Bool {
     requested != nil && ProcessInfo.processInfo.arguments.contains("-FTLegacyTextFields")
   }
+
+  /// Demo mode only (`-FTDemoStatus <status>`): the server status of the synthetic person's latest photos.
+  /// Default `complete`.
+  static var captureStatus: String {
+    let args = ProcessInfo.processInfo.arguments
+    guard let i = args.firstIndex(of: "-FTDemoStatus"), i + 1 < args.count else { return "complete" }
+    return args[i + 1]
+  }
 }
 
 struct DemoRoot: View {
@@ -88,7 +96,7 @@ extension AppModel {
       profile: screen == .profile ? profile : nil,
       consent: screen == .profile ? ConsentView(id: "c", version: "client-terms-v1", store_accepted: true,
                                                 research_use: true, created_at: nil) : nil,
-      captures: CaptureSummary(count: 1, last_at: "2026-11-25T09:00:00Z", latest_status: "complete",
+      captures: CaptureSummary(count: 1, last_at: "2026-11-25T09:00:00Z", latest_status: DemoScreen.captureStatus,
                                next_repeat_due_at: "2026-12-02T09:00:00Z"),
       personality: PersonalityView(status: "unavailable"))
     switch screen {

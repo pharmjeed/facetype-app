@@ -106,6 +106,7 @@
 "tab.capture" = "التصوير";
 "tab.profile" = "ملفي";
 "profile.summary_age" = "{value} سنة";
+"capture.done" = "لا تحتاج إلى تصوير آخر.";
 "status.none" = "لم تصوّر بعد";
 "status.uploading" = "جارٍ الرفع";
 "status.checking" = "جارٍ التحقق";

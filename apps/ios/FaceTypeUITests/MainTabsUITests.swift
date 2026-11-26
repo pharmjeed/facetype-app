@@ -49,9 +49,12 @@ final class MainTabsUITests: XCTestCase {
       XCTAssertFalse(app.staticTexts["profile.personality"].isHittable, "personality block on the details page (\(lang))")
       shot("\(lang)-tab-info")
 
+      // The demo person's photos are complete: photos are taken once, so there is no camera button and no
+      // invitation to repeat (owner 2026-11-26).
       capture.tap()
-      XCTAssertTrue(app.buttons["capture.open"].waitForExistence(timeout: 5), "capture page (\(lang))")
-      XCTAssertTrue(app.buttons["capture.open"].isHittable, "camera button not tappable (\(lang))")
+      XCTAssertTrue(app.staticTexts["capture.done"].waitForExistence(timeout: 5), "capture page, done line (\(lang))")
+      XCTAssertFalse(app.buttons["capture.open"].exists, "camera offered after complete photos (\(lang))")
+      XCTAssertFalse(anything(app, containing: lang == "ar" ? "اختياري" : "optional").exists, "repeat invitation (\(lang))")
       shot("\(lang)-tab-capture")
 
       // The first page sits on the reading side: right in Arabic, left in English.
@@ -60,6 +63,25 @@ final class MainTabsUITests: XCTestCase {
       } else {
         XCTAssertLessThan(info.frame.midX, profile.frame.midX, "English tab order (\(lang))")
       }
+      app.terminate()
+    }
+  }
+
+  /// When the server asks for more photos, the camera is offered on «التصوير».
+  func testCameraOfferedWhenMorePhotosAreNeeded() {
+    continueAfterFailure = true
+    for lang in ["ar", "en"] {
+      let app = XCUIApplication()
+      app.launchArguments = ["-FTDemo", "profile", "-FTLang", lang, "-FTDemoStatus", "needs_more",
+                             "-AppleLanguages", "(ar)", "-AppleLocale", "ar_SA"]
+      app.launch()
+      let bar = app.tabBars.firstMatch
+      XCTAssertTrue(bar.waitForExistence(timeout: 30), "no tab bar (\(lang))")
+      bar.buttons[lang == "ar" ? "التصوير" : "Photos"].tap()
+      XCTAssertTrue(app.buttons["capture.open"].waitForExistence(timeout: 5), "camera button (\(lang))")
+      XCTAssertTrue(app.buttons["capture.open"].isHittable, "camera button not tappable (\(lang))")
+      XCTAssertFalse(app.staticTexts["capture.done"].exists, "done line while more photos are needed (\(lang))")
+      shot("\(lang)-tab-capture-needs-more")
       app.terminate()
     }
   }

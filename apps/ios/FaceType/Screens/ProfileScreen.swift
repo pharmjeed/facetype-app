@@ -2,7 +2,8 @@
 //  ProfileScreen.swift
 //  After sign-in: three pages in a tab bar (owner request 2026-11-26):
 //   - «معلوماتي»: the person's own details (unmasked, owner decision 2026-11-24);
-//   - «التصوير»: the capture status, the optional repeat, and the button that opens the camera;
+//   - «التصوير»: the capture status, and the button that opens the camera. Photos are taken once: the button is
+//     not offered once they are complete (owner 2026-11-26), and there is no repeat invitation;
 //   - «ملفي»: the person's profile. Today it shows who the person is and the personality block, which always reads
 //     «النتيجة غير متاحة بعد»: there is no validated model, so there is nothing else it could truthfully say.
 //  Refresh: pull to refresh, or the toolbar button on «التصوير» and «ملفي».
@@ -19,6 +20,19 @@ enum ProfileStatus {
     }
     guard let latest = me.captures?.latest_status, (me.captures?.count ?? 0) > 0 else { return "status.none" }
     return CaptureStatus(rawValue: latest).map { "status.\($0.rawValue)" } ?? "status.unknown"
+  }
+
+  /// Photos are taken once (owner 2026-11-26 «التصوير المفترض مره واحدة وخلاص»). The camera is offered before the
+  /// first photos and when the server asks for more or for a retake. It is not offered once the photos are
+  /// complete, or while a burst is still on its way.
+  static func offersCamera(_ statusKey: String) -> Bool {
+    !["status.complete", "status.stored", "status.received", "status.uploading", "status.checking",
+      "status.measuring", "status.queued_offline"].contains(statusKey)
+  }
+
+  /// The photos are done: nothing more is needed from the person.
+  static func isDone(_ statusKey: String) -> Bool {
+    statusKey == "status.complete" || statusKey == "status.stored"
   }
 
   static func isoDay(_ value: String?) -> String {
@@ -118,31 +132,34 @@ struct CapturePage: View {
     NavigationStack {
       List {
         if let me = model.state.me {
+          let statusKey = ProfileStatus.key(me: me, spool: model.spool)
           Section {
-            Label(s(ProfileStatus.key(me: me, spool: model.spool)), systemImage: "camera.viewfinder")
+            Label(s(statusKey), systemImage: "camera.viewfinder")
               .accessibilityIdentifier("capture.status")
+            if ProfileStatus.isDone(statusKey) {
+              Text(s("capture.done")).foregroundStyle(.secondary)
+                .accessibilityIdentifier("capture.done")
+            }
             if let captures = me.captures {
               Text(s("profile.capture_count", ["count": captures.count])).foregroundStyle(.secondary)
               if let last = captures.last_at, !ProfileStatus.isoDay(last).isEmpty {
                 Text(s("profile.last_capture", ["date": ProfileStatus.isoDay(last)])).foregroundStyle(.secondary)
               }
-              if let due = captures.next_repeat_due_at, let dueDate = ISO8601DateFormatter.lenient(due) {
-                Text(dueDate <= Date() ? s("profile.repeat_now") : s("profile.repeat_due", ["date": ProfileStatus.isoDay(due)]))
-                  .font(.footnote)
-              }
             }
           }
-          Section {
-            Button {
-              model.mainTab = .capture  // back on this page, with its status, when the camera closes
-              model.openCapture()
-            } label: {
-              Label(s("profile.capture"), systemImage: "camera.fill").frame(maxWidth: .infinity, minHeight: 44)
+          if ProfileStatus.offersCamera(statusKey) {
+            Section {
+              Button {
+                model.mainTab = .capture  // back on this page, with its status, when the camera closes
+                model.openCapture()
+              } label: {
+                Label(s("profile.capture"), systemImage: "camera.fill").frame(maxWidth: .infinity, minHeight: 44)
+              }
+              .buttonStyle(.borderedProminent)
+              .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+              .listRowBackground(Color.clear)
+              .accessibilityIdentifier("capture.open")
             }
-            .buttonStyle(.borderedProminent)
-            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-            .listRowBackground(Color.clear)
-            .accessibilityIdentifier("capture.open")
           }
         }
       }
