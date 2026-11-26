@@ -38,6 +38,9 @@ final class AppModel: ObservableObject {
   @Published private(set) var refreshing = false
   @Published private(set) var bootFailed = false
   @Published private(set) var appleNonce: String?
+  /// The page shown after sign-in («معلوماتي» / «التصوير» / «ملفي»). Kept here so the person comes back to the same
+  /// page after the camera closes; nil until the person picks one.
+  @Published var mainTab: MainTab?
 
   let camera = CameraService.shared
   private let tokens: TokenStore = KeychainTokenStore()
@@ -129,6 +132,7 @@ final class AppModel: ObservableObject {
 
   private func sessionEnded() {
     signedIn = false
+    mainTab = nil
     pumpTask?.cancel()
     pumpTask = nil
     spool = .idle

@@ -102,6 +102,10 @@
 "profile.personality_note" = "لا يوجد حتى الآن نموذج مثبت علميًا، لذلك لا نعرض أي نتيجة.";
 "profile.capture" = "التصوير";
 "profile.refresh" = "تحديث";
+"tab.info" = "معلوماتي";
+"tab.capture" = "التصوير";
+"tab.profile" = "ملفي";
+"profile.summary_age" = "{value} سنة";
 "status.none" = "لم تصوّر بعد";
 "status.uploading" = "جارٍ الرفع";
 "status.checking" = "جارٍ التحقق";

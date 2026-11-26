@@ -142,6 +142,10 @@ export const S = {
   'profile.personality_note': 'لا يوجد حتى الآن نموذج مثبت علميًا، لذلك لا نعرض أي نتيجة.',
   'profile.capture': 'التصوير',
   'profile.refresh': 'تحديث',
+  'tab.info': 'معلوماتي',
+  'tab.capture': 'التصوير',
+  'tab.profile': 'ملفي',
+  'profile.summary_age': '{value} سنة',
 
   'status.none': 'لم تصوّر بعد',
   'status.uploading': 'جارٍ الرفع',
@@ -385,6 +389,10 @@ export const EN: { readonly [K in StringKey]: string } = {
   'profile.personality_note': 'There is no scientifically validated model yet, so no result is shown.',
   'profile.capture': 'Take photos',
   'profile.refresh': 'Refresh',
+  'tab.info': 'My details',
+  'tab.capture': 'Photos',
+  'tab.profile': 'My profile',
+  'profile.summary_age': '{value} years',
 
   'status.none': 'No photos yet',
   'status.uploading': 'Uploading',

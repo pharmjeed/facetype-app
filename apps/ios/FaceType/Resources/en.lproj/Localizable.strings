@@ -102,6 +102,10 @@
 "profile.personality_note" = "There is no scientifically validated model yet, so no result is shown.";
 "profile.capture" = "Take photos";
 "profile.refresh" = "Refresh";
+"tab.info" = "My details";
+"tab.capture" = "Photos";
+"tab.profile" = "My profile";
+"profile.summary_age" = "{value} years";
 "status.none" = "No photos yet";
 "status.uploading" = "Uploading";
 "status.checking" = "Checking";
