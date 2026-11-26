@@ -55,12 +55,17 @@ final class SetupWindowsUITests: XCTestCase {
     var tries = 0
     while !element.isHittable && tries < 6 {
       let window = app.windows.firstMatch.frame
-      let barTop = app.buttons["setup.save"].frame.minY - 70  // the terms row sits above the button
-      let startY = min(barTop - 40, window.height * 0.45)
+      var bottom = window.height
+      let save = app.buttons["setup.save"]
+      if save.exists { bottom = min(bottom, save.frame.minY - 70) }  // the terms row sits above the button
+      let keyboard = app.keyboards.firstMatch
+      if keyboard.exists { bottom = min(bottom, keyboard.frame.minY) }
+      let startY = min(bottom - 40, window.height * 0.45)
       let origin = app.coordinate(withNormalizedOffset: .zero)
       let start = origin.withOffset(CGVector(dx: window.width / 2, dy: startY))
       let end = origin.withOffset(CGVector(dx: window.width / 2, dy: window.height * 0.18))
-      start.press(forDuration: 0.05, thenDragTo: end)
+      // Hold before lifting so the list does not keep gliding: a tap on a moving list only stops it.
+      start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.4)
       tries += 1
     }
   }
@@ -182,6 +187,8 @@ final class SetupWindowsUITests: XCTestCase {
           let deadline = Date().addingTimeInterval(5)
           while !hasFocus(phone) && Date() < deadline { RunLoop.current.run(until: Date().addingTimeInterval(0.2)) }
           XCTAssertTrue(hasFocus(phone), "phone field did not take focus (\(label))")
+          // The bar steps aside while the keyboard is up, so the last rows can be scrolled into view.
+          waitGone(app.buttons["setup.save"], "save bar stayed above the keyboard (\(label))")
         }
         let row = app.buttons[field]
         reveal(row, in: app)
@@ -216,6 +223,7 @@ final class SetupWindowsUITests: XCTestCase {
         waitGone(search, "choosing a country did not close the window (\(label))")
         let expected = lang == "ar" ? "مصر" : "Egypt"
         XCTAssertTrue(row.label.contains(expected), "row does not show the choice (\(label)): \(row.label)")
+        XCTAssertTrue(app.buttons["setup.save"].waitForExistence(timeout: 5), "save bar did not come back (\(label))")
         shot("\(label)-chosen")
 
         // «إلغاء» closes without changing the choice.

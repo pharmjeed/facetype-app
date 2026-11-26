@@ -4,11 +4,12 @@
 //  pickers for document type and sex, and rows that open a window (sheet) for the birth date and for each
 //  country. Owner decisions of 2026-11-26: the agreement is a ticked box under a «الشروط والأحكام» link
 //  (docs/client-terms-v1-ar.md), and the box and «حفظ ومتابعة» stay pinned at the bottom of the screen, always
-//  in view. The birth-date window closes with «تم» (or a tap outside it); a country window closes when a country
+//  in view except while the keyboard is up (a tap outside a field closes it). The birth-date window closes with «تم» (or a tap outside it); a country window closes when a country
 //  is chosen. Any refusal is shown at the top of the form and the form scrolls to the first field in error.
 //
 
 import SwiftUI
+import UIKit
 
 /// The windows this screen opens; one at a time.
 enum SetupSheet: String, Identifiable {
@@ -20,6 +21,9 @@ struct ProfileSetupView: View {
   @EnvironmentObject private var model: AppModel
   @State private var sheet: SetupSheet?
   @State private var draftDate = DateWheel.wheelStart()
+  /// The bar steps aside while the keyboard is up: with both on screen the form could not scroll its last rows
+  /// clear of the bar, and a tap on the nationality row landed on the terms link (UI test 2026-11-26).
+  @State private var keyboardShown = false
 
   private func error(_ field: ProfileField) -> String? {
     if field == .id_number, model.setupError == .identifierTaken {
@@ -154,7 +158,15 @@ struct ProfileSetupView: View {
         // Pinned under the form, never scrolled away: the terms box and «حفظ ومتابعة» (owner 2026-11-26: the
         // button sat partly below the bottom of the screen).
         .safeAreaInset(edge: .bottom, spacing: 0) {
-          SaveBar(showTerms: { sheet = .terms }) { save(proxy) }
+          if !keyboardShown {
+            SaveBar(showTerms: { sheet = .terms }) { save(proxy) }
+          }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+          keyboardShown = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+          keyboardShown = false
         }
         .navigationTitle(s("setup.title"))
         .toolbar { ToolbarItem(placement: .navigationBarTrailing) { LanguageToggle() } }
