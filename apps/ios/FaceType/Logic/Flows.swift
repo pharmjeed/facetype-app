@@ -187,7 +187,8 @@ enum CaptureEvent {
 }
 
 enum CaptureFlow {
-  static let guidanceLimitMs: Double = 60_000
+  /// 180 s since 2026-11-28: with fixed set-points the person needs time to match every reading.
+  static let guidanceLimitMs: Double = 180_000
   static var targetFrames = 10
 
   static func burstDisposition(_ result: BurstResult) -> (keep: [BurstFrameRecord], discard: [String]) {

@@ -49,6 +49,13 @@ export interface FrameMeasure {
   checks: FrameChecks;
   /** Sensor exposure time; null when unknown (§5.11). > 1/30 s → «اجعل الضوء أمامك». */
   exposureTimeNs: number | null;
+  /**
+   * The metered light level (exposure value at ISO 100), from the sensor's ISO, exposure time and lens
+   * aperture. Optional: a camera that cannot compute it leaves it out and the light level is not checked.
+   */
+  ev100?: number | null;
+  /** Predicted motion blur as a fraction of the face width (gyro × exposure × focal ÷ face width). */
+  blurFrac?: number | null;
 }
 
 export interface BurstProgress {

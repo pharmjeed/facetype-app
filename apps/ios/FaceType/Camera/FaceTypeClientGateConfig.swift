@@ -60,6 +60,17 @@ struct FaceTypeClientGateConfig: Decodable {
     let maxClipFrac: Double
     let maxCrushFrac: Double
     let cheekRatio: [Double]
+    /// The one light level a frame is accepted at (owner 2026-11-28): an
+    /// exposure value at ISO 100, as a [low, high] pair around the number.
+    let ev100: [Double]
+    /// Widens `ev100` for the live guidance hysteresis only.
+    let ev100ExitWiden: Double
+  }
+
+  struct Motion: Decodable {
+    /// Largest predicted motion blur of a stored frame, as a fraction of the
+    /// face width (PREREGISTRATION A8.4: 0.003).
+    let maxBlurFrac: Double
   }
 
   struct Expression: Decodable {
@@ -94,6 +105,7 @@ struct FaceTypeClientGateConfig: Decodable {
   let size: Size
   let centre: Centre
   let light: Light
+  let motion: Motion
   let expression: Expression
   let eyes: Eyes
   let sharpness: Sharpness
@@ -183,6 +195,11 @@ struct FaceTypeClientGate {
     if !isFraction(c.light.maxClipFrac) || !isFraction(c.light.maxCrushFrac) || !isPair(c.light.cheekRatio) {
       return "light"
     }
+    if !isPair(c.light.ev100) || !(c.light.ev100ExitWiden.isFinite && c.light.ev100ExitWiden >= 0) {
+      return "light.ev100"
+    }
+    if !(c.motion.maxBlurFrac.isFinite && c.motion.maxBlurFrac > 0) { return "motion" }
+    if !(c.pose.rollMessageDeg.isFinite && c.pose.rollMessageDeg > 0) { return "pose.rollMessageDeg" }
     if !isFraction(c.expression.maxSmile) || !isFraction(c.expression.maxJawOpen) { return "expression" }
     if !isFraction(c.eyes.maxBlink) || !isFraction(c.eyes.minRelativeOpening) { return "eyes" }
     if !isFraction(c.sharpness.minRelativeToBurstMax) { return "sharpness" }

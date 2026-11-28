@@ -181,6 +181,43 @@ final class CaptureModel: ObservableObject {
     if case .bursting(let accepted, let target, _) = flow.phase, target > 0 { return Double(accepted) / Double(target) }
     return view?.holdProgress ?? 0
   }
+
+  // MARK: the live readout (fixed set-points, owner 2026-11-28)
+
+  /// One reading beside its fixed number. `matched` uses the same ENTER limits as the camera's per-frame check.
+  struct ReadoutRow: Identifiable, Equatable {
+    let id: String
+    let now: String
+    let target: String
+    let matched: Bool
+  }
+
+  /// The smoothed readings (median of the last five frames) beside the number each must match.
+  var readout: [ReadoutRow] {
+    guard let gate, flow.phase.isCamera, !guidance.window.isEmpty else { return [] }
+    let v = Guidance.smooth(guidance.window)
+    func text(_ value: Double, _ decimals: Int) -> String {
+      let scale = pow(10, Double(decimals))
+      let rounded = (value * scale).rounded() / scale
+      return String(format: "%.\(decimals)f", rounded == 0 ? 0 : rounded)
+    }
+    func row(_ key: String, _ value: Double?, _ lo: Double, _ hi: Double, _ decimals: Int) -> ReadoutRow {
+      let target = text((lo + hi) / 2, decimals)
+      guard let value, value.isFinite else { return ReadoutRow(id: key, now: "—", target: target, matched: false) }
+      return ReadoutRow(id: key, now: text(value, decimals), target: target, matched: value >= lo && value <= hi)
+    }
+    let distance = gate.distance.enterCm
+    let pose = gate.pose.enterDeg
+    let roll = gate.pose.rollMessageDeg
+    let level = gate.light.ev100
+    return [
+      row("hud.distance", v.distanceCm, distance[0], distance[1], 0),
+      row("hud.yaw", v.yaw, -pose, pose, 0),
+      row("hud.pitch", v.pitch, -pose, pose, 0),
+      row("hud.roll", v.roll, -roll, roll, 0),
+      row("hud.light", v.ev100, level[0], level[1], 1),
+    ]
+  }
 }
 
 struct CaptureScreen: View {
@@ -243,6 +280,7 @@ private struct CaptureContent: View {
           .accessibilityHidden(true)
         VStack(spacing: 12) {
           Spacer()
+          if !model.readout.isEmpty { readoutPanel }
           VStack(spacing: 8) {
             Text(model.liveMessage)
               .font(.title2.bold())
@@ -264,6 +302,35 @@ private struct CaptureContent: View {
         .padding(20)
       }
     }
+  }
+
+  /// Each reading beside its fixed number; a row turns green when it matches.
+  private var readoutPanel: some View {
+    VStack(spacing: 2) {
+      HStack(spacing: 8) {
+        Text("").frame(maxWidth: .infinity, alignment: .leading)
+        Text(s("hud.now")).frame(width: 64)
+        Text(s("hud.target")).frame(width: 64)
+        Color.clear.frame(width: 22, height: 1)
+      }
+      .font(.caption)
+      .foregroundStyle(.white.opacity(0.75))
+      ForEach(model.readout) { row in
+        HStack(spacing: 8) {
+          Text(s(row.id)).frame(maxWidth: .infinity, alignment: .leading)
+          Text(row.now).monospacedDigit().frame(width: 64)
+          Text(row.target).monospacedDigit().frame(width: 64)
+          Image(systemName: row.matched ? "checkmark.circle.fill" : "circle").frame(width: 22)
+        }
+        .font(.footnote.weight(.semibold))
+        .foregroundStyle(row.matched ? Color.green : Color.white)
+      }
+    }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 10)
+    .frame(maxWidth: .infinity)
+    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
+    .accessibilityIdentifier("capture.readout")
   }
 
   // MARK: cards

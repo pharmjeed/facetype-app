@@ -187,6 +187,10 @@
    "key": "more.remove_glasses"
   },
   {
+   "reason": "uncover_face",
+   "key": "more.uncover_face"
+  },
+  {
    "reason": "face_camera",
    "key": "more.face_camera"
   },

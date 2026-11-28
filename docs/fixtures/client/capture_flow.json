@@ -1,5 +1,5 @@
 {
- "guidance_limit_ms": 60000,
+ "guidance_limit_ms": 180000,
  "burst_disposition": [
   {
    "status": "complete",
@@ -334,7 +334,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": null,
@@ -479,7 +479,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": null,
@@ -714,7 +714,7 @@
     {
      "event": {
       "type": "TICK",
-      "nowMs": 61000
+      "nowMs": 181000
      },
      "state": {
       "phase": {
@@ -733,7 +733,7 @@
     {
      "event": {
       "type": "RESUME",
-      "nowMs": 62000
+      "nowMs": 182000
      },
      "state": {
       "phase": {
@@ -746,7 +746,7 @@
       "reasonCounts": {
        "facing": 1
       },
-      "guidanceStartedAtMs": 62000,
+      "guidanceStartedAtMs": 182000,
       "sessionStartedAtMs": 0,
       "helpShown": true
      }
@@ -803,7 +803,7 @@
        "frames": [],
        "topRejectReason": "light"
       },
-      "nowMs": 61000
+      "nowMs": 181000
      },
      "state": {
       "phase": {
@@ -1322,7 +1322,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": {
@@ -1722,7 +1722,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": {
@@ -1974,7 +1974,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": {
@@ -2121,7 +2121,7 @@
         "captureId": "cap-1",
         "attempt": 1,
         "protocolVersion": "capture-spec-v2",
-        "gateConfigHash": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+        "gateConfigHash": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
         "device": {},
         "camera": {},
         "verdict": null,

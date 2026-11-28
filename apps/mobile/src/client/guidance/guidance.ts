@@ -73,6 +73,7 @@ interface Smoothed {
   crushFrac: number | null;
   cheekRatio: number | null;
   exposureTimeNs: number | null;
+  ev100: number | null;
 }
 
 type CheckState = { pass: boolean; message: GuidanceMessage | null };
@@ -152,6 +153,8 @@ export function smooth(window: readonly FrameMeasure[]): Smoothed {
     crushFrac: pick((m) => m.crushFrac),
     cheekRatio: pick((m) => m.cheekRatio),
     exposureTimeNs: pick((m) => m.exposureTimeNs),
+    // The metered light level; only cameras that can compute it report one.
+    ev100: pick((m) => m.ev100),
   };
 }
 
@@ -214,7 +217,9 @@ function evaluate(
     case 'facing': {
       if (v.yaw === null || v.pitch === null) return failing('look_straight');
       const limit = was ? config.pose.exitDeg : config.pose.enterDeg;
-      const rollOk = v.roll === null || Math.abs(v.roll) <= config.pose.rollMessageDeg;
+      // Roll is a set-point too (0°): its exit limit is wider by the same step as yaw and pitch.
+      const rollLimit = config.pose.rollMessageDeg + (was ? config.pose.exitDeg - config.pose.enterDeg : 0);
+      const rollOk = v.roll === null || Math.abs(v.roll) <= rollLimit;
       return Math.abs(v.yaw) <= limit && Math.abs(v.pitch) <= limit && rollOk
         ? { pass: true, message: null }
         : failing('look_straight');
@@ -224,7 +229,12 @@ function evaluate(
       const k = was ? GUIDANCE_TIMING.lightExitFactor : 1;
       const [r0, r1] = config.light.cheekRatio;
       const exposureOk = v.exposureTimeNs === null || v.exposureTimeNs <= GUIDANCE_TIMING.maxExposureNs;
+      // One fixed light level (owner 2026-11-28); a camera that reports no level is not checked for it.
+      const widen = was ? config.light.ev100ExitWiden : 0;
+      const [ev0, ev1] = config.light.ev100;
+      const levelOk = v.ev100 === null || within(v.ev100, [ev0 - widen, ev1 + widen]);
       const ok =
+        levelOk &&
         v.clipFrac <= config.light.maxClipFrac * k &&
         v.crushFrac <= config.light.maxCrushFrac * k &&
         within(v.cheekRatio, [r0 / k, r1 * k]) &&

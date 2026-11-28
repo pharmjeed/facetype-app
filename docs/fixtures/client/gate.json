@@ -24,18 +24,18 @@
    "maxFaces": 2
   },
   "pose": {
-   "enterDeg": 8,
-   "exitDeg": 12,
-   "rollMessageDeg": 15
+   "enterDeg": 2,
+   "exitDeg": 3,
+   "rollMessageDeg": 2
   },
   "distance": {
    "enterCm": [
-    35,
-    60
+    49,
+    51
    ],
    "exitCm": [
-    32,
-    65
+    48,
+    52
    ],
    "irisMm": 11.7
   },
@@ -61,7 +61,15 @@
    "cheekRatio": [
     0.5,
     2
-   ]
+   ],
+   "ev100": [
+    10.5,
+    11.5
+   ],
+   "ev100ExitWiden": 0.25
+  },
+  "motion": {
+   "maxBlurFrac": 0.003
   },
   "expression": {
    "maxSmile": 0.3,
@@ -76,7 +84,7 @@
   },
   "burst": {
    "targetFrames": 10,
-   "maxDurationMs": 60000,
+   "maxDurationMs": 180000,
    "minSpacingMs": 66,
    "minCoverageMs": 1000,
    "holdMs": 500
@@ -87,10 +95,10 @@
    "stream.preferredMinFps": "default",
    "stream.jpegQuality": "default",
    "faces.maxFaces": "default",
-   "pose.enterDeg": "default",
+   "pose.enterDeg": "owner",
    "pose.exitDeg": "default",
-   "pose.rollMessageDeg": "default",
-   "distance.enterCm": "default",
+   "pose.rollMessageDeg": "owner",
+   "distance.enterCm": "owner",
    "distance.exitCm": "default",
    "distance.irisMm": "default",
    "size.minFaceWidthPx": "validated",
@@ -102,6 +110,9 @@
    "light.maxClipFrac": "default",
    "light.maxCrushFrac": "default",
    "light.cheekRatio": "default",
+   "light.ev100": "owner",
+   "light.ev100ExitWiden": "default",
+   "motion.maxBlurFrac": "validated",
    "expression.maxSmile": "research",
    "expression.maxJawOpen": "research",
    "eyes.maxBlink": "default",
@@ -114,11 +125,11 @@
    "burst.holdMs": "default"
   }
  },
- "canonical_json": "{\"burst\":{\"holdMs\":500,\"maxDurationMs\":60000,\"minCoverageMs\":1000,\"minSpacingMs\":66,\"targetFrames\":10},\"centre\":{\"edgeMarginFrac\":0.05,\"eyeMidX\":[0.4,0.6],\"faceCentreY\":[0.35,0.65]},\"distance\":{\"enterCm\":[35,60],\"exitCm\":[32,65],\"irisMm\":11.7},\"expression\":{\"maxJawOpen\":0.05,\"maxSmile\":0.3},\"eyes\":{\"maxBlink\":0.5,\"minRelativeOpening\":0.7},\"faces\":{\"maxFaces\":2},\"labels\":{\"burst.holdMs\":\"default\",\"burst.maxDurationMs\":\"owner\",\"burst.minCoverageMs\":\"default\",\"burst.minSpacingMs\":\"default\",\"burst.targetFrames\":\"owner\",\"centre.edgeMarginFrac\":\"default\",\"centre.eyeMidX\":\"default\",\"centre.faceCentreY\":\"default\",\"distance.enterCm\":\"default\",\"distance.exitCm\":\"default\",\"distance.irisMm\":\"default\",\"expression.maxJawOpen\":\"research\",\"expression.maxSmile\":\"research\",\"eyes.maxBlink\":\"default\",\"eyes.minRelativeOpening\":\"default\",\"faces.maxFaces\":\"default\",\"light.cheekRatio\":\"default\",\"light.maxClipFrac\":\"default\",\"light.maxCrushFrac\":\"default\",\"pose.enterDeg\":\"default\",\"pose.exitDeg\":\"default\",\"pose.rollMessageDeg\":\"default\",\"sharpness.minRelativeToBurstMax\":\"default\",\"size.maxFaceWidthFrac\":\"default\",\"size.minFaceWidthPx\":\"validated\",\"size.preferredFaceWidthPx\":\"default\",\"stream.jpegQuality\":\"default\",\"stream.minSize\":\"default\",\"stream.preferredMinFps\":\"default\",\"stream.preferredSizes\":\"default\"},\"light\":{\"cheekRatio\":[0.5,2],\"maxClipFrac\":0.01,\"maxCrushFrac\":0.02},\"pose\":{\"enterDeg\":8,\"exitDeg\":12,\"rollMessageDeg\":15},\"sharpness\":{\"minRelativeToBurstMax\":0.5},\"size\":{\"maxFaceWidthFrac\":0.7,\"minFaceWidthPx\":220,\"preferredFaceWidthPx\":350},\"stream\":{\"jpegQuality\":95,\"minSize\":[1280,720],\"preferredMinFps\":15,\"preferredSizes\":[[3840,2160],[1920,1080]]},\"version\":\"client-gate-1\"}",
- "sha256": "f37330dc4dc32a546ef694a2fff5912f3f3804ecb9a8fbdf0d9c1963580c9962",
+ "canonical_json": "{\"burst\":{\"holdMs\":500,\"maxDurationMs\":180000,\"minCoverageMs\":1000,\"minSpacingMs\":66,\"targetFrames\":10},\"centre\":{\"edgeMarginFrac\":0.05,\"eyeMidX\":[0.4,0.6],\"faceCentreY\":[0.35,0.65]},\"distance\":{\"enterCm\":[49,51],\"exitCm\":[48,52],\"irisMm\":11.7},\"expression\":{\"maxJawOpen\":0.05,\"maxSmile\":0.3},\"eyes\":{\"maxBlink\":0.5,\"minRelativeOpening\":0.7},\"faces\":{\"maxFaces\":2},\"labels\":{\"burst.holdMs\":\"default\",\"burst.maxDurationMs\":\"owner\",\"burst.minCoverageMs\":\"default\",\"burst.minSpacingMs\":\"default\",\"burst.targetFrames\":\"owner\",\"centre.edgeMarginFrac\":\"default\",\"centre.eyeMidX\":\"default\",\"centre.faceCentreY\":\"default\",\"distance.enterCm\":\"owner\",\"distance.exitCm\":\"default\",\"distance.irisMm\":\"default\",\"expression.maxJawOpen\":\"research\",\"expression.maxSmile\":\"research\",\"eyes.maxBlink\":\"default\",\"eyes.minRelativeOpening\":\"default\",\"faces.maxFaces\":\"default\",\"light.cheekRatio\":\"default\",\"light.ev100\":\"owner\",\"light.ev100ExitWiden\":\"default\",\"light.maxClipFrac\":\"default\",\"light.maxCrushFrac\":\"default\",\"motion.maxBlurFrac\":\"validated\",\"pose.enterDeg\":\"owner\",\"pose.exitDeg\":\"default\",\"pose.rollMessageDeg\":\"owner\",\"sharpness.minRelativeToBurstMax\":\"default\",\"size.maxFaceWidthFrac\":\"default\",\"size.minFaceWidthPx\":\"validated\",\"size.preferredFaceWidthPx\":\"default\",\"stream.jpegQuality\":\"default\",\"stream.minSize\":\"default\",\"stream.preferredMinFps\":\"default\",\"stream.preferredSizes\":\"default\"},\"light\":{\"cheekRatio\":[0.5,2],\"ev100\":[10.5,11.5],\"ev100ExitWiden\":0.25,\"maxClipFrac\":0.01,\"maxCrushFrac\":0.02},\"motion\":{\"maxBlurFrac\":0.003},\"pose\":{\"enterDeg\":2,\"exitDeg\":3,\"rollMessageDeg\":2},\"sharpness\":{\"minRelativeToBurstMax\":0.5},\"size\":{\"maxFaceWidthFrac\":0.7,\"minFaceWidthPx\":220,\"preferredFaceWidthPx\":350},\"stream\":{\"jpegQuality\":95,\"minSize\":[1280,720],\"preferredMinFps\":15,\"preferredSizes\":[[3840,2160],[1920,1080]]},\"version\":\"client-gate-1\"}",
+ "sha256": "08b6aaf13c5c18e96a94d348c568d9ba7edec73a5dc88f68576c65f1a05b6e2f",
  "next_burst_options": {
   "targetFrames": 10,
-  "maxDurationMs": 60000,
+  "maxDurationMs": 180000,
   "minSpacingMs": 66,
   "minCoverageMs": 1000
  }

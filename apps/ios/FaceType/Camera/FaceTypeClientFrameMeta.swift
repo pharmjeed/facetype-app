@@ -151,6 +151,7 @@ struct FaceTypeClientFrameContext {
   let intrinsics: FaceTypeClientIntrinsics?
   let exposureTimeNs: Int64?
   let iso: Double?
+  let lensAperture: Double?
   let focalLengthMm: Double?
   let focusMode: String
   let focusState: String
@@ -261,6 +262,10 @@ enum FaceTypeClientFrameMeta {
 
     meta.put("exposure_time_ns", c.exposureTimeNs.map { NSNumber(value: $0) }, missing: "exposure_not_reported")
     meta.number("iso", c.iso, missing: "iso_not_reported")
+    meta.number("lens_aperture", c.lensAperture, missing: "aperture_not_reported")
+    // The light level the frame was accepted at (gate `light.ev100`) and its predicted motion blur (`motion`).
+    meta.number("ev100", m.ev100, missing: "iso_exposure_or_aperture_not_reported")
+    meta.number("predicted_blur_frac", m.blurFrac, missing: "gyro_exposure_focal_or_face_width_missing")
     meta.put("frame_duration_ns", c.frameDurationNs.map { NSNumber(value: $0) }, missing: "frame_duration_not_reported")
     meta.set("focus_mode", c.focusMode)
     meta.set("focus_state", c.focusState)

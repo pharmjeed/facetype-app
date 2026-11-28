@@ -56,6 +56,7 @@ export function rejectReasonKey(reason: string | null, current: GuidanceMessage)
 /** ADR-016 `needs_more` reason codes (services/client_measure.py REASON_ORDER). */
 const MORE_REASONS: Record<string, StringKey> = {
   remove_glasses: 'more.remove_glasses',
+  uncover_face: 'more.uncover_face',
   face_camera: 'more.face_camera',
   neutral_face: 'more.neutral_face',
   open_eyes: 'more.open_eyes',

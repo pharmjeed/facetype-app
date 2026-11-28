@@ -29,7 +29,8 @@ import { SPOOL_TIMING } from './spool/spool.ts';
 import type { SpoolManifest } from './spool/manifest.ts';
 
 /** Total guidance time before the help card (spec §4). */
-export const GUIDANCE_LIMIT_MS = 60_000;
+// 180 s since 2026-11-28: with fixed set-points the person needs time to match every reading.
+export const GUIDANCE_LIMIT_MS = 180_000;
 
 export type CapturePhase =
   | { name: 'tips' }

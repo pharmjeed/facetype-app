@@ -47,7 +47,7 @@ export function syntheticMeasure(tMs: number, frame = 0): FrameMeasure {
     eyeMidX: 0.5,
     faceCentreY: 0.5,
     faceWidthPx: 380,
-    distanceCm: 45,
+    distanceCm: 50,
     clipFrac: 0.002,
     crushFrac: 0.004,
     cheekRatio: 1.05,

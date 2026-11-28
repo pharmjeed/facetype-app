@@ -26,6 +26,30 @@ import Foundation
 import MediaPipeTasksVision
 import UIKit
 
+/// What the sensor and the gyroscope report for one frame. Every value may be missing.
+struct FaceTypeClientSensorState {
+  var iso: Double?
+  var exposureS: Double?
+  var aperture: Double?
+  var gyroDegPerS: Double?
+
+  /// Exposure value at ISO 100 from the sensor's own solution, or nil when a value is missing.
+  var ev100: Double? {
+    guard let iso, let exposureS, let aperture, iso > 0, exposureS > 0, aperture > 0 else { return nil }
+    let value = log2(aperture * aperture / exposureS) - log2(iso / 100)
+    return value.isFinite ? value : nil
+  }
+
+  /// Predicted motion blur as a fraction of the face width, or nil when a value is missing.
+  func blurFrac(focalPx: Double?, faceWidthPx: Double?) -> Double? {
+    guard let gyroDegPerS, let exposureS, let focalPx, let faceWidthPx,
+      gyroDegPerS >= 0, exposureS > 0, focalPx > 0, faceWidthPx > 0
+    else { return nil }
+    let value = gyroDegPerS * Double.pi / 180 * exposureS * focalPx / faceWidthPx
+    return value.isFinite ? value : nil
+  }
+}
+
 /// Every value one frame is judged on, unsmoothed. `nil` = not measurable.
 struct FaceTypeClientMeasurement {
   var faces = 0
@@ -52,6 +76,10 @@ struct FaceTypeClientMeasurement {
   var openingL: Double?
   var openingR: Double?
   var sharpness: Double?
+  /// The metered light level: exposure value at ISO 100 (log2(N² / t) − log2(ISO / 100)).
+  var ev100: Double?
+  /// Predicted motion blur as a fraction of the face width (gyro × exposure × focal ÷ face width).
+  var blurFrac: Double?
   var blendshapes: [String: Double] = [:]
   /// Flat [x, y, z] * 478, normalised as MediaPipe delivers them.
   var landmarks: [Float] = []
@@ -234,9 +262,12 @@ final class FaceTypeClientFrameAnalyzer {
   func analyse(
     _ pixelBuffer: CVPixelBuffer,
     gate: FaceTypeClientGateConfig,
-    focalPx: Double?
+    focalPx: Double?,
+    sensor: FaceTypeClientSensorState
   ) -> FaceTypeClientMeasurement {
     var m = measure(pixelBuffer, gate: gate, focalPx: focalPx)
+    m.ev100 = sensor.ev100
+    m.blurFrac = sensor.blurFrac(focalPx: focalPx, faceWidthPx: m.faceWidthPx)
     m.checks = Self.evaluate(
       m,
       gate: gate,
@@ -390,13 +421,17 @@ final class FaceTypeClientFrameAnalyzer {
         && within(m.faceCentreY, gate.centre.faceCentreY)
     }
 
-    if let yaw = m.yaw, let pitch = m.pitch, yaw.isFinite, pitch.isFinite {
+    // Fixed set-points (owner 2026-11-28): yaw, pitch and roll each at 0° ± its limit.
+    if let yaw = m.yaw, let pitch = m.pitch, let roll = m.roll, yaw.isFinite, pitch.isFinite, roll.isFinite {
       c.facing = abs(yaw) <= gate.pose.enterDeg && abs(pitch) <= gate.pose.enterDeg
+        && abs(roll) <= gate.pose.rollMessageDeg
     }
 
+    // One fixed light level: a frame without a metered level is never stored.
     if let clip = m.clipFrac, let crush = m.crushFrac {
       c.light = clip <= gate.light.maxClipFrac && crush <= gate.light.maxCrushFrac
         && within(m.cheekRatio, gate.light.cheekRatio)
+        && within(m.ev100, gate.light.ev100)
     }
 
     if let smile = m.smile, let jaw = m.jawOpen, smile.isFinite, jaw.isFinite {
@@ -414,7 +449,10 @@ final class FaceTypeClientFrameAnalyzer {
 
     // No absolute floor (A7.78-B): a frame only has to be measurable here;
     // `sharpness.minRelativeToBurstMax` is applied across the burst.
-    if let s = m.sharpness, s.isFinite, s > 0 { c.sharp = true }
+    // Motion (A8.4): the predicted blur must be known and inside the limit.
+    if let s = m.sharpness, s.isFinite, s > 0, let blur = m.blurFrac, blur.isFinite {
+      c.sharp = blur <= gate.motion.maxBlurFrac
+    }
     return c
   }
 

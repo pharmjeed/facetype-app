@@ -23,12 +23,14 @@ struct FrameMeasure: Decodable, Equatable {
   var crushFrac: Double?
   var cheekRatio: Double?
   var exposureTimeNs: Double?
+  /// The metered light level (exposure value at ISO 100); nil when the camera cannot compute it.
+  var ev100: Double?
 
   init(
     tsMs: Double? = nil, faces: Double? = nil, yaw: Double? = nil, pitch: Double? = nil, roll: Double? = nil,
     faceBox: [Double?]? = nil, eyeMidX: Double? = nil, faceCentreY: Double? = nil, faceWidthPx: Double? = nil,
     distanceCm: Double? = nil, clipFrac: Double? = nil, crushFrac: Double? = nil, cheekRatio: Double? = nil,
-    exposureTimeNs: Double? = nil
+    exposureTimeNs: Double? = nil, ev100: Double? = nil
   ) {
     self.tsMs = tsMs
     self.faces = faces
@@ -44,6 +46,7 @@ struct FrameMeasure: Decodable, Equatable {
     self.crushFrac = crushFrac
     self.cheekRatio = cheekRatio
     self.exposureTimeNs = exposureTimeNs
+    self.ev100 = ev100
   }
 
   /// From the camera controller's event dictionary.
@@ -63,6 +66,7 @@ struct FrameMeasure: Decodable, Equatable {
     crushFrac = number("crushFrac")
     cheekRatio = number("cheekRatio")
     exposureTimeNs = number("exposureTimeNs")
+    ev100 = number("ev100")
   }
 }
 
@@ -125,6 +129,7 @@ enum Guidance {
     var faces, yaw, pitch, roll: Double?
     var faceBox: [Double]?
     var eyeMidX, faceCentreY, faceWidthPx, distanceCm, clipFrac, crushFrac, cheekRatio, exposureTimeNs: Double?
+    var ev100: Double?
   }
 
   /// Median of the finite values, or nil when there are none.
@@ -148,7 +153,7 @@ enum Guidance {
       faceBox: box.allSatisfy({ $0 != nil }) ? box.map { $0! } : nil,
       eyeMidX: pick(\.eyeMidX), faceCentreY: pick(\.faceCentreY), faceWidthPx: pick(\.faceWidthPx),
       distanceCm: pick(\.distanceCm), clipFrac: pick(\.clipFrac), crushFrac: pick(\.crushFrac),
-      cheekRatio: pick(\.cheekRatio), exposureTimeNs: pick(\.exposureTimeNs))
+      cheekRatio: pick(\.cheekRatio), exposureTimeNs: pick(\.exposureTimeNs), ev100: pick(\.ev100))
   }
 
   private static func within(_ value: Double, _ lo: Double, _ hi: Double) -> Bool { value >= lo && value <= hi }
@@ -194,15 +199,21 @@ enum Guidance {
     case .facing:
       guard let yaw = v.yaw, let pitch = v.pitch else { return .failing(.look_straight) }
       let limit = was ? c.pose.exitDeg : c.pose.enterDeg
-      let rollOk = v.roll.map { abs($0) <= c.pose.rollMessageDeg } ?? true
+      // Roll is a set-point too (0°): its exit limit is wider by the same step as yaw and pitch.
+      let rollLimit = c.pose.rollMessageDeg + (was ? c.pose.exitDeg - c.pose.enterDeg : 0)
+      let rollOk = v.roll.map { abs($0) <= rollLimit } ?? true
       return abs(yaw) <= limit && abs(pitch) <= limit && rollOk ? .passing : .failing(.look_straight)
     case .light:
       guard let clip = v.clipFrac, let crush = v.crushFrac, let ratio = v.cheekRatio else { return .failing(.light) }
       let k = was ? GuidanceTiming.lightExitFactor : 1
       let r = c.light.cheekRatio
       let exposureOk = v.exposureTimeNs.map { $0 <= GuidanceTiming.maxExposureNs } ?? true
+      // One fixed light level (owner 2026-11-28); a camera that reports no level is not checked for it.
+      let widen = was ? c.light.ev100ExitWiden : 0
+      let level = c.light.ev100
+      let levelOk = v.ev100.map { within($0, level[0] - widen, level[1] + widen) } ?? true
       let ok =
-        clip <= c.light.maxClipFrac * k && crush <= c.light.maxCrushFrac * k && within(ratio, r[0] / k, r[1] * k)
+        levelOk && clip <= c.light.maxClipFrac * k && crush <= c.light.maxCrushFrac * k && within(ratio, r[0] / k, r[1] * k)
         && exposureOk
       return ok ? .passing : .failing(.light)
     }

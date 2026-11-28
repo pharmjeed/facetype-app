@@ -149,8 +149,8 @@
 "tips.title" = "Before you start";
 "tips.glasses" = "Take off your glasses";
 "tips.no_smile" = "No smile";
-"tips.light" = "Face the light and keep your whole face visible";
-"tips.auto" = "The app takes the photos automatically when everything is ready.";
+"tips.light" = "Face daylight, near a window, and keep your whole face visible";
+"tips.auto" = "Rest the phone in front of you and move yourself until the numbers match. The app takes a photo by itself at each match, until the photos are complete.";
 "tips.start" = "Start";
 "guide.camera_starting" = "Starting the camera";
 "guide.no_face" = "Place your face inside the frame";
@@ -158,9 +158,16 @@
 "guide.move_closer" = "Move a little closer";
 "guide.move_back" = "Move a little back";
 "guide.centre" = "Centre yourself in the frame";
-"guide.look_straight" = "Look straight at the screen";
-"guide.light" = "Face the light";
+"guide.look_straight" = "Look straight at the screen, head upright";
+"guide.light" = "Adjust the light: strong daylight in front of your face";
 "guide.hold_still" = "Hold still…";
+"hud.now" = "Now";
+"hud.target" = "Target";
+"hud.distance" = "Distance (cm)";
+"hud.yaw" = "Turn";
+"hud.pitch" = "Up / down";
+"hud.roll" = "Tilt";
+"hud.light" = "Light";
 "guide.no_smile" = "No smile";
 "guide.eyes" = "Open your eyes naturally";
 "burst.progress" = "Taking photos {accepted} of {target}";
@@ -184,6 +191,7 @@
 "more.title" = "We need more photos";
 "more.continue" = "Continue taking photos";
 "more.remove_glasses" = "Glasses appeared in some photos. Take them off and continue.";
+"more.uncover_face" = "Something covered the face in some photos, such as hair on the forehead, a head covering or a mask. Uncover your whole face and continue.";
 "more.face_camera" = "Look straight at the camera and continue.";
 "more.neutral_face" = "Keep a relaxed face without a smile and continue.";
 "more.open_eyes" = "Keep your eyes open and continue.";
@@ -204,7 +212,7 @@
 "camera.internal" = "An unexpected camera error occurred.";
 "camera.simulator" = "Simulation mode: no real camera and no real face are used.";
 "help.title" = "Need help?";
-"help.eye_level" = "Hold the phone in front of your face at eye level.";
-"help.light" = "Stand facing the light source, not with it behind you.";
+"help.eye_level" = "Rest the phone in front of your face at eye level, 50 cm away.";
+"help.light" = "Face a window in daylight; do not have the light behind you.";
 "help.alone" = "Make sure only your face is in the frame and fully uncovered.";
 "help.again" = "Try again";

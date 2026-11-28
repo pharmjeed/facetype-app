@@ -66,7 +66,7 @@ test('priority: one face beats distance beats centring beats facing beats light'
   state = feed(initialGuidance(0), series(0, 5, (t) => ({ ...far, tsMs: t })));
   assert.equal(guidanceView(state, C).message, 'move_closer');
 
-  const offCentre = { ...far, distanceCm: 45 };
+  const offCentre = { ...far, distanceCm: 50 };
   state = feed(initialGuidance(0), series(0, 5, (t) => ({ ...offCentre, tsMs: t })));
   assert.equal(guidanceView(state, C).message, 'centre');
 
@@ -103,19 +103,61 @@ test('distance is judged only when native knows the focal length; size always', 
 });
 
 test('hysteresis: a passing check survives values between the enter and exit limits', () => {
-  // Enter at yaw ≤ 8°, then drift to 10° (inside the 12° exit): still facing.
-  let state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { yaw: 5 })));
+  // Enter at yaw ≤ 2° (the 0° set-point ± 2°), then drift to 2.5° (inside the 3° exit): still facing.
+  let state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { yaw: 1.5 })));
   assert.equal(state.checks.facing.pass, true);
-  state = feed(state, series(400, 5, (t) => good(t, { yaw: 10 })));
+  state = feed(state, series(400, 5, (t) => good(t, { yaw: 2.5 })));
   assert.equal(state.checks.facing.pass, true);
   // Beyond the exit limit it fails …
-  state = feed(state, series(800, 5, (t) => good(t, { yaw: 13 })));
+  state = feed(state, series(800, 5, (t) => good(t, { yaw: 3.5 })));
   assert.equal(state.checks.facing.pass, false);
-  // … and 10° is not enough to re-enter.
-  state = feed(state, series(1200, 5, (t) => good(t, { yaw: 10 })));
+  // … and 2.5° is not enough to re-enter.
+  state = feed(state, series(1200, 5, (t) => good(t, { yaw: 2.5 })));
   assert.equal(state.checks.facing.pass, false);
-  state = feed(state, series(1600, 5, (t) => good(t, { yaw: 7 })));
+  state = feed(state, series(1600, 5, (t) => good(t, { yaw: 1.8 })));
   assert.equal(state.checks.facing.pass, true);
+});
+
+test('fixed set-points: the distance passes only at 50 ± 1 cm, roll only at 0 ± 2°', () => {
+  assert.deepEqual(C.distance.enterCm, [49, 51]);
+  assert.deepEqual([C.pose.enterDeg, C.pose.rollMessageDeg], [2, 2]);
+  let state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { distanceCm: 51.5 })));
+  assert.equal(state.checks.distance.pass, false, '51.5 cm is outside the enter limit');
+  assert.equal(state.checks.distance.message, 'move_closer');
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { distanceCm: 48.5 })));
+  assert.equal(state.checks.distance.message, 'move_back');
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { distanceCm: 50.4 })));
+  assert.equal(state.checks.distance.pass, true);
+  // Roll: enters at ≤ 2°, survives up to 3° once passing, fails beyond it.
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { roll: 2.5 })));
+  assert.equal(state.checks.facing.pass, false);
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { roll: -1.5 })));
+  assert.equal(state.checks.facing.pass, true);
+  state = feed(state, series(400, 5, (t) => good(t, { roll: -2.8 })));
+  assert.equal(state.checks.facing.pass, true);
+  state = feed(state, series(800, 5, (t) => good(t, { roll: -3.4 })));
+  assert.equal(state.checks.facing.pass, false);
+});
+
+test('one fixed light level: a reported EV100 outside 11 ± 0.5 fails the light check', () => {
+  assert.deepEqual(C.light.ev100, [10.5, 11.5]);
+  // A camera that reports no level is not checked for it.
+  let state = feed(initialGuidance(0), series(0, 5, (t) => good(t)));
+  assert.equal(state.checks.light.pass, true);
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { ev100: 7.2 })));
+  assert.equal(state.checks.light.pass, false, 'room light is far below the level');
+  assert.equal(guidanceView(state, C).message, 'light');
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { ev100: 13 })));
+  assert.equal(state.checks.light.pass, false, 'direct sun is above it');
+  state = feed(initialGuidance(0), series(0, 5, (t) => good(t, { ev100: 11.2 })));
+  assert.equal(state.checks.light.pass, true);
+  // Hysteresis: 11.7 stays inside the widened exit window (≤ 11.75), 11.8 leaves it, 11.7 cannot re-enter.
+  state = feed(state, series(400, 5, (t) => good(t, { ev100: 11.7 })));
+  assert.equal(state.checks.light.pass, true);
+  state = feed(state, series(800, 5, (t) => good(t, { ev100: 11.8 })));
+  assert.equal(state.checks.light.pass, false);
+  state = feed(state, series(1200, 5, (t) => good(t, { ev100: 11.7 })));
+  assert.equal(state.checks.light.pass, false);
 });
 
 test('size hysteresis: 10% band below the validated 220 px floor', () => {

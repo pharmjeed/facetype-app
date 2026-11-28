@@ -27,6 +27,7 @@ enum Messages {
 
   private static let moreReasons: [String: String] = [
     "remove_glasses": "more.remove_glasses",
+    "uncover_face": "more.uncover_face",
     "face_camera": "more.face_camera",
     "neutral_face": "more.neutral_face",
     "open_eyes": "more.open_eyes",

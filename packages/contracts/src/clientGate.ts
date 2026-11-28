@@ -40,6 +40,14 @@ export interface ClientGateConfig {
     preferredMinFps: number;
     jpegQuality: number;
   };
+  /**
+   * FIXED SET-POINTS (owner 2026-11-28). The phone stays still and the person
+   * moves; a frame is taken each time every reading matches its number. A
+   * continuous reading never equals a number exactly, so each ENTER limit is
+   * the number ± the reading's own resolution (distance 50 ± 1 cm; yaw, pitch
+   * and roll 0 ± 2°; light level EV100 11 ± 0.5). The EXIT limits are wider by
+   * one more step and only steady the live guidance.
+   */
   /** MediaPipe `numFaces`; any detected second face blocks storing. */
   faces: { maxFaces: 2 };
   pose: { enterDeg: number; exitDeg: number; rollMessageDeg: number };
@@ -50,7 +58,27 @@ export interface ClientGateConfig {
    */
   size: { minFaceWidthPx: number; preferredFaceWidthPx: number; maxFaceWidthFrac: number };
   centre: { eyeMidX: [number, number]; faceCentreY: [number, number]; edgeMarginFrac: number };
-  light: { maxClipFrac: number; maxCrushFrac: number; cheekRatio: [number, number] };
+  /**
+   * `ev100` is the light level the camera metered, as an exposure value at
+   * ISO 100: log2(N² / t) − log2(ISO / 100), with N the lens aperture and t the
+   * exposure time in seconds. A frame is accepted only inside this window
+   * (owner 2026-11-28: one fixed light level for everyone). `ev100ExitWiden`
+   * widens it for the live guidance hysteresis only. A camera that reports no
+   * `ev100` is not checked for the level.
+   */
+  light: {
+    maxClipFrac: number;
+    maxCrushFrac: number;
+    cheekRatio: [number, number];
+    ev100: [number, number];
+    ev100ExitWiden: number;
+  };
+  /**
+   * Predicted motion blur of a frame = gyro rate (rad/s) × exposure time (s) ×
+   * focal length (px) ÷ face width (px). 0.003 is the A8.4 limit (0.3% of the
+   * face width). Applied per frame by the native camera that can compute it.
+   */
+  motion: { maxBlurFrac: number };
   expression: { maxSmile: number; maxJawOpen: number };
   eyes: { maxBlink: number; minRelativeOpening: number };
   /**
@@ -62,7 +90,8 @@ export interface ClientGateConfig {
   /**
    * The burst ACCUMULATES (owner decision 2026-11-24): frames that fail a check
    * are skipped, frames that pass are kept, and the burst runs until the
-   * target is reached or `maxDurationMs` (60 s, the help-card limit) passes.
+   * target is reached or `maxDurationMs` passes (180 s since 2026-11-28: with
+   * fixed set-points a frame is taken only when every reading matches).
    * It no longer starts again from zero after a few seconds.
    */
   burst: {
@@ -87,25 +116,26 @@ export const CLIENT_GATE_CONFIG: ClientGateConfig = {
     jpegQuality: 95,
   },
   faces: { maxFaces: 2 },
-  pose: { enterDeg: 8, exitDeg: 12, rollMessageDeg: 15 },
-  distance: { enterCm: [35, 60], exitCm: [32, 65], irisMm: 11.7 },
+  pose: { enterDeg: 2, exitDeg: 3, rollMessageDeg: 2 },
+  distance: { enterCm: [49, 51], exitCm: [48, 52], irisMm: 11.7 },
   size: { minFaceWidthPx: 220, preferredFaceWidthPx: 350, maxFaceWidthFrac: 0.7 },
   centre: { eyeMidX: [0.4, 0.6], faceCentreY: [0.35, 0.65], edgeMarginFrac: 0.05 },
-  light: { maxClipFrac: 0.01, maxCrushFrac: 0.02, cheekRatio: [0.5, 2] },
+  light: { maxClipFrac: 0.01, maxCrushFrac: 0.02, cheekRatio: [0.5, 2], ev100: [10.5, 11.5], ev100ExitWiden: 0.25 },
+  motion: { maxBlurFrac: 0.003 },
   expression: { maxSmile: 0.3, maxJawOpen: 0.05 },
   eyes: { maxBlink: 0.5, minRelativeOpening: 0.7 },
   sharpness: { minRelativeToBurstMax: 0.5 },
-  burst: { targetFrames: 10, maxDurationMs: 60000, minSpacingMs: 66, minCoverageMs: 1000, holdMs: 500 },
+  burst: { targetFrames: 10, maxDurationMs: 180000, minSpacingMs: 66, minCoverageMs: 1000, holdMs: 500 },
   labels: {
     'stream.preferredSizes': 'default',
     'stream.minSize': 'default',
     'stream.preferredMinFps': 'default',
     'stream.jpegQuality': 'default',
     'faces.maxFaces': 'default',
-    'pose.enterDeg': 'default',
+    'pose.enterDeg': 'owner',
     'pose.exitDeg': 'default',
-    'pose.rollMessageDeg': 'default',
-    'distance.enterCm': 'default',
+    'pose.rollMessageDeg': 'owner',
+    'distance.enterCm': 'owner',
     'distance.exitCm': 'default',
     'distance.irisMm': 'default',
     'size.minFaceWidthPx': 'validated',
@@ -117,6 +147,9 @@ export const CLIENT_GATE_CONFIG: ClientGateConfig = {
     'light.maxClipFrac': 'default',
     'light.maxCrushFrac': 'default',
     'light.cheekRatio': 'default',
+    'light.ev100': 'owner',
+    'light.ev100ExitWiden': 'default',
+    'motion.maxBlurFrac': 'validated',
     'expression.maxSmile': 'research',
     'expression.maxJawOpen': 'research',
     'eyes.maxBlink': 'default',

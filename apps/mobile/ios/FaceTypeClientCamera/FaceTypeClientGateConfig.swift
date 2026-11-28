@@ -60,6 +60,15 @@ struct FaceTypeClientGateConfig: Decodable {
     let maxClipFrac: Double
     let maxCrushFrac: Double
     let cheekRatio: [Double]
+    /// Decoded for the contract; this older module does not apply the light
+    /// level (the native app in apps/ios does).
+    let ev100: [Double]
+    let ev100ExitWiden: Double
+  }
+
+  /// Decoded for the contract; this older module does not apply it.
+  struct Motion: Decodable {
+    let maxBlurFrac: Double
   }
 
   struct Expression: Decodable {
@@ -94,6 +103,7 @@ struct FaceTypeClientGateConfig: Decodable {
   let size: Size
   let centre: Centre
   let light: Light
+  let motion: Motion
   let expression: Expression
   let eyes: Eyes
   let sharpness: Sharpness

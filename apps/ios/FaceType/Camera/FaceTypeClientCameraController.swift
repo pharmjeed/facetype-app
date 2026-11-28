@@ -693,13 +693,14 @@ final class FaceTypeClientCameraController: NSObject {
     }
 
     let ptsMs = Double(ptsNs ?? Int64(receivedNs)) / 1_000_000
+    let gyro = gyroDegPerS()
+    let exposureNs = Self.exposureTimeNs(exif: exif, device: run.device)
     let measurement = analyzer.analyse(
       pixelBuffer,
       gate: gate.config,
-      focalPx: focalPx
+      focalPx: focalPx,
+      sensor: Self.sensorState(exif: exif, device: run.device, exposureNs: exposureNs, gyro: gyro)
     )
-    let gyro = gyroDegPerS()
-    let exposureNs = Self.exposureTimeNs(exif: exif, device: run.device)
     frameSequence &+= 1
 
     if let burst {
@@ -823,8 +824,7 @@ final class FaceTypeClientCameraController: NSObject {
     effects: FaceTypeClientEffects,
     gyro: Double?
   ) -> FaceTypeClientFrameContext {
-    var iso = (exif?[kCGImagePropertyExifISOSpeedRatings as String] as? [NSNumber])?.first?.doubleValue
-    if iso == nil, device.iso.isFinite, device.iso > 0 { iso = Double(device.iso) }
+    let sensor = Self.sensorState(exif: exif, device: device, exposureNs: exposureNs, gyro: gyro)
     let gains = device.deviceWhiteBalanceGains
     return FaceTypeClientFrameContext(
       ptsNs: ptsNs,
@@ -836,7 +836,8 @@ final class FaceTypeClientCameraController: NSObject {
       frameDurationNs: frameDurationNs,
       intrinsics: intrinsics,
       exposureTimeNs: exposureNs,
-      iso: iso,
+      iso: sensor.iso,
+      lensAperture: sensor.aperture,
       focalLengthMm: focalLengthMm,
       focusMode: FaceTypeClientFrameMeta.focusModeName(device.focusMode),
       focusState: device.isAdjustingFocus ? "scanning" : "stable",
@@ -851,6 +852,20 @@ final class FaceTypeClientCameraController: NSObject {
       gyroDegPerS: gyro,
       orientationDeg: orientationDeg()
     )
+  }
+
+  /// ISO, exposure time, aperture and gyro rate of this frame: EXIF first, the device's live values otherwise.
+  static func sensorState(
+    exif: [String: Any]?, device: AVCaptureDevice, exposureNs: Int64?, gyro: Double?
+  ) -> FaceTypeClientSensorState {
+    var iso = (exif?[kCGImagePropertyExifISOSpeedRatings as String] as? [NSNumber])?.first?.doubleValue
+    if iso == nil, device.iso.isFinite, device.iso > 0 { iso = Double(device.iso) }
+    var aperture = (exif?[kCGImagePropertyExifFNumber as String] as? NSNumber)?.doubleValue
+    if aperture == nil, device.lensAperture.isFinite, device.lensAperture > 0 {
+      aperture = Double(device.lensAperture)
+    }
+    return FaceTypeClientSensorState(
+      iso: iso, exposureS: exposureNs.map { Double($0) / 1_000_000_000 }, aperture: aperture, gyroDegPerS: gyro)
   }
 
   /// Exposure time of this frame in ns: the sample buffer's own EXIF
@@ -918,6 +933,9 @@ final class FaceTypeClientCameraController: NSObject {
       "gyroDegPerS": n(gyro),
       // Contract §5.11: guidance shows «اجعل الضوء أمامك» above 1/30 s.
       "exposureTimeNs": exposureNs.map { NSNumber(value: $0) } ?? NSNull(),
+      // The metered light level and the predicted motion blur, for the live readout and guidance.
+      "ev100": n(m.ev100),
+      "blurFrac": n(m.blurFrac),
       "checks": m.checks.eventPayload,
     ]
   }

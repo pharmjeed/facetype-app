@@ -142,6 +142,14 @@ const scenarios: Scenario[] = [
   { name: 'off_centre', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { eyeMidX: 0.25 })) },
   { name: 'turned', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { yaw: 20 })) },
   { name: 'tilted_roll', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { roll: 25 })) },
+  // Fixed set-points (owner 2026-11-28): just outside each number, and the exit hysteresis of roll and light level.
+  { name: 'distance_just_far', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { distanceCm: 51.6 })) },
+  { name: 'distance_just_near', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { distanceCm: 48.4 })) },
+  { name: 'pitch_just_off', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { pitch: -2.6 })) },
+  { name: 'roll_enter_then_drift', frames: Array.from({ length: 45 }, (_, i) => good(at(i), { roll: i < 15 ? 1.5 : i < 30 ? 2.8 : 3.4 })) },
+  { name: 'light_level_room', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { ev100: 7.2 })) },
+  { name: 'light_level_sun', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { ev100: 13 })) },
+  { name: 'light_level_enter_then_drift', frames: Array.from({ length: 45 }, (_, i) => good(at(i), { ev100: i < 15 ? 11.2 : i < 30 ? 11.7 : 11.8 })) },
   { name: 'dark', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { crushFrac: 0.2 })) },
   { name: 'slow_exposure', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { exposureTimeNs: 50_000_000 })) },
   { name: 'two_faces', frames: Array.from({ length: 30 }, (_, i) => good(at(i), { faces: 2 })) },
@@ -179,7 +187,7 @@ write('messages.json', {
   ].map(([field, reason]) => ({ field, reason, key: profileFieldErrorKey(field!, reason!) })),
   verdict_reason_key: ['upload_integrity', 'glasses_detected', 'face_covered', 'occluded', 'mask', 'second_face', 'multiple_faces',
     'too_few_frames', 'frames_short', 'low_quality', 'blur', 'light', 'sharpness', 'whatever'].map((reason) => ({ reason, key: verdictReasonKey(reason) })),
-  more_reason_key: ['remove_glasses', 'face_camera', 'neutral_face', 'open_eyes', 'hold_still', 'one_face', 'same_person', 'more_photos', 'other', undefined]
+  more_reason_key: ['remove_glasses', 'uncover_face', 'face_camera', 'neutral_face', 'open_eyes', 'hold_still', 'one_face', 'same_person', 'more_photos', 'other', undefined]
     .map((reason) => ({ reason: reason ?? null, key: moreReasonKey(reason) })),
   reject_reason_key: (['oneFace', 'distanceOrSize', 'centred', 'facing', 'light', 'expression', 'eyes', 'sharp', 'effects_active', 'internal', 'unknown', null] as const)
     .flatMap((reason) => (['move_closer', 'move_back', 'centre'] as const).map((current) => ({ reason, current, key: rejectReasonKey(reason, current) }))),
@@ -270,8 +278,8 @@ write('spool.json', {
 const frames10 = Array.from({ length: 10 }, (_, i) => ({ id: `f${i}`, width: 1, height: 1, sha256: 'a'.repeat(64), bytes: 1, meta: {} }));
 const captureSequences: Array<{ name: string; events: CaptureEvent[] }> = [
   { name: 'happy', events: [{ type: 'START', nowMs: 1000 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_PROGRESS', progress: { accepted: 4, target: 10, elapsedMs: 900, topRejectReason: null } }, { type: 'BURST_RESULT', result: { status: 'complete', frames: frames10, topRejectReason: null } as never, nowMs: 3000 }, { type: 'ENQUEUED' }, { type: 'SPOOL_STATUS', outcome: outcomes[1]![1], nowMs: 4000 }, { type: 'SPOOL_STATUS', outcome: outcomes[4]![1], nowMs: 5000 }] },
-  { name: 'partial_then_help', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'partial', frames: frames10.slice(0, 4), topRejectReason: 'facing' } as never, nowMs: 30_000 }, { type: 'TICK', nowMs: 61_000 }, { type: 'RESUME', nowMs: 62_000 }] },
-  { name: 'partial_late', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'partial', frames: [], topRejectReason: 'light' } as never, nowMs: 61_000 }] },
+  { name: 'partial_then_help', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'partial', frames: frames10.slice(0, 4), topRejectReason: 'facing' } as never, nowMs: 30_000 }, { type: 'TICK', nowMs: 181_000 }, { type: 'RESUME', nowMs: 182_000 }] },
+  { name: 'partial_late', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'partial', frames: [], topRejectReason: 'light' } as never, nowMs: 181_000 }] },
   { name: 'camera_errors', events: [{ type: 'CAMERA_ERROR', code: 'internal' }, { type: 'START', nowMs: 0 }, { type: 'CAMERA_ERROR', code: 'permission_denied' }, { type: 'RESUME', nowMs: 10 }, { type: 'CAMERA_ERROR', code: 'camera_interrupted' }, { type: 'RESUME', nowMs: 20 }, { type: 'CAMERA_ERROR', code: 'model_unavailable' }] },
   { name: 'cancelled_burst', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'cancelled', frames: [], topRejectReason: null } as never, nowMs: 100 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_FAILED', nowMs: 200 }] },
   { name: 'more_then_continue', events: [{ type: 'START', nowMs: 0 }, { type: 'BURST_STARTED', target: 10 }, { type: 'BURST_RESULT', result: { status: 'complete', frames: frames10, topRejectReason: null } as never, nowMs: 3000 }, { type: 'ENQUEUED' }, { type: 'SPOOL_STATUS', outcome: outcomes.find(([n]) => n === 'needs_more')![1], nowMs: 9000 }, { type: 'CONTINUE', nowMs: 9500 }] },
@@ -279,7 +287,7 @@ const captureSequences: Array<{ name: string; events: CaptureEvent[] }> = [
   { name: 'spool_during_tips_ignored', events: [{ type: 'SPOOL_STATUS', outcome: outcomes.find(([n]) => n === 'complete')![1], nowMs: 0 }, { type: 'SPOOL_STATUS', outcome: outcomes[1]![1], nowMs: 0 }] },
 ];
 write('capture_flow.json', {
-  guidance_limit_ms: 60_000,
+  guidance_limit_ms: 180_000,
   burst_disposition: [
     { result: { status: 'complete', frames: frames10, topRejectReason: null } },
     { result: { status: 'complete', frames: frames10.slice(0, 9), topRejectReason: null } },
